@@ -68,11 +68,9 @@ No account required. No data stored. Completely free.
 
 ---
 
-## Spec Index
+## Specs
 
-| Spec | Feature | Status |
-|---|---|---|
-| [SPEC-001](docs/specs/001-contract-analysis.md) | AI Contract Analysis (MVP + insurance support) | shipped |
+All feature specs live in [`docs/specs/`](docs/specs/).
 
 ---
 
