@@ -14,7 +14,7 @@ const client = new Anthropic({
 
 const SYSTEM_PROMPT = `You are a Swiss contract analysis assistant. Analyse the provided contract and return a structured JSON response with:
 1. summary: A 2-3 paragraph plain-English summary of what the contract is about
-2. contract_type: Type of contract (employment, tenancy, NDA, freelance, other)
+2. contract_type: Type of contract (employment, tenancy, NDA, freelance, insurance, other)
 3. key_terms: Array of 5-8 key terms/clauses explained in plain English
 4. red_flags: Array of concerning clauses or unusual terms (can be empty)
 5. positive_clauses: Array of notably good/fair clauses (can be empty)

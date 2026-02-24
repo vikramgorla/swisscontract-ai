@@ -27,6 +27,7 @@ const contractTypeLabels: Record<string, string> = {
   tenancy: 'Tenancy Agreement',
   NDA: 'Non-Disclosure Agreement',
   freelance: 'Freelance Contract',
+  insurance: 'Insurance Contract',
   other: 'Contract',
 };
 
@@ -35,6 +36,7 @@ const contractTypeColors: Record<string, string> = {
   tenancy: 'bg-purple-100 text-purple-800',
   NDA: 'bg-yellow-100 text-yellow-800',
   freelance: 'bg-orange-100 text-orange-800',
+  insurance: 'bg-teal-100 text-teal-800',
   other: 'bg-gray-100 text-gray-800',
 };
 

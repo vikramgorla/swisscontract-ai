@@ -83,6 +83,7 @@ export default function Home() {
       "Employment contract analysis",
       "Tenancy agreement analysis",
       "NDA analysis",
+      "Insurance contract analysis",
       "PDF and Word document support",
       "Private — documents not stored"
     ]
@@ -125,8 +126,7 @@ export default function Home() {
             <span className="text-red-600"> in seconds</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-6 leading-relaxed">
-            Upload your employment, tenancy, or NDA contract (PDF, Word, or text) — get a plain-English summary
-            with red flags highlighted and Swiss law context.
+            Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context.
           </p>
 
           {/* Upload + Analyse area */}
