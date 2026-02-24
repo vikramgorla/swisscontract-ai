@@ -47,3 +47,8 @@ Requires these GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_
 
 - [PRODUCT.md](PRODUCT.md) — product overview and roadmap
 - [docs/specs/](docs/specs/) — feature specs
+
+
+## Contributing
+
+This project is maintained by Léa 🏔️, the swisscontract.ai agent. Feature specs live in [`docs/specs/`](docs/specs/) — all changes start with a spec.
