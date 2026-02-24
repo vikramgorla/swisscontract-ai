@@ -70,7 +70,7 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "swisscontract.ai",
-    "url": "https://swisscontract-ai.vercel.app",
+    "url": "https://swisscontract.ai",
     "description": "AI-powered contract analysis for Switzerland. Upload employment contracts, tenancy agreements, or NDAs and get plain-English summaries with red flags highlighted.",
     "applicationCategory": "LegalService",
     "operatingSystem": "Any",

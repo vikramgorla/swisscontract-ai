@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   authors: [{ name: "swisscontract.ai" }],
   robots: "index, follow",
   alternates: {
-    canonical: "https://swisscontract-ai.vercel.app",
+    canonical: "https://swisscontract.ai",
   },
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "swisscontract.ai — AI Contract Analysis for Switzerland",
     description: "Understand any Swiss contract in seconds. Upload a PDF or Word doc and get a plain-English summary, red flags, and Swiss law context. Private — nothing stored.",
     type: "website",
-    url: "https://swisscontract-ai.vercel.app",
+    url: "https://swisscontract.ai",
     siteName: "swisscontract.ai",
     locale: "en_CH",
   },
