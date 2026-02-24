@@ -236,9 +236,17 @@ export default function Home() {
               <button
                 onClick={handleAskQuestion}
                 disabled={!question.trim() || isAnalysing}
-                className="px-4 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-700 transition-colors whitespace-nowrap"
+                className="px-4 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-700 transition-colors whitespace-nowrap flex items-center gap-2"
               >
-                {isAnalysing ? 'Asking…' : 'Ask'}
+                {isAnalysing ? (
+                  <>
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Asking…
+                  </>
+                ) : 'Ask'}
               </button>
             </div>
             {error && (
@@ -250,6 +258,20 @@ export default function Home() {
               </div>
             )}
           </div>
+
+          {isAnalysing && (
+            <div className="mb-6 bg-indigo-50 border border-indigo-200 rounded-xl p-6 animate-pulse">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-5 h-5 rounded bg-indigo-200" />
+                <div className="h-4 w-40 rounded bg-indigo-200" />
+              </div>
+              <div className="space-y-2">
+                <div className="h-3 rounded bg-indigo-200 w-full" />
+                <div className="h-3 rounded bg-indigo-200 w-5/6" />
+                <div className="h-3 rounded bg-indigo-200 w-4/6" />
+              </div>
+            </div>
+          )}
 
           <AnalysisResult analysis={analysis} onReset={handleReset} />
         </section>
