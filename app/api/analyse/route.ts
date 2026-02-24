@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const question = formData.get('question') as string | null;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -126,6 +127,12 @@ export async function POST(request: NextRequest) {
       contractText = contractText.substring(0, maxChars) + '\n\n[Document truncated — first 50,000 characters analysed]';
     }
 
+    // Build user message — optionally include the user's specific question
+    let userMessage = `Please analyse this contract:\n\n${contractText}`;
+    if (question && question.trim().length > 0) {
+      userMessage += `\n\nThe user has a specific question about this contract: "${question.trim()}"\nPlease add a "question_answer" field to your JSON response with a direct, plain-English answer (2–4 sentences). Add it as the first field in your JSON.`;
+    }
+
     // Send to AI — only the extracted text string is transmitted, not the file
     const message = await client.messages.create({
       model: 'claude-sonnet-4-5',
@@ -134,7 +141,7 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'user',
-          content: `Please analyse this contract:\n\n${contractText}`,
+          content: userMessage,
         },
       ],
     });

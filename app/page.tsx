@@ -5,6 +5,7 @@ import UploadZone from './components/UploadZone';
 import AnalysisResult from './components/AnalysisResult';
 
 interface Analysis {
+  question_answer?: string;
   summary: string;
   contract_type: string;
   key_terms: Array<{ title: string; explanation: string }>;
@@ -19,6 +20,7 @@ export default function Home() {
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [question, setQuestion] = useState<string>('');
 
 
   const handleFileSelect = (file: File) => {
@@ -35,6 +37,9 @@ export default function Home() {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
+    if (question.trim()) {
+      formData.append('question', question.trim());
+    }
 
     try {
       const response = await fetch('/api/analyse', {
@@ -63,6 +68,7 @@ export default function Home() {
     setSelectedFile(null);
     setAnalysis(null);
     setError(null);
+    setQuestion('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -133,6 +139,22 @@ export default function Home() {
           {!analysis && (
             <div className="max-w-xl mx-auto">
               <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} />
+
+              <div className="mt-4">
+                <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1.5 text-left">
+                  Your question <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  id="question-input"
+                  type="text"
+                  maxLength={300}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  disabled={isAnalysing}
+                  placeholder="e.g. Do I need additional insurance to cover my risk in this contract?"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
+                />
+              </div>
 
               {error && (
                 <div className="mt-4 flex items-start gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-left">
