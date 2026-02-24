@@ -64,6 +64,28 @@ export default function Home() {
     }
   };
 
+  const handleAskQuestion = async () => {
+    if (!selectedFile || !question.trim()) return;
+    setIsAnalysing(true);
+    setError(null);
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('question', question.trim());
+    try {
+      const response = await fetch('/api/analyse', { method: 'POST', body: formData });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || 'Analysis failed. Please try again.');
+      } else {
+        setAnalysis(data.analysis);
+      }
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsAnalysing(false);
+    }
+  };
+
   const handleReset = () => {
     setSelectedFile(null);
     setAnalysis(null);
@@ -194,6 +216,41 @@ export default function Home() {
       {/* Results */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Question panel */}
+          <div className="mb-6 bg-gray-50 border border-gray-200 rounded-xl p-5">
+            <label htmlFor="question-input" className="block text-sm font-semibold text-gray-700 mb-2">
+              Ask a question about this contract
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="question-input"
+                type="text"
+                maxLength={300}
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                disabled={isAnalysing}
+                onKeyDown={(e) => { if (e.key === 'Enter' && question.trim() && !isAnalysing) handleAskQuestion(); }}
+                placeholder="e.g. Do I need additional insurance to cover my risk in this contract?"
+                className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
+              />
+              <button
+                onClick={handleAskQuestion}
+                disabled={!question.trim() || isAnalysing}
+                className="px-4 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-700 transition-colors whitespace-nowrap"
+              >
+                {isAnalysing ? 'Asking…' : 'Ask'}
+              </button>
+            </div>
+            {error && (
+              <div className="mt-3 flex items-start gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
+          </div>
+
           <AnalysisResult analysis={analysis} onReset={handleReset} />
         </section>
       )}
