@@ -1,3 +1,5 @@
+> Only create a spec for meaningful features or architectural changes — not minor copy/UI tweaks.
+
 # SPEC-XXX: [Feature Name]
 
 **Status:** draft | ready | shipped  

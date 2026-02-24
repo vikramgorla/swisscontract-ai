@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# swisscontract.ai
 
-## Getting Started
+AI-powered contract analysis for Switzerland. Upload any Swiss contract and get an instant plain-language summary — key clauses, red flags, and Swiss law context.
 
-First, run the development server:
+**Live:** https://swisscontract.ai
+
+## What it does
+
+- Upload employment, tenancy, insurance, NDA, or freelance contracts (PDF, DOCX, TXT)
+- AI analysis powered by Claude (Anthropic)
+- Identifies red flags, positive clauses, key terms
+- Adds Switzerland-specific legal context
+- Private — nothing is stored
+
+## Stack
+
+- Next.js (App Router), TypeScript, Tailwind CSS
+- Claude API (`claude-sonnet-4-5`)
+- PDF parsing: unpdf | DOCX parsing: mammoth
+- Deployed on Vercel
+
+## Running locally
 
 ```bash
+cp .env.example .env.local
+# Add your ANTHROPIC_API_KEY to .env.local
+
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Push to `main` → GitHub Actions → auto-deploys to Vercel.
 
-## Learn More
+Requires these GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
-To learn more about Next.js, take a look at the following resources:
+## Limits
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 5MB max file size
+- 20 pages max (PDF)
+- 5 analyses per IP per 24h (in-memory rate limit, resets on cold start)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Docs
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [PRODUCT.md](PRODUCT.md) — product overview and roadmap
+- [docs/specs/](docs/specs/) — feature specs

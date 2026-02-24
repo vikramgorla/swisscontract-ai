@@ -2,7 +2,7 @@
 
 **Live:** https://swisscontract.ai  
 **Repo:** https://github.com/vikramgorla/swisscontract-ai  
-**Stack:** Next.js 14, TypeScript, Tailwind CSS, Claude API, Vercel
+**Stack:** Next.js 16, TypeScript, Tailwind CSS, Claude API, Vercel
 
 ---
 
@@ -21,7 +21,7 @@ No account required. No data stored. Completely free.
 - AI analysis powered by Claude (Anthropic)
 - Returns:
   - Plain-English summary (2–3 paragraphs)
-  - Contract type detection (employment, tenancy, NDA, freelance, other)
+  - Contract type detection (employment, tenancy, insurance, NDA, freelance, other)
   - Key terms explained without jargon
   - Red flags — unusual or risky clauses highlighted
   - Positive clauses — notably fair or favourable terms
@@ -37,7 +37,7 @@ No account required. No data stored. Completely free.
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | AI | Anthropic Claude API (`claude-sonnet-4-5`) |
@@ -72,7 +72,7 @@ No account required. No data stored. Completely free.
 
 | Spec | Feature | Status |
 |---|---|---|
-| [SPEC-001](docs/specs/001-contract-analysis.md) | AI Contract Analysis (MVP) | shipped |
+| [SPEC-001](docs/specs/001-contract-analysis.md) | AI Contract Analysis (MVP + insurance support) | shipped |
 
 ---
 

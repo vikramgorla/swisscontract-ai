@@ -107,3 +107,4 @@ The AI can analyse contracts in any language but the UI is English-first. The `l
 ## Changelog
 - 2026-02-24: Spec written retrospectively to document shipped MVP
 - 2025-12-01: MVP shipped — PDF/DOCX upload, Claude analysis, rate limiting, no storage
+- 2026-02-24: Added insurance contract type; hero subtitle shortened

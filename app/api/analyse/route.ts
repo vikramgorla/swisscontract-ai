@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       if (error.message.includes('API key')) {
         return NextResponse.json({ error: 'API configuration error. Please contact support.' }, { status: 500 });
       }
-      return NextResponse.json({ error: `Analysis failed: ${error.message}` }, { status: 500 });
+      return NextResponse.json({ error: 'Analysis failed. Please try again.' }, { status: 500 });
     }
     
     return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
