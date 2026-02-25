@@ -1,9 +1,10 @@
 'use client';
 import { useEffect } from 'react';
 
-const GA_ID = 'GA_MEASUREMENT_ID';
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 function loadGA() {
+  if (!GA_ID) return;
   // Guard: don't inject twice
   if (document.getElementById('ga-script')) return;
 

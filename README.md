@@ -38,7 +38,8 @@ Open [http://localhost:3000](http://localhost:3000)
 Push to `main` → GitHub Actions → auto-deploys to Vercel.
 
 Requires GitHub environment secrets: `VERCEL_TOKEN`, `ANTHROPIC_API_KEY`  
-And environment variables: `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+And environment variables: `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`  
+Vercel project env: `NEXT_PUBLIC_GA_ID` (set in Vercel dashboard)
 
 ## Limits
 
