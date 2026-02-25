@@ -7,7 +7,7 @@ const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "swisscontract.ai — Understand Any Swiss Contract in Seconds",
-  description: "AI-powered contract analysis for Switzerland. Upload your employment contract, tenancy agreement, or NDA and get a plain-English summary with red flags highlighted. Free to try. No account needed. Built in Switzerland.",
+  description: "AI-powered contract analysis for Switzerland. Upload your employment contract, tenancy agreement, or NDA and get a plain-English summary with red flags highlighted. No account needed. Built in Switzerland.",
   keywords: [
     "swiss contract analysis",
     "Switzerland employment contract",

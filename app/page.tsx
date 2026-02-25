@@ -103,7 +103,7 @@ export default function Home() {
       "description": "AI-powered contract analysis for Switzerland. Upload employment contracts, tenancy agreements, or NDAs and get plain-English summaries with red flags highlighted.",
       "applicationCategory": "LegalService",
       "operatingSystem": "Any",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CHF" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CHF", "availability": "https://schema.org/LimitedAvailability" },
       "inLanguage": ["en", "de", "fr", "it"],
       "areaServed": { "@type": "Country", "name": "Switzerland" },
       "featureList": [
@@ -123,10 +123,10 @@ export default function Home() {
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Is swisscontract.ai free to use?",
+          "name": "How much does swisscontract.ai cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, swisscontract.ai is free to use. Upload your contract and get an AI analysis instantly — no account required."
+            "text": "Try it without creating an account. No credit card required to get started."
           }
         },
         {
@@ -381,7 +381,7 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
             {[
               { step: "1", title: "Upload your contract", desc: "PDF, Word, or plain text. Employment, rental, NDA, insurance — any Swiss contract." },
-              { step: "2", title: "AI analyses it", desc: "Claude reads your contract and extracts key terms, red flags, and Swiss law context in seconds." },
+              { step: "2", title: "AI analyses it", desc: "Our AI reads your contract and extracts key terms, red flags, and Swiss law context in seconds." },
               { step: "3", title: "Understand clearly", desc: "Get a plain-English summary. No jargon. No account. Nothing stored." }
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center gap-3">
@@ -400,8 +400,8 @@ export default function Home() {
         <div className="divide-y divide-gray-100">
           {[
             {
-              q: "Is swisscontract.ai free to use?",
-              a: "Yes, completely free. Upload your contract and get an AI analysis instantly — no account required."
+              q: "How much does swisscontract.ai cost?",
+              a: "Try it without creating an account — no credit card required to get started."
             },
             {
               q: "What types of Swiss contracts can I analyse?",
