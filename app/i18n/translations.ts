@@ -4,6 +4,7 @@ export const translations = {
   en: {
     badge: 'No account needed · Try it now',
     privacy_badge: 'Data never stored · Redact personal info before uploading',
+    opensource_badge: 'Open source · Check the code',
     cookie_banner: 'We use cookies to remember your language preference and analyse site traffic anonymously. No personal data is collected.',
     cookie_accept: 'Got it',
     cookie_decline: 'Decline',
@@ -88,6 +89,7 @@ export const translations = {
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
     privacy_badge: 'Daten nie gespeichert · Persönliche Daten vor dem Hochladen schwärzen',
+    opensource_badge: 'Open Source · Code ansehen',
     cookie_banner: 'Wir verwenden Cookies, um Ihre Spracheinstellung zu speichern und den Datenverkehr anonym zu analysieren. Es werden keine persönlichen Daten erhoben.',
     cookie_accept: 'Verstanden',
     cookie_decline: 'Ablehnen',
@@ -172,6 +174,7 @@ export const translations = {
   fr: {
     badge: 'Sans compte · Essayez maintenant',
     privacy_badge: 'Données jamais stockées · Masquez vos infos personnelles avant envoi',
+    opensource_badge: 'Open source · Voir le code',
     cookie_banner: "Nous utilisons des cookies pour mémoriser votre langue et analyser le trafic de manière anonyme. Aucune donnée personnelle n'est collectée.",
     cookie_accept: 'Compris',
     cookie_decline: 'Refuser',
@@ -256,6 +259,7 @@ export const translations = {
   it: {
     badge: 'Senza account · Prova ora',
     privacy_badge: 'Dati mai salvati · Oscura i dati personali prima di caricare',
+    opensource_badge: 'Open source · Vedi il codice',
     cookie_banner: 'Utilizziamo cookie per ricordare la tua lingua e analizzare il traffico in modo anonimo. Nessun dato personale viene raccolto.',
     cookie_accept: 'Capito',
     cookie_decline: 'Rifiuta',
@@ -344,6 +348,7 @@ export const translations = {
 export type TranslationKeys = {
   badge: string;
   privacy_badge: string;
+  opensource_badge: string;
   cookie_banner: string;
   cookie_accept: string;
   cookie_decline: string;
