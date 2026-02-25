@@ -47,6 +47,26 @@ export const translations = {
     analysing_time: 'This usually takes 10–20 seconds',
     question_placeholder_fallback: 'Ask a question about this contract…',
     results_language_label: 'Results language',
+    upload_change: 'Click to change file',
+    upload_time: 'This usually takes 10–20 seconds',
+    progress_uploading: 'Uploading document…',
+    progress_extracting: 'Extracting text…',
+    progress_reading: 'Reading contract…',
+    progress_identifying: 'Identifying clauses…',
+    progress_redflags: 'Checking for red flags…',
+    progress_swiss: 'Applying Swiss law context…',
+    progress_clearing: 'Clearing document from memory…',
+    progress_finalising: 'Finalising analysis…',
+    progress_done: 'Done!',
+    typewriter_examples: [
+      "Do I need additional insurance for this contract?",
+      "Can my employer terminate me during probation?",
+      "Is my notice period legally compliant?",
+      "Are there any unusual penalty clauses?",
+      "What are my rights if the landlord sells the property?",
+      "Is this non-compete clause enforceable in Switzerland?",
+      "Can I sublet my apartment under this agreement?",
+    ],
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -94,6 +114,26 @@ export const translations = {
     analysing_time: 'Dies dauert normalerweise 10–20 Sekunden',
     question_placeholder_fallback: 'Stellen Sie eine Frage zu diesem Vertrag…',
     results_language_label: 'Ergebnissprache',
+    upload_change: 'Zum Ändern klicken',
+    upload_time: 'Dies dauert normalerweise 10–20 Sekunden',
+    progress_uploading: 'Dokument wird hochgeladen…',
+    progress_extracting: 'Text wird extrahiert…',
+    progress_reading: 'Vertrag wird gelesen…',
+    progress_identifying: 'Klauseln werden identifiziert…',
+    progress_redflags: 'Risiken werden geprüft…',
+    progress_swiss: 'Schweizer Rechtskontext wird angewendet…',
+    progress_clearing: 'Dokument wird aus dem Speicher gelöscht…',
+    progress_finalising: 'Analyse wird abgeschlossen…',
+    progress_done: 'Fertig!',
+    typewriter_examples: [
+      "Benötige ich eine zusätzliche Versicherung für diesen Vertrag?",
+      "Kann mein Arbeitgeber mich während der Probezeit kündigen?",
+      "Ist meine Kündigungsfrist rechtskonform?",
+      "Gibt es ungewöhnliche Strafklauseln?",
+      "Was sind meine Rechte, wenn der Vermieter die Wohnung verkauft?",
+      "Ist diese Konkurrenzklausel in der Schweiz durchsetzbar?",
+      "Kann ich meine Wohnung gemäss diesem Vertrag untervermieten?",
+    ],
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -141,6 +181,26 @@ export const translations = {
     analysing_time: 'Cela prend généralement 10 à 20 secondes',
     question_placeholder_fallback: 'Posez une question sur ce contrat…',
     results_language_label: 'Langue des résultats',
+    upload_change: 'Cliquer pour changer le fichier',
+    upload_time: 'Cela prend généralement 10 à 20 secondes',
+    progress_uploading: 'Téléchargement du document…',
+    progress_extracting: 'Extraction du texte…',
+    progress_reading: 'Lecture du contrat…',
+    progress_identifying: 'Identification des clauses…',
+    progress_redflags: "Vérification des points d'attention…",
+    progress_swiss: 'Application du contexte juridique suisse…',
+    progress_clearing: 'Suppression du document de la mémoire…',
+    progress_finalising: "Finalisation de l'analyse…",
+    progress_done: 'Terminé !',
+    typewriter_examples: [
+      "Ai-je besoin d'une assurance supplémentaire pour ce contrat ?",
+      "Mon employeur peut-il me licencier pendant la période d'essai ?",
+      "Mon délai de préavis est-il légalement conforme ?",
+      "Y a-t-il des clauses pénales inhabituelles ?",
+      "Quels sont mes droits si le propriétaire vend le bien ?",
+      "Cette clause de non-concurrence est-elle applicable en Suisse ?",
+      "Puis-je sous-louer mon appartement selon ce contrat ?",
+    ],
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -188,6 +248,26 @@ export const translations = {
     analysing_time: 'Di solito richiede 10-20 secondi',
     question_placeholder_fallback: 'Fai una domanda su questo contratto…',
     results_language_label: 'Lingua dei risultati',
+    upload_change: 'Clicca per cambiare file',
+    upload_time: 'Di solito richiede 10-20 secondi',
+    progress_uploading: 'Caricamento documento…',
+    progress_extracting: 'Estrazione testo…',
+    progress_reading: 'Lettura del contratto…',
+    progress_identifying: 'Identificazione delle clausole…',
+    progress_redflags: 'Verifica dei rischi…',
+    progress_swiss: 'Applicazione del contesto giuridico svizzero…',
+    progress_clearing: 'Cancellazione del documento dalla memoria…',
+    progress_finalising: "Finalizzazione dell'analisi…",
+    progress_done: 'Fatto!',
+    typewriter_examples: [
+      "Ho bisogno di un'assicurazione aggiuntiva per questo contratto?",
+      "Il mio datore di lavoro può licenziarmi durante il periodo di prova?",
+      "Il mio periodo di preavviso è legalmente conforme?",
+      "Ci sono clausole penali insolite?",
+      "Quali sono i miei diritti se il proprietario vende l'immobile?",
+      "Questa clausola di non concorrenza è applicabile in Svizzera?",
+      "Posso subaffittare il mio appartamento secondo questo contratto?",
+    ],
   },
 } as const;
 
@@ -225,4 +305,16 @@ export type TranslationKeys = {
   analysing_time: string;
   question_placeholder_fallback: string;
   results_language_label: string;
+  upload_change: string;
+  upload_time: string;
+  progress_uploading: string;
+  progress_extracting: string;
+  progress_reading: string;
+  progress_identifying: string;
+  progress_redflags: string;
+  progress_swiss: string;
+  progress_clearing: string;
+  progress_finalising: string;
+  progress_done: string;
+  typewriter_examples: ReadonlyArray<string>;
 };

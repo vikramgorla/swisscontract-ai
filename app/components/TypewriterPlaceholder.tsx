@@ -1,30 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
-const EXAMPLES = [
-  "Do I need additional insurance for this contract?",
-  "Can my employer terminate me during probation?",
-  "Is my notice period legally compliant?",
-  "Are there any unusual penalty clauses?",
-  "What are my rights if the landlord sells the property?",
-  "Is this non-compete clause enforceable in Switzerland?",
-  "Can I sublet my apartment under this agreement?",
-];
+import { translations, Locale } from '../i18n/translations';
 
 const TYPE_SPEED = 45;    // ms per character typed
 const DELETE_SPEED = 20;  // ms per character deleted
 const PAUSE_AFTER = 2200; // ms to pause when fully typed
 const PAUSE_BEFORE = 400; // ms to pause before typing next
 
-export function useTypewriterPlaceholder() {
+export function useTypewriterPlaceholder(locale: Locale = 'en') {
+  const examples = translations[locale].typewriter_examples as readonly string[];
   const [displayText, setDisplayText] = useState('');
   const [exampleIndex, setExampleIndex] = useState(0);
   const [phase, setPhase] = useState<'typing' | 'pausing' | 'deleting' | 'waiting'>('typing');
   const [charIndex, setCharIndex] = useState(0);
 
+  // Reset when locale changes
   useEffect(() => {
-    const current = EXAMPLES[exampleIndex];
+    setDisplayText('');
+    setExampleIndex(0);
+    setPhase('typing');
+    setCharIndex(0);
+  }, [locale]);
+
+  useEffect(() => {
+    const current = examples[exampleIndex % examples.length];
 
     if (phase === 'typing') {
       if (charIndex < current.length) {
@@ -48,13 +48,13 @@ export function useTypewriterPlaceholder() {
         return () => clearTimeout(t);
       } else {
         const t = setTimeout(() => {
-          setExampleIndex(i => (i + 1) % EXAMPLES.length);
+          setExampleIndex(i => (i + 1) % examples.length);
           setPhase('typing');
         }, PAUSE_BEFORE);
         return () => clearTimeout(t);
       }
     }
-  }, [phase, charIndex, exampleIndex]);
+  }, [phase, charIndex, exampleIndex, examples]);
 
   return displayText;
 }

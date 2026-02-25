@@ -29,7 +29,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
-  const typewriterPlaceholder = useTypewriterPlaceholder();
+  const typewriterPlaceholder = useTypewriterPlaceholder(locale);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -201,7 +201,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           {/* Upload + Analyse area */}
           {!analysis && (
             <div className="max-w-xl mx-auto">
-              <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} />
+              <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
 
               <div className="mt-3">
                 <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">

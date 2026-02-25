@@ -5,20 +5,27 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
   isAnalysing: boolean;
+  t: {
+    upload_title: string;
+    upload_browse: string;
+    upload_hint: string;
+    upload_change: string;
+    upload_time: string;
+    progress_uploading: string;
+    progress_extracting: string;
+    progress_reading: string;
+    progress_identifying: string;
+    progress_redflags: string;
+    progress_swiss: string;
+    progress_clearing: string;
+    progress_finalising: string;
+    progress_done: string;
+    file_change: string;
+    analysing_time: string;
+  };
 }
 
-const PROGRESS_STEPS = [
-  { pct: 8,  label: 'Uploading document…' },
-  { pct: 20, label: 'Extracting text…' },
-  { pct: 35, label: 'Reading contract…' },
-  { pct: 52, label: 'Identifying clauses…' },
-  { pct: 67, label: 'Checking for red flags…' },
-  { pct: 80, label: 'Applying Swiss law context…' },
-  { pct: 90, label: 'Clearing document from memory…' },
-  { pct: 95, label: 'Finalising analysis…' },
-];
-
-export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProps) {
+export default function UploadZone({ onFileSelect, isAnalysing, t }: UploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -27,17 +34,29 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
   const stepRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // PROGRESS_STEPS lives inside the component so it can use translated `t` props
+  const progressSteps = [
+    { pct: 8,  label: t.progress_uploading },
+    { pct: 20, label: t.progress_extracting },
+    { pct: 35, label: t.progress_reading },
+    { pct: 52, label: t.progress_identifying },
+    { pct: 67, label: t.progress_redflags },
+    { pct: 80, label: t.progress_swiss },
+    { pct: 90, label: t.progress_clearing },
+    { pct: 95, label: t.progress_finalising },
+  ];
+
   useEffect(() => {
     if (isAnalysing) {
       stepRef.current = 0;
       setProgress(0);
-      setProgressLabel(PROGRESS_STEPS[0].label);
+      setProgressLabel(progressSteps[0].label);
       scheduleNext();
     } else {
       if (timerRef.current) clearTimeout(timerRef.current);
       // Jump to 100% briefly on completion
       setProgress(100);
-      setProgressLabel('Done!');
+      setProgressLabel(t.progress_done);
       setTimeout(() => { setProgress(0); setProgressLabel(''); }, 600);
     }
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
@@ -45,12 +64,12 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
 
   const scheduleNext = () => {
     const step = stepRef.current;
-    if (step >= PROGRESS_STEPS.length) return;
+    if (step >= progressSteps.length) return;
     // Spread steps across ~25s (typical analysis time)
     const delays = [300, 1500, 2500, 4000, 4500, 3500, 2000, 2000];
     timerRef.current = setTimeout(() => {
-      setProgress(PROGRESS_STEPS[step].pct);
-      setProgressLabel(PROGRESS_STEPS[step].label);
+      setProgress(progressSteps[step].pct);
+      setProgressLabel(progressSteps[step].label);
       stepRef.current = step + 1;
       scheduleNext();
     }, delays[step] ?? 2000);
@@ -152,7 +171,7 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
                 />
               </div>
             </div>
-            <p className="text-xs text-gray-400">This usually takes 10–20 seconds</p>
+            <p className="text-xs text-gray-400">{t.upload_time}</p>
           </div>
         ) : selectedFile ? (
           <div className="flex flex-col items-center gap-3">
@@ -163,7 +182,7 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
             </div>
             <div>
               <p className="font-semibold text-gray-800">{selectedFile.name}</p>
-              <p className="text-sm text-gray-500">{formatFileSize(selectedFile.size)} · Click to change file</p>
+              <p className="text-sm text-gray-500">{formatFileSize(selectedFile.size)} · {t.upload_change}</p>
             </div>
           </div>
         ) : (
@@ -174,9 +193,9 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
               </svg>
             </div>
             <div>
-              <p className="text-base sm:text-lg font-semibold text-gray-700">Drop your contract here</p>
-              <p className="text-sm text-gray-500 mt-0.5">or <span className="text-red-600 font-medium">click to browse</span></p>
-              <p className="text-xs text-gray-400 mt-1">PDF, Word (.docx) or .txt · Max 5MB · Max 20 pages</p>
+              <p className="text-base sm:text-lg font-semibold text-gray-700">{t.upload_title}</p>
+              <p className="text-sm text-gray-500 mt-0.5">or <span className="text-red-600 font-medium">{t.upload_browse}</span></p>
+              <p className="text-xs text-gray-400 mt-1">{t.upload_hint}</p>
             </div>
           </div>
         )}
