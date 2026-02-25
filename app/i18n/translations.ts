@@ -3,6 +3,7 @@ export type Locale = 'en' | 'de' | 'fr' | 'it';
 export const translations = {
   en: {
     badge: 'No account needed · Try it now',
+    privacy_badge: 'Your data is never stored',
     h1: 'Understand any Swiss contract',
     h1_accent: 'in seconds',
     subtitle: 'Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context.',
@@ -79,6 +80,7 @@ export const translations = {
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
+    privacy_badge: 'Ihre Daten werden nie gespeichert',
     h1: 'Jeden Schweizer Vertrag verstehen',
     h1_accent: 'in Sekunden',
     subtitle: 'Laden Sie Ihren Arbeits-, Miet-, Versicherungs- oder NDA-Vertrag hoch — erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken und Schweizer Rechtskontext.',
@@ -155,6 +157,7 @@ export const translations = {
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
+    privacy_badge: 'Vos données ne sont jamais stockées',
     h1: 'Comprenez tout contrat suisse',
     h1_accent: 'en quelques secondes',
     subtitle: "Déposez votre contrat de travail, bail, assurance ou NDA — obtenez un résumé clair avec les points d'attention et le contexte juridique suisse.",
@@ -231,6 +234,7 @@ export const translations = {
   },
   it: {
     badge: 'Senza account · Prova ora',
+    privacy_badge: 'I tuoi dati non vengono mai salvati',
     h1: 'Comprendi qualsiasi contratto svizzero',
     h1_accent: 'in pochi secondi',
     subtitle: 'Carica il tuo contratto di lavoro, affitto, assicurazione o NDA — ottieni un riassunto chiaro con i rischi evidenziati e il contesto giuridico svizzero.',
@@ -311,6 +315,7 @@ export const translations = {
 // to allow all locale translations to be assignable to it.
 export type TranslationKeys = {
   badge: string;
+  privacy_badge: string;
   h1: string;
   h1_accent: string;
   subtitle: string;

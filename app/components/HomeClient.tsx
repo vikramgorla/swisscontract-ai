@@ -186,9 +186,17 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       {/* Hero */}
       <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-20 text-center">
-          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-3 sm:mb-6 border border-red-100">
-            <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-            {t.badge}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-3 sm:mb-6">
+            <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-red-100">
+              <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+              {t.badge}
+            </div>
+            <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-green-100">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              {t.privacy_badge}
+            </div>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-3 sm:mb-5">
             {t.h1}<br className="hidden sm:block" />
