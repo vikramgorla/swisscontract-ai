@@ -26,6 +26,39 @@ Format each item in key_terms, red_flags, positive_clauses as: { title: string, 
 
 Return ONLY valid JSON, no markdown, no code blocks.`;
 
+/**
+ * OCR fallback for scanned PDFs (image-only, no embedded text).
+ * Sends the raw PDF as a base64 document block to Claude, which natively
+ * handles PDF rendering and text extraction — no canvas or pdfjs rendering needed.
+ */
+async function ocrPdfWithClaude(buffer: ArrayBuffer): Promise<string> {
+  const base64 = Buffer.from(buffer).toString('base64');
+
+  const ocrResponse = await client.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 8000,
+    messages: [{
+      role: 'user',
+      content: [
+        {
+          type: 'document',
+          source: {
+            type: 'base64',
+            media_type: 'application/pdf',
+            data: base64,
+          },
+        },
+        {
+          type: 'text',
+          text: 'Please extract all text from this contract document exactly as written. Return only the extracted text, preserving structure and layout as best as possible. No commentary, no explanations — just the extracted text.',
+        },
+      ],
+    }],
+  });
+
+  return ocrResponse.content[0].type === 'text' ? ocrResponse.content[0].text : '';
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
@@ -91,7 +124,18 @@ export async function POST(request: NextRequest) {
         contractText = text;
       } catch (pdfError) {
         console.error('PDF extraction failed:', pdfError);
-        return NextResponse.json({ error: 'Could not extract text from PDF. Please ensure the PDF contains readable text (not scanned images).' }, { status: 400 });
+        // Don't return early — fall through to OCR below
+      }
+
+      // OCR fallback for scanned PDFs (image-only, no embedded text).
+      // Claude natively renders PDF pages and extracts text — no canvas needed.
+      if (contractText.trim().length < 100) {
+        try {
+          contractText = await ocrPdfWithClaude(arrayBuffer.slice(0));
+        } catch (ocrError) {
+          console.error('OCR fallback failed:', ocrError);
+          // contractText remains short; will hit the length guard below
+        }
       }
 
     } else if (fileName.endsWith('.docx') || fileName.endsWith('.doc') ||
@@ -118,7 +162,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (!contractText || contractText.trim().length < 50) {
-      return NextResponse.json({ error: 'Contract text is too short or empty. Please upload a valid contract document.' }, { status: 400 });
+      return NextResponse.json({
+        error: 'Could not extract text from this document. If it is a scanned PDF, try a higher quality scan or a searchable PDF version.',
+      }, { status: 400 });
     }
 
     // Truncate if too long — only the truncated text string is sent to the AI, never the raw file
