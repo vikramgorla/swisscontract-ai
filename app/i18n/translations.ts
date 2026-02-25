@@ -32,7 +32,7 @@ export const translations = {
     faqs: [
       { q: 'How much does swisscontract.ai cost?', a: 'Try it without creating an account — no credit card required to get started.' },
       { q: 'What types of Swiss contracts can I analyse?', a: 'Employment contracts, tenancy agreements (Mietvertrag), NDAs, insurance contracts, and freelance contracts. PDF, Word (.docx), and .txt files are supported.' },
-      { q: 'Is my contract kept private?', a: 'Yes. Your document is analysed and immediately discarded. Nothing is stored on our servers — privacy by design.' },
+      { q: 'Is my contract kept private?', a: 'Yes. Your contract is processed in memory and discarded immediately — never stored, never logged, never linked to you. We recommend redacting personal details before uploading as an extra precaution.' },
       { q: 'Can it analyse contracts in German or French?', a: 'Yes. Upload your contract in any language — German, French, Italian, or English. The AI detects the language and returns the results in plain English.' },
       { q: 'Is this legal advice?', a: 'No. swisscontract.ai provides informational analysis only. For binding legal advice, consult a qualified Swiss lawyer.' },
     ],
@@ -58,6 +58,15 @@ export const translations = {
     progress_clearing: 'Clearing document from memory…',
     progress_finalising: 'Finalising analysis…',
     progress_done: 'Done!',
+    upload_tip: 'Tip: redact names, signatures and personal details before uploading',
+    privacy_title: 'Your privacy, plainly stated',
+    privacy_points: [
+      'Your contract is sent directly to the AI for analysis and never written to any database or storage.',
+      'We have no user accounts, no tracking of what you upload, and no way to link a document to a person.',
+      'The analysis happens in memory and is discarded the moment your results are returned.',
+      'We recommend redacting names, signatures and personal details before uploading — just to be safe.',
+      'We built this to help people, not to collect data. That\'s it.',
+    ],
     typewriter_examples: [
       "Do I need additional insurance for this contract?",
       "Can my employer terminate me during probation?",
@@ -99,7 +108,7 @@ export const translations = {
     faqs: [
       { q: 'Was kostet swisscontract.ai?', a: 'Sie können es ohne Konto ausprobieren — keine Kreditkarte erforderlich.' },
       { q: 'Welche Schweizer Verträge kann ich analysieren?', a: 'Arbeitsverträge, Mietverträge, NDAs, Versicherungsverträge und Freelancer-Verträge. PDF, Word (.docx) und .txt werden unterstützt.' },
-      { q: 'Bleibt mein Vertrag privat?', a: 'Ja. Ihr Dokument wird analysiert und sofort gelöscht. Es wird nichts auf unseren Servern gespeichert.' },
+      { q: 'Bleibt mein Vertrag privat?', a: 'Ja. Ihr Vertrag wird im Arbeitsspeicher verarbeitet und sofort gelöscht — niemals gespeichert, niemals protokolliert, niemals mit Ihnen verknüpft. Wir empfehlen, persönliche Daten vor dem Hochladen zu schwärzen — als zusätzliche Sicherheit.' },
       { q: 'Kann es Verträge auf Deutsch oder Französisch analysieren?', a: 'Ja. Laden Sie Ihren Vertrag in beliebiger Sprache hoch. Die KI erkennt die Sprache und gibt die Ergebnisse in der gewählten Sprache zurück.' },
       { q: 'Ist das Rechtsberatung?', a: 'Nein. swisscontract.ai liefert nur informative Analysen. Für verbindliche Rechtsberatung wenden Sie sich an einen Schweizer Anwalt.' },
     ],
@@ -125,6 +134,15 @@ export const translations = {
     progress_clearing: 'Dokument wird aus dem Speicher gelöscht…',
     progress_finalising: 'Analyse wird abgeschlossen…',
     progress_done: 'Fertig!',
+    upload_tip: 'Tipp: Namen, Unterschriften und persönliche Daten vor dem Hochladen schwärzen',
+    privacy_title: 'Ihr Datenschutz, klar ausgedrückt',
+    privacy_points: [
+      'Ihr Vertrag wird direkt zur Analyse an die KI gesendet und niemals in einer Datenbank oder einem Speicher abgelegt.',
+      'Wir haben keine Benutzerkonten, kein Tracking dessen, was Sie hochladen, und keine Möglichkeit, ein Dokument einer Person zuzuordnen.',
+      'Die Analyse findet im Arbeitsspeicher statt und wird gelöscht, sobald Ihre Ergebnisse zurückgegeben werden.',
+      'Wir empfehlen, Namen, Unterschriften und persönliche Daten vor dem Hochladen zu schwärzen — nur zur Sicherheit.',
+      'Wir haben das gebaut, um Menschen zu helfen, nicht um Daten zu sammeln. Das ist alles.',
+    ],
     typewriter_examples: [
       "Benötige ich eine zusätzliche Versicherung für diesen Vertrag?",
       "Kann mein Arbeitgeber mich während der Probezeit kündigen?",
@@ -166,7 +184,7 @@ export const translations = {
     faqs: [
       { q: 'Combien coûte swisscontract.ai ?', a: 'Essayez sans créer de compte — aucune carte de crédit requise.' },
       { q: 'Quels types de contrats suisses puis-je analyser ?', a: "Contrats de travail, baux, NDAs, contrats d'assurance et contrats freelance. PDF, Word (.docx) et .txt sont supportés." },
-      { q: 'Mon contrat reste-t-il privé ?', a: "Oui. Votre document est analysé puis immédiatement supprimé. Rien n'est stocké sur nos serveurs." },
+      { q: 'Mon contrat reste-t-il privé ?', a: "Oui. Votre contrat est traité en mémoire et supprimé immédiatement — jamais stocké, jamais journalisé, jamais lié à vous. Nous recommandons de masquer les données personnelles avant l'envoi, par précaution supplémentaire." },
       { q: 'Peut-il analyser des contrats en allemand ou en italien ?', a: "Oui. Déposez votre contrat dans n'importe quelle langue. L'IA détecte la langue et retourne les résultats dans la langue choisie." },
       { q: 'Est-ce un conseil juridique ?', a: 'Non. swisscontract.ai fournit uniquement une analyse informative. Pour un conseil juridique contraignant, consultez un avocat suisse qualifié.' },
     ],
@@ -192,6 +210,15 @@ export const translations = {
     progress_clearing: 'Suppression du document de la mémoire…',
     progress_finalising: "Finalisation de l'analyse…",
     progress_done: 'Terminé !',
+    upload_tip: 'Conseil : masquez les noms, signatures et données personnelles avant d\'envoyer',
+    privacy_title: 'Votre confidentialité, clairement expliquée',
+    privacy_points: [
+      "Votre contrat est envoyé directement à l'IA pour analyse et n'est jamais écrit dans une base de données ou un stockage.",
+      "Nous n'avons pas de comptes utilisateurs, pas de suivi de ce que vous téléchargez, et aucun moyen de lier un document à une personne.",
+      'L\'analyse se déroule en mémoire et est supprimée dès que vos résultats sont retournés.',
+      'Nous recommandons de masquer les noms, signatures et données personnelles avant d\'envoyer — par précaution.',
+      'Nous avons construit ceci pour aider les gens, pas pour collecter des données. C\'est tout.',
+    ],
     typewriter_examples: [
       "Ai-je besoin d'une assurance supplémentaire pour ce contrat ?",
       "Mon employeur peut-il me licencier pendant la période d'essai ?",
@@ -233,7 +260,7 @@ export const translations = {
     faqs: [
       { q: 'Quanto costa swisscontract.ai?', a: 'Provalo senza creare un account — nessuna carta di credito richiesta.' },
       { q: 'Quali tipi di contratti svizzeri posso analizzare?', a: 'Contratti di lavoro, affitti, NDA, contratti assicurativi e contratti freelance. Supporta PDF, Word (.docx) e .txt.' },
-      { q: 'Il mio contratto rimane privato?', a: 'Sì. Il documento viene analizzato e immediatamente eliminato. Nulla viene salvato sui nostri server.' },
+      { q: 'Il mio contratto rimane privato?', a: 'Sì. Il tuo contratto viene elaborato in memoria e scartato immediatamente — mai salvato, mai registrato, mai collegato a te. Consigliamo di oscurare i dati personali prima di caricare, come precauzione aggiuntiva.' },
       { q: 'Può analizzare contratti in tedesco o francese?', a: "Sì. Carica il contratto in qualsiasi lingua. L'IA rileva la lingua e restituisce i risultati nella lingua scelta." },
       { q: 'È una consulenza legale?', a: 'No. swisscontract.ai fornisce solo analisi informative. Per una consulenza legale vincolante, consulta un avvocato svizzero qualificato.' },
     ],
@@ -259,6 +286,15 @@ export const translations = {
     progress_clearing: 'Cancellazione del documento dalla memoria…',
     progress_finalising: "Finalizzazione dell'analisi…",
     progress_done: 'Fatto!',
+    upload_tip: 'Suggerimento: oscura nomi, firme e dati personali prima di caricare',
+    privacy_title: 'La tua privacy, detta chiaramente',
+    privacy_points: [
+      'Il tuo contratto viene inviato direttamente all\'IA per l\'analisi e non viene mai scritto in alcun database o archivio.',
+      'Non abbiamo account utente, nessun tracciamento di ciò che carichi e nessun modo per collegare un documento a una persona.',
+      'L\'analisi avviene in memoria e viene eliminata nel momento in cui i risultati ti vengono restituiti.',
+      'Consigliamo di oscurare nomi, firme e dati personali prima di caricare — solo per sicurezza.',
+      'Abbiamo costruito questo per aiutare le persone, non per raccogliere dati. Tutto qui.',
+    ],
     typewriter_examples: [
       "Ho bisogno di un'assicurazione aggiuntiva per questo contratto?",
       "Il mio datore di lavoro può licenziarmi durante il periodo di prova?",
@@ -316,5 +352,8 @@ export type TranslationKeys = {
   progress_clearing: string;
   progress_finalising: string;
   progress_done: string;
+  upload_tip: string;
+  privacy_title: string;
+  privacy_points: ReadonlyArray<string>;
   typewriter_examples: ReadonlyArray<string>;
 };

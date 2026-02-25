@@ -11,6 +11,7 @@ interface UploadZoneProps {
     upload_hint: string;
     upload_change: string;
     upload_time: string;
+    upload_tip: string;
     progress_uploading: string;
     progress_extracting: string;
     progress_reading: string;
@@ -196,6 +197,12 @@ export default function UploadZone({ onFileSelect, isAnalysing, t }: UploadZoneP
               <p className="text-base sm:text-lg font-semibold text-gray-700">{t.upload_title}</p>
               <p className="text-sm text-gray-500 mt-0.5">or <span className="text-red-600 font-medium">{t.upload_browse}</span></p>
               <p className="text-xs text-gray-400 mt-1">{t.upload_hint}</p>
+              <p className="text-xs text-amber-600 mt-2 flex items-center justify-center gap-1">
+                <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {t.upload_tip}
+              </p>
             </div>
           </div>
         )}
