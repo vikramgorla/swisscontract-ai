@@ -162,7 +162,7 @@ export const translations = {
   fr: {
     badge: 'Sans compte · Essayez maintenant',
     privacy_badge: 'Données jamais stockées · Masquez vos infos personnelles avant envoi',
-    cookie_banner: 'Nous utilisons des cookies pour mémoriser votre langue et analyser le trafic de manière anonyme. Aucune donnée personnelle n'est collectée.',
+    cookie_banner: "Nous utilisons des cookies pour mémoriser votre langue et analyser le trafic de manière anonyme. Aucune donnée personnelle n'est collectée.",
     cookie_accept: 'Compris',
     h1: 'Comprenez tout contrat suisse',
     h1_accent: 'en quelques secondes',
