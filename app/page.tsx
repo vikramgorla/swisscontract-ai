@@ -94,28 +94,84 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "swisscontract.ai",
-    "url": "https://swisscontract.ai",
-    "description": "AI-powered contract analysis for Switzerland. Upload employment contracts, tenancy agreements, or NDAs and get plain-English summaries with red flags highlighted.",
-    "applicationCategory": "LegalService",
-    "operatingSystem": "Any",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CHF" },
-    "inLanguage": ["en", "de", "fr", "it"],
-    "areaServed": { "@type": "Country", "name": "Switzerland" },
-    "featureList": [
-      "Contract red flag detection",
-      "Swiss law context",
-      "Employment contract analysis",
-      "Tenancy agreement analysis",
-      "NDA analysis",
-      "Insurance contract analysis",
-      "PDF and Word document support",
-      "Private — documents not stored"
-    ]
-  };
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "swisscontract.ai",
+      "url": "https://swisscontract.ai",
+      "description": "AI-powered contract analysis for Switzerland. Upload employment contracts, tenancy agreements, or NDAs and get plain-English summaries with red flags highlighted.",
+      "applicationCategory": "LegalService",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CHF" },
+      "inLanguage": ["en", "de", "fr", "it"],
+      "areaServed": { "@type": "Country", "name": "Switzerland" },
+      "featureList": [
+        "Contract red flag detection",
+        "Swiss law context",
+        "Employment contract analysis",
+        "Tenancy agreement analysis",
+        "NDA analysis",
+        "Insurance contract analysis",
+        "PDF and Word document support",
+        "Private — documents not stored"
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is swisscontract.ai free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, swisscontract.ai is free to use. Upload your contract and get an AI analysis instantly — no account required."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What types of Swiss contracts can I analyse?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Employment contracts, tenancy agreements (Mietvertrag), NDAs, insurance contracts, and freelance contracts. PDF, Word (.docx), and .txt files supported."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my contract kept private?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Your document is analysed and immediately discarded. Nothing is stored on our servers. Privacy by design."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it analyse contracts in German or French?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Upload your contract in any language — German, French, Italian, or English. The AI detects the language and analyses it, returning the results in plain English."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this legal advice?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. swisscontract.ai provides informational analysis only. For binding legal advice, consult a qualified Swiss lawyer."
+          }
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "swisscontract.ai",
+      "url": "https://swisscontract.ai",
+      "areaServed": { "@type": "Country", "name": "Switzerland" },
+      "knowsAbout": ["Swiss contract law", "Employment contracts Switzerland", "Tenancy law Switzerland", "NDA Switzerland"]
+    }
+  ];
 
   return (
     <main className="min-h-screen bg-white">
@@ -318,12 +374,74 @@ export default function Home() {
         </section>
       )}
 
+      {/* How it works */}
+      {!analysis && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-14 border-t border-gray-100">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">How it works</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            {[
+              { step: "1", title: "Upload your contract", desc: "PDF, Word, or plain text. Employment, rental, NDA, insurance — any Swiss contract." },
+              { step: "2", title: "AI analyses it", desc: "Claude reads your contract and extracts key terms, red flags, and Swiss law context in seconds." },
+              { step: "3", title: "Understand clearly", desc: "Get a plain-English summary. No jargon. No account. Nothing stored." }
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-600 text-white font-bold text-lg flex items-center justify-center">{item.step}</div>
+                <h3 className="font-semibold text-gray-900">{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* FAQ Section */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-14 border-t border-gray-100">
+        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+        <div className="divide-y divide-gray-100">
+          {[
+            {
+              q: "Is swisscontract.ai free to use?",
+              a: "Yes, completely free. Upload your contract and get an AI analysis instantly — no account required."
+            },
+            {
+              q: "What types of Swiss contracts can I analyse?",
+              a: "Employment contracts, tenancy agreements (Mietvertrag), NDAs, insurance contracts, and freelance contracts. PDF, Word (.docx), and .txt files are supported."
+            },
+            {
+              q: "Is my contract kept private?",
+              a: "Yes. Your document is analysed and immediately discarded. Nothing is stored on our servers — privacy by design."
+            },
+            {
+              q: "Can it analyse contracts in German or French?",
+              a: "Yes. Upload your contract in any language — German, French, Italian, or English. The AI detects the language and returns the results in plain English."
+            },
+            {
+              q: "Is this legal advice?",
+              a: "No. swisscontract.ai provides informational analysis only. For binding legal advice, consult a qualified Swiss lawyer."
+            }
+          ].map((item, i) => (
+            <div key={i} className="py-5">
+              <h3 className="font-semibold text-gray-900 mb-1.5">{item.q}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-gray-100 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 text-center space-y-2">
-          <p className="text-xs text-gray-400">
-            swisscontract.ai — AI-powered contract analysis
-          </p>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs text-gray-400 text-center sm:text-left">
+              <span className="font-medium text-gray-600">swisscontract.ai</span> — AI-powered contract analysis<br />
+              For informational purposes only. Not legal advice.
+            </div>
+            <div className="flex items-center gap-4 text-xs text-gray-400">
+              <span>🇨🇭 Built in Switzerland</span>
+              <span>·</span>
+              <span>Private by design</span>
+            </div>
+          </div>
         </div>
       </footer>
     </main>

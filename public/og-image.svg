@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="white"/>
+  <!-- Light gray border -->
+  <rect x="1" y="1" width="1198" height="628" fill="none" stroke="#E5E7EB" stroke-width="2"/>
+  <!-- Red left accent bar -->
+  <rect x="0" y="0" width="40" height="630" fill="#DC2626"/>
+
+  <!-- Document icon in red (left side, vertically centered) -->
+  <g transform="translate(90, 215)">
+    <rect x="0" y="0" width="80" height="100" rx="8" fill="#FEE2E2"/>
+    <path d="M50 0 L80 30 L80 100 Q80 108 72 108 L8 108 Q0 108 0 100 L0 8 Q0 0 8 0 Z" fill="#FEE2E2"/>
+    <path d="M50 0 L50 30 L80 30" fill="none" stroke="#DC2626" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="0" y="0" width="72" height="100" rx="8" fill="none" stroke="#DC2626" stroke-width="3"/>
+    <!-- Document lines -->
+    <line x1="14" y1="44" x2="58" y2="44" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+    <line x1="14" y1="58" x2="58" y2="58" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+    <line x1="14" y1="72" x2="42" y2="72" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Main title -->
+  <text x="220" y="285" font-family="system-ui, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="72" font-weight="800" fill="#111827" letter-spacing="-2">swisscontract<tspan fill="#DC2626">.ai</tspan></text>
+
+  <!-- Subtitle -->
+  <text x="220" y="355" font-family="system-ui, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="32" font-weight="400" fill="#6B7280">Understand any Swiss contract in seconds</text>
+
+  <!-- Trust badges row -->
+  <g transform="translate(220, 400)">
+    <rect x="0" y="0" width="160" height="36" rx="18" fill="#FEF2F2" stroke="#FECACA" stroke-width="1"/>
+    <text x="80" y="23" text-anchor="middle" font-family="system-ui, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="600" fill="#DC2626">Free to use</text>
+
+    <rect x="176" y="0" width="170" height="36" rx="18" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1"/>
+    <text x="261" y="23" text-anchor="middle" font-family="system-ui, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="600" fill="#16A34A">Nothing stored</text>
+
+    <rect x="362" y="0" width="200" height="36" rx="18" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+    <text x="462" y="23" text-anchor="middle" font-family="system-ui, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="600" fill="#2563EB">No account needed</text>
+  </g>
+
+  <!-- Bottom right text -->
+  <text x="1160" y="598" text-anchor="end" font-family="system-ui, -apple-system, Helvetica Neue, Arial, sans-serif" font-size="20" fill="#9CA3AF">AI-powered · Built in Switzerland</text>
+</svg>

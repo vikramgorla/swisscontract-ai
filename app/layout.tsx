@@ -44,11 +44,20 @@ export const metadata: Metadata = {
     url: "https://swisscontract.ai",
     siteName: "swisscontract.ai",
     locale: "en_CH",
+    images: [
+      {
+        url: 'https://swisscontract.ai/og-image.svg',
+        width: 1200,
+        height: 630,
+        alt: 'swisscontract.ai — AI contract analysis for Switzerland',
+      }
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "swisscontract.ai — Understand Any Swiss Contract in Seconds",
     description: "AI-powered contract analysis for Switzerland. Red flags highlighted. Swiss law context. Nothing stored.",
+    images: ['https://swisscontract.ai/og-image.svg'],
   },
 };
 
