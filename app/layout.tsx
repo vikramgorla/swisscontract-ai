@@ -31,6 +31,13 @@ export const metadata: Metadata = {
   robots: "index, follow",
   alternates: {
     canonical: "https://swisscontract.ai",
+    languages: {
+      'en': 'https://swisscontract.ai/',
+      'de-CH': 'https://swisscontract.ai/?locale=de',
+      'fr-CH': 'https://swisscontract.ai/?locale=fr',
+      'it-CH': 'https://swisscontract.ai/?locale=it',
+      'x-default': 'https://swisscontract.ai/',
+    },
   },
   icons: {
     icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],

@@ -78,6 +78,11 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const question = formData.get('question') as string | null;
+    const locale = (formData.get('locale') as string | null) ?? 'en';
+    const validLocales = ['en', 'de', 'fr', 'it'];
+    const safeLocale = validLocales.includes(locale) ? locale : 'en';
+    const outputLanguage = safeLocale === 'de' ? 'German' : safeLocale === 'fr' ? 'French' : safeLocale === 'it' ? 'Italian' : 'English';
+    const localeSystemPrompt = `${SYSTEM_PROMPT}\n\nReturn all analysis fields (summary, red flags, key terms, swiss_law_notes) in ${outputLanguage}.`;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -183,7 +188,7 @@ export async function POST(request: NextRequest) {
     const message = await client.messages.create({
       model: 'claude-sonnet-4-5',
       max_tokens: 4096,
-      system: SYSTEM_PROMPT,
+      system: localeSystemPrompt,
       messages: [
         {
           role: 'user',

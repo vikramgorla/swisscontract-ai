@@ -21,6 +21,7 @@ interface Analysis {
 interface AnalysisResultProps {
   analysis: Analysis;
   onReset: () => void;
+  resetLabel?: string;
 }
 
 const contractTypeLabels: Record<string, string> = {
@@ -69,7 +70,7 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
   );
 }
 
-export default function AnalysisResult({ analysis, onReset }: AnalysisResultProps) {
+export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract' }: AnalysisResultProps) {
   const contractLabel = contractTypeLabels[analysis.contract_type] || 'Contract';
   const contractColor = contractTypeColors[analysis.contract_type] || contractTypeColors.other;
 
@@ -92,7 +93,7 @@ export default function AnalysisResult({ analysis, onReset }: AnalysisResultProp
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          Analyse Another Contract
+          {resetLabel}
         </button>
       </div>
 
@@ -209,7 +210,7 @@ export default function AnalysisResult({ analysis, onReset }: AnalysisResultProp
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          Analyse Another Contract
+          {resetLabel}
         </button>
       </div>
     </div>
