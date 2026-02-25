@@ -22,6 +22,7 @@ interface AnalysisResultProps {
   analysis: Analysis;
   onReset: () => void;
   resetLabel?: string;
+  languageLabel?: string;
 }
 
 const contractTypeLabels: Record<string, string> = {
@@ -70,7 +71,7 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
   );
 }
 
-export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract' }: AnalysisResultProps) {
+export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language' }: AnalysisResultProps) {
   const contractLabel = contractTypeLabels[analysis.contract_type] || 'Contract';
   const contractColor = contractTypeColors[analysis.contract_type] || contractTypeColors.other;
 
@@ -83,7 +84,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             {contractLabel}
           </span>
           <span className="text-sm text-gray-500">
-            Language: <span className="font-medium text-gray-700">{analysis.language}</span>
+            {languageLabel}: <span className="font-medium text-gray-700">{analysis.language}</span>
           </span>
         </div>
         <button

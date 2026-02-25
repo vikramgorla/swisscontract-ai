@@ -6,6 +6,8 @@ export const translations = {
     privacy_badge: 'Data never stored · Redact personal info before uploading',
     cookie_banner: 'We use cookies to remember your language preference and analyse site traffic anonymously. No personal data is collected.',
     cookie_accept: 'Got it',
+    cookie_decline: 'Decline',
+    cookie_privacy_link: 'Privacy Policy',
     h1: 'Understand any Swiss contract',
     h1_accent: 'in seconds',
     subtitle: 'Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context.',
@@ -33,7 +35,7 @@ export const translations = {
     ],
     faq_title: 'Frequently Asked Questions',
     faqs: [
-      { q: 'How much does swisscontract.ai cost?', a: 'Try it without creating an account — no credit card required to get started.' },
+      { q: 'How much does swisscontract.ai cost?', a: 'Use it without creating an account. No payment required to get started.' },
       { q: 'What types of Swiss contracts can I analyse?', a: 'Employment contracts, tenancy agreements (Mietvertrag), NDAs, insurance contracts, and freelance contracts. PDF, Word (.docx), and .txt files are supported.' },
       { q: 'Is my contract kept private?', a: 'Yes. Your contract is processed in memory and discarded immediately — never stored, never logged, never linked to you. We recommend redacting personal details before uploading as an extra precaution.' },
       { q: 'Can it analyse contracts in German or French?', a: 'Yes. Upload your contract in any language — German, French, Italian, or English. The AI detects the language and returns the results in plain English.' },
@@ -43,6 +45,8 @@ export const translations = {
     footer_disclaimer: 'For informational purposes only. Not legal advice.',
     footer_built: '🇨🇭 Built in Switzerland',
     footer_private: 'Private by design',
+    footer_privacy: 'Privacy Policy',
+    footer_opensource: 'Open source',
     built_in: 'Built in Switzerland',
     error_short: 'Contract text is too short or empty. Please upload a valid contract document.',
     error_network: 'Network error. Please check your connection and try again.',
@@ -70,6 +74,7 @@ export const translations = {
       'We recommend redacting names, signatures and personal details before uploading — just to be safe.',
       'We built this to help people, not to collect data. That\'s it.',
     ],
+    language_label: 'Language',
     typewriter_examples: [
       "Do I need additional insurance for this contract?",
       "Can my employer terminate me during probation?",
@@ -85,6 +90,8 @@ export const translations = {
     privacy_badge: 'Daten nie gespeichert · Persönliche Daten vor dem Hochladen schwärzen',
     cookie_banner: 'Wir verwenden Cookies, um Ihre Spracheinstellung zu speichern und den Datenverkehr anonym zu analysieren. Es werden keine persönlichen Daten erhoben.',
     cookie_accept: 'Verstanden',
+    cookie_decline: 'Ablehnen',
+    cookie_privacy_link: 'Datenschutzerklärung',
     h1: 'Jeden Schweizer Vertrag verstehen',
     h1_accent: 'in Sekunden',
     subtitle: 'Laden Sie Ihren Arbeits-, Miet-, Versicherungs- oder NDA-Vertrag hoch — erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken und Schweizer Rechtskontext.',
@@ -112,7 +119,7 @@ export const translations = {
     ],
     faq_title: 'Häufig gestellte Fragen',
     faqs: [
-      { q: 'Was kostet swisscontract.ai?', a: 'Sie können es ohne Konto ausprobieren — keine Kreditkarte erforderlich.' },
+      { q: 'Was kostet swisscontract.ai?', a: 'Nutzen Sie es ohne Konto. Keine Zahlung erforderlich.' },
       { q: 'Welche Schweizer Verträge kann ich analysieren?', a: 'Arbeitsverträge, Mietverträge, NDAs, Versicherungsverträge und Freelancer-Verträge. PDF, Word (.docx) und .txt werden unterstützt.' },
       { q: 'Bleibt mein Vertrag privat?', a: 'Ja. Ihr Vertrag wird im Arbeitsspeicher verarbeitet und sofort gelöscht — niemals gespeichert, niemals protokolliert, niemals mit Ihnen verknüpft. Wir empfehlen, persönliche Daten vor dem Hochladen zu schwärzen — als zusätzliche Sicherheit.' },
       { q: 'Kann es Verträge auf Deutsch oder Französisch analysieren?', a: 'Ja. Laden Sie Ihren Vertrag in beliebiger Sprache hoch. Die KI erkennt die Sprache und gibt die Ergebnisse in der gewählten Sprache zurück.' },
@@ -122,6 +129,8 @@ export const translations = {
     footer_disclaimer: 'Nur zu Informationszwecken. Keine Rechtsberatung.',
     footer_built: '🇨🇭 In der Schweiz entwickelt',
     footer_private: 'Datenschutz by Design',
+    footer_privacy: 'Datenschutz',
+    footer_opensource: 'Open Source',
     built_in: 'In der Schweiz entwickelt',
     error_short: 'Vertragstext ist zu kurz oder leer. Bitte laden Sie ein gültiges Vertragsdokument hoch.',
     error_network: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
@@ -149,6 +158,7 @@ export const translations = {
       'Wir empfehlen, Namen, Unterschriften und persönliche Daten vor dem Hochladen zu schwärzen — nur zur Sicherheit.',
       'Wir haben das gebaut, um Menschen zu helfen, nicht um Daten zu sammeln. Das ist alles.',
     ],
+    language_label: 'Sprache',
     typewriter_examples: [
       "Benötige ich eine zusätzliche Versicherung für diesen Vertrag?",
       "Kann mein Arbeitgeber mich während der Probezeit kündigen?",
@@ -164,6 +174,8 @@ export const translations = {
     privacy_badge: 'Données jamais stockées · Masquez vos infos personnelles avant envoi',
     cookie_banner: "Nous utilisons des cookies pour mémoriser votre langue et analyser le trafic de manière anonyme. Aucune donnée personnelle n'est collectée.",
     cookie_accept: 'Compris',
+    cookie_decline: 'Refuser',
+    cookie_privacy_link: 'Politique de confidentialité',
     h1: 'Comprenez tout contrat suisse',
     h1_accent: 'en quelques secondes',
     subtitle: "Déposez votre contrat de travail, bail, assurance ou NDA — obtenez un résumé clair avec les points d'attention et le contexte juridique suisse.",
@@ -191,7 +203,7 @@ export const translations = {
     ],
     faq_title: 'Questions fréquentes',
     faqs: [
-      { q: 'Combien coûte swisscontract.ai ?', a: 'Essayez sans créer de compte — aucune carte de crédit requise.' },
+      { q: 'Combien coûte swisscontract.ai ?', a: 'Utilisez-le sans créer de compte. Aucun paiement requis.' },
       { q: 'Quels types de contrats suisses puis-je analyser ?', a: "Contrats de travail, baux, NDAs, contrats d'assurance et contrats freelance. PDF, Word (.docx) et .txt sont supportés." },
       { q: 'Mon contrat reste-t-il privé ?', a: "Oui. Votre contrat est traité en mémoire et supprimé immédiatement — jamais stocké, jamais journalisé, jamais lié à vous. Nous recommandons de masquer les données personnelles avant l'envoi, par précaution supplémentaire." },
       { q: 'Peut-il analyser des contrats en allemand ou en italien ?', a: "Oui. Déposez votre contrat dans n'importe quelle langue. L'IA détecte la langue et retourne les résultats dans la langue choisie." },
@@ -201,6 +213,8 @@ export const translations = {
     footer_disclaimer: 'À titre informatif uniquement. Pas de conseil juridique.',
     footer_built: '🇨🇭 Conçu en Suisse',
     footer_private: 'Confidentialité by design',
+    footer_privacy: 'Confidentialité',
+    footer_opensource: 'Open source',
     built_in: 'Conçu en Suisse',
     error_short: 'Le texte du contrat est trop court ou vide. Veuillez télécharger un document contractuel valide.',
     error_network: 'Erreur réseau. Veuillez vérifier votre connexion.',
@@ -228,6 +242,7 @@ export const translations = {
       'Nous recommandons de masquer les noms, signatures et données personnelles avant d\'envoyer — par précaution.',
       'Nous avons construit ceci pour aider les gens, pas pour collecter des données. C\'est tout.',
     ],
+    language_label: 'Langue',
     typewriter_examples: [
       "Ai-je besoin d'une assurance supplémentaire pour ce contrat ?",
       "Mon employeur peut-il me licencier pendant la période d'essai ?",
@@ -243,6 +258,8 @@ export const translations = {
     privacy_badge: 'Dati mai salvati · Oscura i dati personali prima di caricare',
     cookie_banner: 'Utilizziamo cookie per ricordare la tua lingua e analizzare il traffico in modo anonimo. Nessun dato personale viene raccolto.',
     cookie_accept: 'Capito',
+    cookie_decline: 'Rifiuta',
+    cookie_privacy_link: 'Informativa sulla privacy',
     h1: 'Comprendi qualsiasi contratto svizzero',
     h1_accent: 'in pochi secondi',
     subtitle: 'Carica il tuo contratto di lavoro, affitto, assicurazione o NDA — ottieni un riassunto chiaro con i rischi evidenziati e il contesto giuridico svizzero.',
@@ -270,7 +287,7 @@ export const translations = {
     ],
     faq_title: 'Domande frequenti',
     faqs: [
-      { q: 'Quanto costa swisscontract.ai?', a: 'Provalo senza creare un account — nessuna carta di credito richiesta.' },
+      { q: 'Quanto costa swisscontract.ai?', a: 'Usalo senza creare un account. Nessun pagamento richiesto.' },
       { q: 'Quali tipi di contratti svizzeri posso analizzare?', a: 'Contratti di lavoro, affitti, NDA, contratti assicurativi e contratti freelance. Supporta PDF, Word (.docx) e .txt.' },
       { q: 'Il mio contratto rimane privato?', a: 'Sì. Il tuo contratto viene elaborato in memoria e scartato immediatamente — mai salvato, mai registrato, mai collegato a te. Consigliamo di oscurare i dati personali prima di caricare, come precauzione aggiuntiva.' },
       { q: 'Può analizzare contratti in tedesco o francese?', a: "Sì. Carica il contratto in qualsiasi lingua. L'IA rileva la lingua e restituisce i risultati nella lingua scelta." },
@@ -280,6 +297,8 @@ export const translations = {
     footer_disclaimer: 'Solo a scopo informativo. Non è una consulenza legale.',
     footer_built: '🇨🇭 Sviluppato in Svizzera',
     footer_private: 'Privacy by design',
+    footer_privacy: 'Privacy',
+    footer_opensource: 'Open source',
     built_in: 'Sviluppato in Svizzera',
     error_short: 'Il testo del contratto è troppo breve o vuoto. Carica un documento contrattuale valido.',
     error_network: 'Errore di rete. Controlla la connessione.',
@@ -307,6 +326,7 @@ export const translations = {
       'Consigliamo di oscurare nomi, firme e dati personali prima di caricare — solo per sicurezza.',
       'Abbiamo costruito questo per aiutare le persone, non per raccogliere dati. Tutto qui.',
     ],
+    language_label: 'Lingua',
     typewriter_examples: [
       "Ho bisogno di un'assicurazione aggiuntiva per questo contratto?",
       "Il mio datore di lavoro può licenziarmi durante il periodo di prova?",
@@ -326,6 +346,8 @@ export type TranslationKeys = {
   privacy_badge: string;
   cookie_banner: string;
   cookie_accept: string;
+  cookie_decline: string;
+  cookie_privacy_link: string;
   h1: string;
   h1_accent: string;
   subtitle: string;
@@ -349,6 +371,8 @@ export type TranslationKeys = {
   footer_disclaimer: string;
   footer_built: string;
   footer_private: string;
+  footer_privacy: string;
+  footer_opensource: string;
   built_in: string;
   error_short: string;
   error_network: string;
@@ -370,5 +394,6 @@ export type TranslationKeys = {
   upload_tip: string;
   privacy_title: string;
   privacy_points: ReadonlyArray<string>;
+  language_label: string;
   typewriter_examples: ReadonlyArray<string>;
 };
