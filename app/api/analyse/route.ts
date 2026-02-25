@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         contractText = result.value;
 
         if (result.messages.length > 0) {
-          console.info('mammoth warnings:', result.messages);
+          console.info('mammoth extraction completed with warnings');
         }
       } catch (docError) {
         console.error('Word document extraction failed:', docError);

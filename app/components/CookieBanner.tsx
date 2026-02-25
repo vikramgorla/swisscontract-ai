@@ -13,6 +13,7 @@ export default function CookieBanner({ locale = 'en' }: { locale?: Locale }) {
 
   const accept = () => {
     localStorage.setItem('cookie_consent', 'accepted');
+    window.dispatchEvent(new Event('cookie_consent_accepted'));
     setVisible(false);
   };
 

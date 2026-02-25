@@ -2,21 +2,23 @@
 
 AI-powered contract analysis for Switzerland. Upload any Swiss contract and get an instant plain-language summary — key clauses, red flags, and Swiss law context.
 
-**Live:** https://swisscontract.ai
+**Live:** https://swisscontract.ai  
+**Repo:** https://github.com/vikramgorla/swisscontract-ai
 
 ## What it does
 
 - Upload employment, tenancy, insurance, NDA, or freelance contracts (PDF, DOCX, TXT)
-- AI analysis powered by Claude (Anthropic)
-- Identifies red flags, positive clauses, key terms
-- Adds Switzerland-specific legal context
+- AI analysis — identifies red flags, positive clauses, key terms, Swiss law context
+- Optional: ask a specific question about your contract and get a direct answer
+- Scanned PDFs supported via AI-powered OCR
+- Available in English, German, French and Italian
 - Private — nothing is stored
 
 ## Stack
 
 - Next.js (App Router), TypeScript, Tailwind CSS
-- Claude API (`claude-sonnet-4-5`)
-- PDF parsing: unpdf | DOCX parsing: mammoth
+- Anthropic Claude API
+- PDF parsing: unpdf (+ OCR fallback) | DOCX parsing: mammoth
 - Deployed on Vercel
 
 ## Running locally
@@ -35,20 +37,17 @@ Open [http://localhost:3000](http://localhost:3000)
 
 Push to `main` → GitHub Actions → auto-deploys to Vercel.
 
-Requires these GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+Requires GitHub environment secrets: `VERCEL_TOKEN`, `ANTHROPIC_API_KEY`  
+And environment variables: `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
 ## Limits
 
 - 5MB max file size
 - 20 pages max (PDF)
-- 5 analyses per IP per 24h (in-memory rate limit, resets on cold start)
+- 5 analyses per IP per 24h (in-memory, resets on cold start)
 
 ## Docs
 
 - [PRODUCT.md](PRODUCT.md) — product overview and roadmap
 - [docs/specs/](docs/specs/) — feature specs
-
-
-## Contributing
-
-This project is maintained by Léa 🏔️, the swisscontract.ai agent. Feature specs live in [`docs/specs/`](docs/specs/) — all changes start with a spec.
+- [LICENSE](LICENSE) — CC BY 4.0
