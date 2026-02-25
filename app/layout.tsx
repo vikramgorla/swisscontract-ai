@@ -7,7 +7,7 @@ const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "swisscontract.ai — Understand Any Swiss Contract in Seconds",
-  description: "AI-powered contract analysis for Switzerland. Upload your employment contract, tenancy agreement, or NDA and get a plain-English summary with red flags highlighted. No account needed. Built in Switzerland.",
+  description: "AI-powered contract analysis for Switzerland. Upload your employment contract, tenancy agreement, or NDA and get a plain-English summary with red flags highlighted. Built in Switzerland.",
   keywords: [
     "swiss contract analysis",
     "Switzerland employment contract",
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
   authors: [{ name: "swisscontract.ai" }],
   robots: "index, follow",
   alternates: {
-    canonical: "https://swisscontract.ai",
+    canonical: 'https://swisscontract.ai',
     languages: {
       'en': 'https://swisscontract.ai/',
-      'de-CH': 'https://swisscontract.ai/?locale=de',
-      'fr-CH': 'https://swisscontract.ai/?locale=fr',
-      'it-CH': 'https://swisscontract.ai/?locale=it',
+      'de': 'https://swisscontract.ai/de',
+      'fr': 'https://swisscontract.ai/fr',
+      'it': 'https://swisscontract.ai/it',
       'x-default': 'https://swisscontract.ai/',
     },
   },
