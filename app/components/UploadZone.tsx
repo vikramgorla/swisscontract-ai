@@ -118,7 +118,7 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
         onDragLeave={handleDragLeave}
         onClick={() => !isAnalysing && document.getElementById('file-input')?.click()}
         className={`
-          relative border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all duration-200
+          relative border-2 border-dashed rounded-xl p-5 sm:p-10 text-center cursor-pointer transition-all duration-200
           ${isDragging 
             ? 'border-red-500 bg-red-50' 
             : selectedFile 
@@ -167,16 +167,16 @@ export default function UploadZone({ onFileSelect, isAnalysing }: UploadZoneProp
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex flex-col items-center gap-2 sm:gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
             <div>
-              <p className="text-lg font-semibold text-gray-700">Drop your contract here</p>
-              <p className="text-sm text-gray-500 mt-1">or <span className="text-red-600 font-medium">click to browse</span></p>
-              <p className="text-xs text-gray-400 mt-2">PDF, Word (.docx) or .txt · Max 5MB · Max 20 pages</p>
+              <p className="text-base sm:text-lg font-semibold text-gray-700">Drop your contract here</p>
+              <p className="text-sm text-gray-500 mt-0.5">or <span className="text-red-600 font-medium">click to browse</span></p>
+              <p className="text-xs text-gray-400 mt-1">PDF, Word (.docx) or .txt · Max 5MB · Max 20 pages</p>
             </div>
           </div>
         )}

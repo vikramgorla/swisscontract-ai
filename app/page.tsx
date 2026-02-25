@@ -202,16 +202,16 @@ export default function Home() {
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
-          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-red-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-20 text-center">
+          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-3 sm:mb-6 border border-red-100">
             <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
             No account needed · Try it now
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-5">
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-3 sm:mb-5">
             Understand any Swiss contract<br className="hidden sm:block" />
             <span className="text-red-600"> in seconds</span>
           </h1>
-          <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-6 leading-relaxed">
+          <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto mb-4 sm:mb-6 leading-relaxed">
             Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context.
           </p>
 
@@ -220,8 +220,8 @@ export default function Home() {
             <div className="max-w-xl mx-auto">
               <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} />
 
-              <div className="mt-4">
-                <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1.5 text-left">
+              <div className="mt-3">
+                <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">
                   Your question <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
                 <input
