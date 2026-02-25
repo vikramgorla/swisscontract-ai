@@ -49,6 +49,10 @@ export const translations = {
     footer_privacy: 'Privacy Policy',
     footer_opensource: 'Open source',
     built_in: 'Built in Switzerland',
+    meta_title: 'swisscontract.ai — Understand Any Swiss Contract in Seconds',
+    meta_description: 'AI-powered contract analysis for Switzerland. Upload your employment contract, tenancy agreement, or NDA and get a plain-English summary with red flags highlighted.',
+    html_lang: 'en',
+    og_locale: 'en_CH',
     error_short: 'Contract text is too short or empty. Please upload a valid contract document.',
     error_network: 'Network error. Please check your connection and try again.',
     file_change: 'Click to change file',
@@ -134,6 +138,10 @@ export const translations = {
     footer_privacy: 'Datenschutz',
     footer_opensource: 'Open Source',
     built_in: 'In der Schweiz entwickelt',
+    meta_title: 'swisscontract.ai — Jeden Schweizer Vertrag verstehen',
+    meta_description: 'KI-gestützte Vertragsanalyse für die Schweiz. Laden Sie Ihren Arbeits-, Miet- oder NDA-Vertrag hoch und erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken.',
+    html_lang: 'de',
+    og_locale: 'de_CH',
     error_short: 'Vertragstext ist zu kurz oder leer. Bitte laden Sie ein gültiges Vertragsdokument hoch.',
     error_network: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
     file_change: 'Zum Ändern klicken',
@@ -219,6 +227,10 @@ export const translations = {
     footer_privacy: 'Confidentialité',
     footer_opensource: 'Open source',
     built_in: 'Conçu en Suisse',
+    meta_title: 'swisscontract.ai — Comprenez tout contrat suisse en quelques secondes',
+    meta_description: "Analyse de contrats par IA pour la Suisse. Déposez votre contrat de travail, bail ou NDA et obtenez un résumé clair avec les points d'attention mis en évidence.",
+    html_lang: 'fr',
+    og_locale: 'fr_CH',
     error_short: 'Le texte du contrat est trop court ou vide. Veuillez télécharger un document contractuel valide.',
     error_network: 'Erreur réseau. Veuillez vérifier votre connexion.',
     file_change: 'Cliquer pour changer le fichier',
@@ -304,6 +316,10 @@ export const translations = {
     footer_privacy: 'Privacy',
     footer_opensource: 'Open source',
     built_in: 'Sviluppato in Svizzera',
+    meta_title: 'swisscontract.ai — Comprendi qualsiasi contratto svizzero in pochi secondi',
+    meta_description: "Analisi contratti con IA per la Svizzera. Carica il tuo contratto di lavoro, affitto o NDA e ottieni un riassunto chiaro con i rischi evidenziati.",
+    html_lang: 'it',
+    og_locale: 'it_CH',
     error_short: 'Il testo del contratto è troppo breve o vuoto. Carica un documento contrattuale valido.',
     error_network: 'Errore di rete. Controlla la connessione.',
     file_change: 'Clicca per cambiare file',
@@ -379,6 +395,10 @@ export type TranslationKeys = {
   footer_privacy: string;
   footer_opensource: string;
   built_in: string;
+  meta_title: string;
+  meta_description: string;
+  html_lang: string;
+  og_locale: string;
   error_short: string;
   error_network: string;
   file_change: string;
