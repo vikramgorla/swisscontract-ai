@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import Script from "next/script";
-import CookieBanner from "./components/CookieBanner";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -93,7 +92,6 @@ export default function RootLayout({
       </head>
       <body className={geist.className}>
         {children}
-        <CookieBanner />
       </body>
     </html>
   );

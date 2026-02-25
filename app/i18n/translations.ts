@@ -4,6 +4,8 @@ export const translations = {
   en: {
     badge: 'No account needed · Try it now',
     privacy_badge: 'Data never stored · Redact personal info before uploading',
+    cookie_banner: 'We use cookies to remember your language preference and analyse site traffic anonymously. No personal data is collected.',
+    cookie_accept: 'Got it',
     h1: 'Understand any Swiss contract',
     h1_accent: 'in seconds',
     subtitle: 'Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context.',
@@ -81,6 +83,8 @@ export const translations = {
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
     privacy_badge: 'Daten nie gespeichert · Persönliche Daten vor dem Hochladen schwärzen',
+    cookie_banner: 'Wir verwenden Cookies, um Ihre Spracheinstellung zu speichern und den Datenverkehr anonym zu analysieren. Es werden keine persönlichen Daten erhoben.',
+    cookie_accept: 'Verstanden',
     h1: 'Jeden Schweizer Vertrag verstehen',
     h1_accent: 'in Sekunden',
     subtitle: 'Laden Sie Ihren Arbeits-, Miet-, Versicherungs- oder NDA-Vertrag hoch — erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken und Schweizer Rechtskontext.',
@@ -158,6 +162,8 @@ export const translations = {
   fr: {
     badge: 'Sans compte · Essayez maintenant',
     privacy_badge: 'Données jamais stockées · Masquez vos infos personnelles avant envoi',
+    cookie_banner: 'Nous utilisons des cookies pour mémoriser votre langue et analyser le trafic de manière anonyme. Aucune donnée personnelle n'est collectée.',
+    cookie_accept: 'Compris',
     h1: 'Comprenez tout contrat suisse',
     h1_accent: 'en quelques secondes',
     subtitle: "Déposez votre contrat de travail, bail, assurance ou NDA — obtenez un résumé clair avec les points d'attention et le contexte juridique suisse.",
@@ -235,6 +241,8 @@ export const translations = {
   it: {
     badge: 'Senza account · Prova ora',
     privacy_badge: 'Dati mai salvati · Oscura i dati personali prima di caricare',
+    cookie_banner: 'Utilizziamo cookie per ricordare la tua lingua e analizzare il traffico in modo anonimo. Nessun dato personale viene raccolto.',
+    cookie_accept: 'Capito',
     h1: 'Comprendi qualsiasi contratto svizzero',
     h1_accent: 'in pochi secondi',
     subtitle: 'Carica il tuo contratto di lavoro, affitto, assicurazione o NDA — ottieni un riassunto chiaro con i rischi evidenziati e il contesto giuridico svizzero.',
@@ -316,6 +324,8 @@ export const translations = {
 export type TranslationKeys = {
   badge: string;
   privacy_badge: string;
+  cookie_banner: string;
+  cookie_accept: string;
   h1: string;
   h1_accent: string;
   subtitle: string;

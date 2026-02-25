@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
+import CookieBanner from './CookieBanner';
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, TranslationKeys } from '../i18n/translations';
 
@@ -418,6 +419,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           </div>
         </div>
       </footer>
+      <CookieBanner locale={locale} />
     </main>
   );
 }
