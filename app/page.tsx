@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import UploadZone from './components/UploadZone';
 import AnalysisResult from './components/AnalysisResult';
+import { useTypewriterPlaceholder } from './components/TypewriterPlaceholder';
 
 interface Analysis {
   question_answer?: string;
@@ -21,6 +22,7 @@ export default function Home() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
+  const typewriterPlaceholder = useTypewriterPlaceholder();
 
 
   const handleFileSelect = (file: File) => {
@@ -229,7 +231,7 @@ export default function Home() {
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   disabled={isAnalysing}
-                  placeholder="e.g. Do I need additional insurance to cover my risk in this contract?"
+                  placeholder={question ? '' : (typewriterPlaceholder || 'Ask a question about this contract…')}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
                 />
               </div>
@@ -286,7 +288,7 @@ export default function Home() {
                 onChange={(e) => setQuestion(e.target.value)}
                 disabled={isAnalysing}
                 onKeyDown={(e) => { if (e.key === 'Enter' && question.trim() && !isAnalysing) handleAskQuestion(); }}
-                placeholder="e.g. Do I need additional insurance to cover my risk in this contract?"
+                placeholder={question ? '' : (typewriterPlaceholder || 'Ask a question about this contract…')}
                 className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
               />
               <button
