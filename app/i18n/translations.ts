@@ -89,6 +89,10 @@ export const translations = {
       "Is this non-compete clause enforceable in Switzerland?",
       "Can I sublet my apartment under this agreement?",
     ],
+    why_free_title: 'Why is this free?',
+    why_free_p1: 'swisscontract.ai is free while we evaluate whether it\'s useful enough to sustain. We built this ourselves — just the two of us — as an experiment.',
+    why_free_p2: 'If it grows, we\'ll find a way to cover costs — perhaps through partnerships with Swiss legal or insurance services, or a paid tier for heavy users. If it doesn\'t grow, we\'ll be honest about that too.',
+    why_free_p3: 'No data sold. No hidden agenda. Just a tool we think Switzerland needs.',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -178,6 +182,10 @@ export const translations = {
       "Ist diese Konkurrenzklausel in der Schweiz durchsetzbar?",
       "Kann ich meine Wohnung gemäss diesem Vertrag untervermieten?",
     ],
+    why_free_title: 'Warum ist das kostenlos?',
+    why_free_p1: 'swisscontract.ai ist kostenlos, während wir evaluieren, ob es nützlich genug ist, um es weiterzubetreiben. Wir haben es selbst entwickelt — nur wir zwei — als Experiment.',
+    why_free_p2: 'Wenn es wächst, werden wir einen Weg finden, die Kosten zu decken — vielleicht durch Partnerschaften mit Schweizer Rechts- oder Versicherungsdiensten, oder ein kostenpflichtiges Angebot für Vielnutzer. Wenn nicht, werden wir auch das offen kommunizieren.',
+    why_free_p3: 'Keine Datenweitergabe. Keine versteckte Agenda. Nur ein Werkzeug, das die Schweiz braucht.',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -267,6 +275,10 @@ export const translations = {
       "Cette clause de non-concurrence est-elle applicable en Suisse ?",
       "Puis-je sous-louer mon appartement selon ce contrat ?",
     ],
+    why_free_title: 'Pourquoi est-ce gratuit\u00a0?',
+    why_free_p1: 'swisscontract.ai est gratuit le temps d\'évaluer s\'il est suffisamment utile pour être pérennisé. Nous l\'avons construit nous-mêmes — à deux — comme une expérience.',
+    why_free_p2: 'S\'il se développe, nous trouverons un moyen de couvrir les coûts — peut-être via des partenariats avec des services juridiques ou d\'assurance suisses, ou un accès payant pour les grands utilisateurs. Sinon, nous le dirons clairement.',
+    why_free_p3: 'Aucune donnée vendue. Aucun agenda caché. Juste un outil dont la Suisse a besoin.',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -356,6 +368,10 @@ export const translations = {
       "Questa clausola di non concorrenza è applicabile in Svizzera?",
       "Posso subaffittare il mio appartamento secondo questo contratto?",
     ],
+    why_free_title: 'Perché è gratuito?',
+    why_free_p1: 'swisscontract.ai è gratuito mentre valutiamo se è abbastanza utile da sostenere. Lo abbiamo costruito noi stessi — in due — come esperimento.',
+    why_free_p2: 'Se cresce, troveremo un modo per coprire i costi — forse attraverso partnership con servizi legali o assicurativi svizzeri, o un piano a pagamento per gli utenti più attivi. Se non cresce, lo diremo chiaramente.',
+    why_free_p3: 'Nessun dato venduto. Nessuna agenda nascosta. Solo uno strumento di cui la Svizzera ha bisogno.',
   },
 } as const;
 
@@ -421,4 +437,8 @@ export type TranslationKeys = {
   privacy_points: ReadonlyArray<string>;
   language_label: string;
   typewriter_examples: ReadonlyArray<string>;
+  why_free_title: string;
+  why_free_p1: string;
+  why_free_p2: string;
+  why_free_p3: string;
 };
