@@ -138,7 +138,8 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (String(data.error) || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
-      setAnalysis(data.analysis);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setAnalysis(data.analysis as any);
     }
     setIsAnalysing(false);
   };
