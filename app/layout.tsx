@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { translations } from './i18n/translations';
+import { getAppEnv } from './lib/env';
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -73,17 +74,18 @@ export const metadata: Metadata = {
   },
 };
 
-const isProd = process.env.APP_ENV === 'production';
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const env = await getAppEnv();
+  const showBanner = env !== 'production';
+
   return (
     <html lang="en">
       <body className={geist.className}>
-        {!isProd && (
+        {showBanner && (
           <div className="bg-amber-400 text-amber-900 text-xs font-bold text-center py-1 px-4">
             ⚗️ PREPROD — Testing Swiss-sovereign AI models — not for production use
           </div>

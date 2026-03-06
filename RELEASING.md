@@ -85,6 +85,18 @@ curl https://swisscontract.ai/api/health
 
 ---
 
+## How environment is determined
+
+The app never hardcodes domain names or environment strings. Instead:
+
+1. **Traefik injects** `X-App-Env: preprod` or `X-App-Env: production` as a request header via middleware labels on each container
+2. **The app reads** `X-App-Env` from request headers at runtime via `app/lib/env.ts`
+3. **Fallback** for local development: `APP_ENV` environment variable (set in `.env.local`)
+
+This means the same Docker image runs as any environment. Adding a new environment requires zero code changes — just a new container with the appropriate Traefik label.
+
+---
+
 ## Environment variables
 
 | Variable | Where set | Purpose |

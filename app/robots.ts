@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
+import { isProd } from './lib/env';
 
-export default function robots(): MetadataRoute.Robots {
-  const isProd = process.env.APP_ENV === 'production';
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const prod = await isProd();
 
-  if (!isProd) {
+  if (!prod) {
     return {
       rules: { userAgent: '*', disallow: '/' },
     };

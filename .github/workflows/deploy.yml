@@ -121,6 +121,8 @@ jobs:
             --label "traefik.http.routers.swisscontract-preprod.rule=Host(\`${DOMAIN}\`)" \
             --label "traefik.http.routers.swisscontract-preprod.entrypoints=websecure" \
             --label "traefik.http.routers.swisscontract-preprod.tls.certresolver=letsencrypt" \
+            --label "traefik.http.routers.swisscontract-preprod.middlewares=inject-env-preprod" \
+            --label "traefik.http.middlewares.inject-env-preprod.headers.customrequestheaders.X-App-Env=preprod" \
             --label "traefik.http.services.swisscontract-preprod.loadbalancer.server.port=3000" \
             "$IMAGE"
 
@@ -225,6 +227,8 @@ jobs:
             --label "traefik.http.routers.swisscontract-production.rule=Host(\`${DOMAIN}\`)" \
             --label "traefik.http.routers.swisscontract-production.entrypoints=websecure" \
             --label "traefik.http.routers.swisscontract-production.tls.certresolver=letsencrypt" \
+            --label "traefik.http.routers.swisscontract-production.middlewares=inject-env-production" \
+            --label "traefik.http.middlewares.inject-env-production.headers.customrequestheaders.X-App-Env=production" \
             --label "traefik.http.services.swisscontract-production.loadbalancer.server.port=3000" \
             "$IMAGE"
 
