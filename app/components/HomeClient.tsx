@@ -57,8 +57,20 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setError(null);
     setWarning(null);
 
+    // Read file into ArrayBuffer first — Android Chrome content URIs can become
+    // unreadable after file picker closes, causing fetch() to throw immediately
+    let fileBlob: Blob;
+    try {
+      const buffer = await selectedFile.arrayBuffer();
+      fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
+    } catch {
+      setError(t.error_network);
+      setIsAnalysing(false);
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('file', fileBlob, selectedFile.name);
     formData.append('locale', locale);
     if (question.trim()) {
       formData.append('question', question.trim());
@@ -108,8 +120,19 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setIsAnalysing(true);
     setError(null);
     setWarning(null);
+
+    let fileBlob: Blob;
+    try {
+      const buffer = await selectedFile.arrayBuffer();
+      fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
+    } catch {
+      setError(t.error_network);
+      setIsAnalysing(false);
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('file', fileBlob, selectedFile.name);
     formData.append('question', question.trim());
     formData.append('locale', locale);
 
