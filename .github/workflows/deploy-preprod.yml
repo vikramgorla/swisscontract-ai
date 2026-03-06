@@ -46,7 +46,8 @@ jobs:
 
           echo "=== Clean install ==="
           rm -rf node_modules .next
-          npm ci
+          npm cache clean --force 2>/dev/null || true
+          npm install --prefer-online
 
           echo "=== Building ==="
           NEXT_PUBLIC_ENV=preprod npm run build
