@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import Analytics from "./components/Analytics";
 import { translations } from './i18n/translations';
 import "./globals.css";
 
@@ -74,6 +73,8 @@ export const metadata: Metadata = {
   },
 };
 
+const isPreprod = process.env.NEXT_PUBLIC_ENV === 'preprod';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -82,8 +83,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={geist.className}>
+        {isPreprod && (
+          <div className="bg-amber-400 text-amber-900 text-xs font-bold text-center py-1 px-4">
+            ⚗️ PREPROD — Testing Swiss-sovereign AI models — not for production use
+          </div>
+        )}
         {children}
-        <Analytics />
       </body>
     </html>
   );
