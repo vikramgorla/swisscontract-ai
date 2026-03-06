@@ -1,35 +1,33 @@
 name: Deploy
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-      domain:
-        required: true
-        type: string
-    secrets:
-      VPS_SSH_KEY:
-        required: true
-      VPS_HOST:
-        required: true
-      VPS_USER:
-        required: true
-      INFOMANIAK_AI_TOKEN:
-        required: true
-      INFOMANIAK_AI_PRODUCT_ID:
-        required: true
+  push:
+    branches: [main, preprod]
+    paths:
+      - 'app/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'tsconfig.json'
+      - 'postcss.config.mjs'
+      - 'proxy.ts'
+      - 'Dockerfile'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name }}
     timeout-minutes: 30
+
+    env:
+      ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || github.ref_name }}
 
     steps:
       - name: Checkout
@@ -50,20 +48,18 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/vikramgorla/swisscontract-ai:${{ inputs.environment }}
+          tags: ghcr.io/vikramgorla/swisscontract-ai:${{ env.ENVIRONMENT }}
           build-args: |
-            NEXT_PUBLIC_ENV=${{ inputs.environment }}
-          cache-from: type=gha,scope=${{ inputs.environment }}
-          cache-to: type=gha,mode=max,scope=${{ inputs.environment }}
+            NEXT_PUBLIC_ENV=${{ env.ENVIRONMENT }}
+          cache-from: type=gha,scope=${{ env.ENVIRONMENT }}
+          cache-to: type=gha,mode=max,scope=${{ env.ENVIRONMENT }}
 
       - name: Deploy to VPS
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           HOST: ${{ secrets.VPS_HOST }}
           USER: ${{ secrets.VPS_USER }}
-          ENVIRONMENT: ${{ inputs.environment }}
-          DOMAIN: ${{ inputs.domain }}
-          IMAGE: ghcr.io/vikramgorla/swisscontract-ai:${{ inputs.environment }}
+          DOMAIN: ${{ vars.DOMAIN }}
           INFOMANIAK_AI_TOKEN: ${{ secrets.INFOMANIAK_AI_TOKEN }}
           INFOMANIAK_AI_PRODUCT_ID: ${{ secrets.INFOMANIAK_AI_PRODUCT_ID }}
           GITHUB_TOKEN_FOR_DOCKER: ${{ secrets.GITHUB_TOKEN }}
@@ -72,72 +68,63 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
 
-          ssh -i ~/.ssh/deploy_key $USER@$HOST \
+          ssh -i ~/.ssh/deploy_key "$USER@$HOST" \
             ENVIRONMENT="$ENVIRONMENT" \
             DOMAIN="$DOMAIN" \
-            IMAGE="$IMAGE" \
             INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
             INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
             GITHUB_TOKEN_FOR_DOCKER="$GITHUB_TOKEN_FOR_DOCKER" \
             GITHUB_ACTOR="$GITHUB_ACTOR" \
             bash << 'ENDSSH'
           set -e
+          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:${ENVIRONMENT}"
 
-          echo "=== Logging into ghcr.io ==="
-          echo "$GITHUB_TOKEN_FOR_DOCKER" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin 2>/dev/null || true
+          echo "$GITHUB_TOKEN_FOR_DOCKER" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
-          echo "=== Pulling image: $IMAGE ==="
           docker pull "$IMAGE"
 
-          echo "=== Stopping old container: swisscontract-$ENVIRONMENT ==="
-          docker stop "swisscontract-$ENVIRONMENT" 2>/dev/null || true
-          docker rm "swisscontract-$ENVIRONMENT" 2>/dev/null || true
+          docker stop "swisscontract-${ENVIRONMENT}" 2>/dev/null || true
+          docker rm   "swisscontract-${ENVIRONMENT}" 2>/dev/null || true
 
-          echo "=== Ensuring traefik-net network exists ==="
           docker network create traefik-net 2>/dev/null || true
 
-          echo "=== Starting container: swisscontract-$ENVIRONMENT ==="
-          # TODO: Remove -p 3000:3000 when migrated to Traefik-only (post VPS wipe)
           docker run -d \
-            --name "swisscontract-$ENVIRONMENT" \
+            --name "swisscontract-${ENVIRONMENT}" \
             --restart unless-stopped \
             --network traefik-net \
-            -p 3000:3000 \
             -e INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
             -e INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
             -e NEXT_PUBLIC_ENV="$ENVIRONMENT" \
             -e NODE_ENV=production \
             -e PORT=3000 \
             -e HOSTNAME=0.0.0.0 \
-            -l "traefik.enable=true" \
-            -l "traefik.http.routers.swisscontract-$ENVIRONMENT.rule=Host(\`$DOMAIN\`)" \
-            -l "traefik.http.routers.swisscontract-$ENVIRONMENT.entrypoints=websecure" \
-            -l "traefik.http.routers.swisscontract-$ENVIRONMENT.tls.certresolver=letsencrypt" \
-            -l "traefik.http.services.swisscontract-$ENVIRONMENT.loadbalancer.server.port=3000" \
+            --label "traefik.enable=true" \
+            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.rule=Host(\`${DOMAIN}\`)" \
+            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.entrypoints=websecure" \
+            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.tls.certresolver=letsencrypt" \
+            --label "traefik.http.services.swisscontract-${ENVIRONMENT}.loadbalancer.server.port=3000" \
             "$IMAGE"
 
-          echo "=== Waiting for startup ==="
           sleep 10
           for i in 1 2 3 4 5; do
-            HTTP=$(docker exec "swisscontract-$ENVIRONMENT" wget -qO- http://localhost:3000/api/health 2>/dev/null | grep -c '"ok"' || echo "0")
-            if [ "$HTTP" = "1" ]; then
-              echo "Container healthy ✅"
-              break
-            fi
-            echo "Waiting... attempt $i"
+            STATUS=$(docker exec "swisscontract-${ENVIRONMENT}" \
+              wget -qO- http://localhost:3000/api/health 2>/dev/null || true)
+            echo "$STATUS" | grep -q '"ok"' && echo "Healthy ✅" && break
+            echo "Attempt $i — retrying in 5s..."
             sleep 5
           done
 
-          echo "=== Cleaning old images ==="
           docker image prune -f
           ENDSSH
 
       - name: External health check
+        env:
+          DOMAIN: ${{ vars.DOMAIN }}
         run: |
           sleep 5
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ inputs.domain }}/api/health" --max-time 20)
-          echo "https://${{ inputs.domain }}/api/health → HTTP $HTTP"
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://${DOMAIN}/api/health" --max-time 20)
+          echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
           [ "$HTTP" = "200" ] || exit 1
-          echo "✅ Health check passed"
+          echo "✅ Deployment complete"

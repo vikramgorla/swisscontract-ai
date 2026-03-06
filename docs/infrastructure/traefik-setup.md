@@ -40,6 +40,47 @@ volumes:
   traefik-letsencrypt:
 ```
 
+## Deployment Architecture
+
+A single workflow (`.github/workflows/deploy.yml`) handles all environments:
+
+| Branch    | GitHub Environment | Domain                      |
+|-----------|--------------------|-----------------------------|
+| `main`    | `production`       | `swisscontract.ai`          |
+| `preprod` | `preprod`          | `preprod.swisscontract.ai`  |
+
+### GitHub Configuration
+
+**Repo-level secrets** (shared across all environments):
+- `VPS_SSH_KEY` — ed25519 deploy key
+- `VPS_HOST` — VPS IP address
+- `VPS_USER` — SSH user
+
+**Environment-level variables** (per environment):
+- `DOMAIN` — the domain routed by Traefik
+
+**Environment-level secrets** (per environment):
+- `INFOMANIAK_AI_TOKEN` — API token for Infomaniak AI
+- `INFOMANIAK_AI_PRODUCT_ID` — product ID for Infomaniak AI
+
+### How it works
+
+1. Push to `main` or `preprod` triggers the workflow
+2. Branch name determines the environment (`main` → `production`, otherwise branch name)
+3. Docker image built and pushed to `ghcr.io/vikramgorla/swisscontract-ai:<environment>`
+4. SSH into VPS, pull image, run container with Traefik labels
+5. Container self-registers with Traefik via Docker labels — no port mapping needed
+6. Health check confirms deployment
+
+### Adding a new environment
+
+1. Create a GitHub environment (e.g. `staging`) with:
+   - Variable: `DOMAIN` = `staging.swisscontract.ai`
+   - Secrets: `INFOMANIAK_AI_TOKEN`, `INFOMANIAK_AI_PRODUCT_ID`
+2. Add the branch name to the `branches` list in `deploy.yml`
+3. Point DNS for the new domain to the VPS IP
+4. Push to the branch — Traefik auto-provisions SSL and routes traffic
+
 ## Bootstrap commands
 
 ```bash
@@ -64,19 +105,14 @@ mkdir -p ~/traefik
 # Create docker-compose.yml as above
 cd ~/traefik && docker compose up -d
 
-# 6. Update GitHub Actions secrets:
-#    VPS_HOST = <new IP>
-#    VPS_SSH_KEY = <deploy key>
-#    VPS_USER = ubuntu
-#    INFOMANIAK_AI_TOKEN = <token>
-#    INFOMANIAK_AI_PRODUCT_ID = 107324
+# 6. DNS: point swisscontract.ai and preprod.swisscontract.ai to VPS IP
 
-# 7. Push to preprod branch — GitHub Actions deploys the app automatically
+# 7. Push to preprod or main — GitHub Actions deploys automatically
 ```
 
 ## Notes
 
 - No nginx needed — Traefik handles SSL + routing
-- App containers self-register via Docker labels
-- Adding a new environment = new branch + new workflow, zero server changes
+- App containers self-register via Docker labels — no port mapping (`-p`) used
+- Adding a new environment = new GitHub environment + branch + DNS, zero server changes
 - Certs stored in Docker volume (persist across Traefik restarts)
