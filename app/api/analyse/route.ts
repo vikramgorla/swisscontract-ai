@@ -151,6 +151,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Build the full prompt
+    // Apertus 70B context limit: 16,384 tokens (~12,000 chars safe limit)
+    const MAX_CHARS = 12000;
+    if (contractText.length > MAX_CHARS) {
+      contractText = contractText.substring(0, MAX_CHARS) + '\n\n[Document truncated for analysis — first 12,000 characters]';
+    }
+
     let userContent = `Please analyse this contract:\n\n${contractText}`;
     if (question && question.trim().length > 0) {
       const safeQuestion = question.trim().replace(/[<>]/g, '');
@@ -251,7 +257,10 @@ export async function POST(request: NextRequest) {
     console.error('Analysis error:', error instanceof Error ? error.message : 'Unknown error');
 
     if (error instanceof Error) {
-      if (error.message.includes('API') || error.message.includes('token')) {
+      if (error.message.includes('context length') || error.message.includes('input tokens') || error.message.includes('maximum context')) {
+        return NextResponse.json({ error: 'ERR_DOC_TOO_LONG' }, { status: 400 });
+      }
+      if (error.message.includes('401') || error.message.includes('403') || (error.message.includes('token') && !error.message.includes('input tokens'))) {
         return NextResponse.json({ error: 'API configuration error. Please contact support.' }, { status: 500 });
       }
       return NextResponse.json({ error: 'Analysis failed. Please try again.' }, { status: 500 });

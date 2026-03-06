@@ -91,7 +91,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       return;
     }
     if (!response.ok) {
-      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (String(data.error) || 'Analysis failed. Please try again.');
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : data.error === 'ERR_DOC_TOO_LONG' ? t.error_doc_too_long : (String(data.error) || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -135,7 +135,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       return;
     }
     if (!response.ok) {
-      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (String(data.error) || 'Analysis failed. Please try again.');
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : data.error === 'ERR_DOC_TOO_LONG' ? t.error_doc_too_long : (String(data.error) || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

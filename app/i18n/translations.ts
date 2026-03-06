@@ -54,6 +54,7 @@ export const translations = {
     error_timeout: 'Analysis is taking longer than expected. Please try again — large documents can take up to 60 seconds.',
     error_scanned_pdf: 'This document appears to be a scanned PDF. Please upload a searchable (text-based) PDF, or copy the text into a Word document.',
     error_file_too_large: 'File too large. Maximum size is 10MB.',
+    error_doc_too_long: 'This document is too long to analyse in full. Try a shorter contract or copy-paste the key sections as a text file.',
     warn_large_file: 'Large file detected (>5MB). Analysis may take up to 60 seconds — please be patient.',
     contract_type_employment: 'Employment Contract',
     contract_type_tenancy: 'Tenancy Agreement',
@@ -208,6 +209,7 @@ export const translations = {
     error_timeout: 'Die Analyse dauert länger als erwartet. Bitte versuchen Sie es erneut — grosse Dokumente können bis zu 60 Sekunden benötigen.',
     error_scanned_pdf: 'Dieses Dokument scheint ein gescanntes PDF zu sein. Bitte laden Sie ein durchsuchbares (textbasiertes) PDF hoch oder kopieren Sie den Text in ein Word-Dokument.',
     error_file_too_large: 'Datei zu gross. Maximale Größe ist 10MB.',
+    error_doc_too_long: 'Dieses Dokument ist zu lang für eine vollständige Analyse. Versuchen Sie einen kürzeren Vertrag oder fügen Sie die wichtigsten Abschnitte als Textdatei ein.',
     warn_large_file: 'Große Datei erkannt (>5MB). Die Analyse kann bis zu 60 Sekunden dauern — bitte haben Sie Geduld.',
     contract_type_employment: 'Arbeitsvertrag',
     contract_type_tenancy: 'Mietvertrag',
@@ -362,6 +364,7 @@ export const translations = {
     error_timeout: "L'analyse prend plus de temps que prévu. Veuillez réessayer — les documents volumineux peuvent prendre jusqu'à 60 secondes.",
     error_scanned_pdf: 'Ce document semble être un PDF scanné. Veuillez télécharger un PDF consultable (basé sur du texte) ou copier le texte dans un document Word.',
     error_file_too_large: 'Fichier trop volumineux. La taille maximale est de 10MB.',
+    error_doc_too_long: "Ce document est trop long pour être analysé en entier. Essayez un contrat plus court ou copiez les sections clés dans un fichier texte.",
     warn_large_file: "Fichier volumineux détecté (>5MB). L'analyse peut prendre jusqu'à 60 secondes — merci de patienter.",
     contract_type_employment: 'Contrat de travail',
     contract_type_tenancy: 'Contrat de bail',
@@ -516,6 +519,7 @@ export const translations = {
     error_timeout: "L'analisi sta richiedendo più tempo del previsto. Riprova — i documenti di grandi dimensioni possono richiedere fino a 60 secondi.",
     error_scanned_pdf: 'Questo documento sembra essere un PDF scansionato. Caricate un PDF ricercabile (basato su testo) o copiate il testo in un documento Word.',
     error_file_too_large: 'File troppo grande. La dimensione massima è 10MB.',
+    error_doc_too_long: 'Questo documento è troppo lungo per essere analizzato interamente. Prova un contratto più breve o incolla le sezioni principali in un file di testo.',
     warn_large_file: "File di grandi dimensioni rilevato (>5MB). L'analisi può richiedere fino a 60 secondi — attendere.",
     contract_type_employment: 'Contratto di lavoro',
     contract_type_tenancy: 'Contratto di locazione',
@@ -660,6 +664,7 @@ export type TranslationKeys = {
   error_timeout: string;
   error_scanned_pdf: string;
   error_file_too_large: string;
+  error_doc_too_long: string;
   warn_large_file: string;
   contract_type_employment: string;
   contract_type_tenancy: string;
