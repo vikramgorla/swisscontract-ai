@@ -21,13 +21,13 @@ permissions:
   packages: write
 
 jobs:
-  deploy:
+  build:
+    # Build runs ONLY on preprod push — produces a single image
+    # On main push, we skip build and promote the existing preprod image
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name }}
-    timeout-minutes: 30
-
-    env:
-      ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || github.ref_name }}
+    if: github.ref_name == 'preprod'
+    outputs:
+      sha_tag: ${{ steps.meta.outputs.sha_tag }}
 
     steps:
       - name: Checkout
@@ -43,23 +43,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set image metadata
+        id: meta
+        run: |
+          SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "sha_tag=sha-${SHA_SHORT}" >> $GITHUB_OUTPUT
+          echo "Building image: ghcr.io/vikramgorla/swisscontract-ai:sha-${SHA_SHORT}"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/vikramgorla/swisscontract-ai:${{ env.ENVIRONMENT }}
-          build-args: |
-            NEXT_PUBLIC_ENV=${{ env.ENVIRONMENT }}
-          cache-from: type=gha,scope=${{ env.ENVIRONMENT }}
-          cache-to: type=gha,mode=max,scope=${{ env.ENVIRONMENT }}
+          tags: |
+            ghcr.io/vikramgorla/swisscontract-ai:preprod
+            ghcr.io/vikramgorla/swisscontract-ai:${{ steps.meta.outputs.sha_tag }}
+          cache-from: type=gha,scope=app
+          cache-to: type=gha,mode=max,scope=app
 
+  deploy-preprod:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: preprod
+    if: github.ref_name == 'preprod'
+    timeout-minutes: 15
+
+    steps:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Deploy to VPS
+      - name: Deploy preprod to VPS
         env:
           HOST: ${{ secrets.VPS_HOST }}
           USER: ${{ secrets.VPS_USER }}
@@ -68,50 +83,52 @@ jobs:
           INFOMANIAK_AI_PRODUCT_ID: ${{ secrets.INFOMANIAK_AI_PRODUCT_ID }}
           GITHUB_TOKEN_FOR_DOCKER: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
+          SHA_TAG: ${{ needs.build.outputs.sha_tag }}
         run: |
           ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
 
           ssh "$USER@$HOST" \
-            ENVIRONMENT="$ENVIRONMENT" \
             DOMAIN="$DOMAIN" \
             INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
             INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
             GITHUB_TOKEN_FOR_DOCKER="$GITHUB_TOKEN_FOR_DOCKER" \
             GITHUB_ACTOR="$GITHUB_ACTOR" \
+            SHA_TAG="$SHA_TAG" \
             bash << 'ENDSSH'
           set -e
-          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:${ENVIRONMENT}"
+          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:${SHA_TAG}"
 
           echo "$GITHUB_TOKEN_FOR_DOCKER" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
           docker pull "$IMAGE"
 
-          docker stop "swisscontract-${ENVIRONMENT}" 2>/dev/null || true
-          docker rm   "swisscontract-${ENVIRONMENT}" 2>/dev/null || true
+          docker stop swisscontract-preprod 2>/dev/null || true
+          docker rm   swisscontract-preprod 2>/dev/null || true
 
           docker network create traefik-net 2>/dev/null || true
 
           docker run -d \
-            --name "swisscontract-${ENVIRONMENT}" \
+            --name swisscontract-preprod \
             --restart unless-stopped \
             --network traefik-net \
             -e INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
             -e INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
-            -e NEXT_PUBLIC_ENV="$ENVIRONMENT" \
+            -e APP_ENV=preprod \
             -e NODE_ENV=production \
             -e PORT=3000 \
             -e HOSTNAME=0.0.0.0 \
             --label "traefik.enable=true" \
-            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.rule=Host(\`${DOMAIN}\`)" \
-            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.entrypoints=websecure" \
-            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.tls.certresolver=letsencrypt" \
-            --label "traefik.http.services.swisscontract-${ENVIRONMENT}.loadbalancer.server.port=3000" \
+            --label "traefik.http.routers.swisscontract-preprod.rule=Host(\`${DOMAIN}\`)" \
+            --label "traefik.http.routers.swisscontract-preprod.entrypoints=websecure" \
+            --label "traefik.http.routers.swisscontract-preprod.tls.certresolver=letsencrypt" \
+            --label "traefik.http.routers.swisscontract-preprod.middlewares=inject-env-preprod" \
+            --label "traefik.http.middlewares.inject-env-preprod.headers.customrequestheaders.X-App-Env=preprod" \
+            --label "traefik.http.services.swisscontract-preprod.loadbalancer.server.port=3000" \
             "$IMAGE"
 
           sleep 10
           for i in 1 2 3 4 5; do
-            STATUS=$(docker exec "swisscontract-${ENVIRONMENT}" \
-              wget -qO- http://localhost:3000/api/health 2>/dev/null || true)
+            STATUS=$(docker exec swisscontract-preprod wget -qO- http://localhost:3000/api/health 2>/dev/null || true)
             echo "$STATUS" | grep -q '"ok"' && echo "Healthy ✅" && break
             echo "Attempt $i — retrying in 5s..."
             sleep 5
@@ -128,4 +145,110 @@ jobs:
           HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://${DOMAIN}/api/health" --max-time 20)
           echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
           [ "$HTTP" = "200" ] || exit 1
-          echo "✅ Deployment complete"
+          echo "✅ Preprod deployment complete"
+
+  promote-production:
+    # Runs ONLY on main push — re-tags the preprod image, no rebuild
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref_name == 'main'
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote preprod image to production
+        run: |
+          # Pull the preprod image (already tested)
+          docker pull ghcr.io/vikramgorla/swisscontract-ai:preprod
+
+          # Re-tag as production and push
+          docker tag ghcr.io/vikramgorla/swisscontract-ai:preprod \
+                     ghcr.io/vikramgorla/swisscontract-ai:production
+          docker push ghcr.io/vikramgorla/swisscontract-ai:production
+
+          echo "✅ Image promoted: preprod → production"
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Deploy production to VPS
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USER: ${{ secrets.VPS_USER }}
+          DOMAIN: ${{ vars.DOMAIN }}
+          INFOMANIAK_AI_TOKEN: ${{ secrets.INFOMANIAK_AI_TOKEN }}
+          INFOMANIAK_AI_PRODUCT_ID: ${{ secrets.INFOMANIAK_AI_PRODUCT_ID }}
+          GITHUB_TOKEN_FOR_DOCKER: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+
+          ssh "$USER@$HOST" \
+            DOMAIN="$DOMAIN" \
+            INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
+            INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
+            GITHUB_TOKEN_FOR_DOCKER="$GITHUB_TOKEN_FOR_DOCKER" \
+            GITHUB_ACTOR="$GITHUB_ACTOR" \
+            bash << 'ENDSSH'
+          set -e
+          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:production"
+
+          echo "$GITHUB_TOKEN_FOR_DOCKER" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+          docker pull "$IMAGE"
+
+          docker stop swisscontract-production 2>/dev/null || true
+          docker rm   swisscontract-production 2>/dev/null || true
+
+          docker network create traefik-net 2>/dev/null || true
+
+          docker run -d \
+            --name swisscontract-production \
+            --restart unless-stopped \
+            --network traefik-net \
+            -e INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
+            -e INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
+            -e APP_ENV=production \
+            -e NODE_ENV=production \
+            -e PORT=3000 \
+            -e HOSTNAME=0.0.0.0 \
+            --label "traefik.enable=true" \
+            --label "traefik.http.routers.swisscontract-production.rule=Host(\`${DOMAIN}\`)" \
+            --label "traefik.http.routers.swisscontract-production.entrypoints=websecure" \
+            --label "traefik.http.routers.swisscontract-production.tls.certresolver=letsencrypt" \
+            --label "traefik.http.routers.swisscontract-production.middlewares=inject-env-production" \
+            --label "traefik.http.middlewares.inject-env-production.headers.customrequestheaders.X-App-Env=production" \
+            --label "traefik.http.services.swisscontract-production.loadbalancer.server.port=3000" \
+            "$IMAGE"
+
+          sleep 10
+          for i in 1 2 3 4 5; do
+            STATUS=$(docker exec swisscontract-production wget -qO- http://localhost:3000/api/health 2>/dev/null || true)
+            echo "$STATUS" | grep -q '"ok"' && echo "Healthy ✅" && break
+            echo "Attempt $i — retrying in 5s..."
+            sleep 5
+          done
+
+          docker image prune -f
+          ENDSSH
+
+      - name: External health check
+        env:
+          DOMAIN: ${{ vars.DOMAIN }}
+        run: |
+          sleep 5
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://${DOMAIN}/api/health" --max-time 20)
+          echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
+          [ "$HTTP" = "200" ] || exit 1
+          echo "✅ Production deployment complete"

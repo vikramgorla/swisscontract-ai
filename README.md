@@ -52,12 +52,14 @@ Open [http://localhost:3000](http://localhost:3000)
 |---|---|---|
 | `INFOMANIAK_AI_TOKEN` | Yes | Infomaniak AI API key ([get one here](https://manager.infomaniak.com)) |
 | `INFOMANIAK_AI_PRODUCT_ID` | Yes | Infomaniak AI product ID |
-| `NEXT_PUBLIC_ENV` | No | Controls debug logging, robots noindex, and the preprod banner. Set to `production` for prod; anything else is treated as non-production. Injected via Docker at deploy time. |
+| `APP_ENV` | No | Controls debug logging, robots noindex, and the preprod banner. Set to `production` for prod; anything else is treated as non-production. Injected at runtime via `docker run -e APP_ENV=...` — never baked into the image. |
 
 ## Deployment
 
-- **Preprod:** Push to `preprod` → GitHub Actions builds Docker image → deploys to Infomaniak VPS via Traefik at `preprod.swisscontract.ai`
-- **Production:** Push to `main` → GitHub Actions builds Docker image → deploys to Infomaniak VPS via Traefik at `swisscontract.ai`
+Uses a **build-once, promote** model. See [RELEASING.md](RELEASING.md) for the full procedure.
+
+- **Preprod:** Push to `preprod` → builds Docker image → deploys to `preprod.swisscontract.ai`
+- **Production:** Merge `preprod` → `main` → re-tags existing image (no rebuild) → deploys to `swisscontract.ai`
 
 ## Limits
 

@@ -10,10 +10,7 @@ RUN npm ci
 # Copy source
 COPY . .
 
-# Build — NEXT_PUBLIC_ENV injected at build time via ARG
-ARG NEXT_PUBLIC_ENV=preprod
-ENV NEXT_PUBLIC_ENV=$NEXT_PUBLIC_ENV
-
+# Build — APP_ENV is injected at runtime via docker run -e, not baked in
 RUN npm run build
 
 # ---- Runtime image ----
