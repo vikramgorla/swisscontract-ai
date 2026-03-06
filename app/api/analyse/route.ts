@@ -25,7 +25,7 @@ Return ONLY valid JSON, no markdown, no code blocks. All string values must be o
  * Gate verbose logs to non-production environments only.
  */
 function debugLog(...args: unknown[]) {
-  if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+  if (process.env.APP_ENV !== 'production') {
     console.error('[debug]', ...args);
   }
 }
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
           parsed = JSON.parse(cleanedResponse);
         } catch (parseErr1) {
           debugLog(`Attempt ${attempt} - JSON parse failed:`, parseErr1 instanceof Error ? parseErr1.message : parseErr1);
-          if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+          if (process.env.APP_ENV !== 'production') {
             console.error(`[debug] attempt ${attempt} raw response:`, responseText.slice(0, 2000));
             console.error(`[debug] attempt ${attempt} cleaned:`, cleanedResponse.slice(0, 2000));
           }
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+    if (process.env.APP_ENV !== 'production') {
       console.error('[debug] Analysis error:', error instanceof Error ? error.message : 'Unknown error');
     }
 
