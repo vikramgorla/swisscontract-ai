@@ -281,47 +281,43 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             {t.subtitle}
           </p>
 
-          {/* Trust badges — 3 items, clean inline layout */}
+          {/* Trust badges — single line, 3 items */}
           {!analysis && (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-8 mb-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-0 my-6">
 
               {/* Badge 1: Hosted in Switzerland */}
-              <div className="flex items-center gap-2.5">
-                <span className="text-xl leading-none">🇨🇭</span>
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{t.badge_hosted_title}</div>
-                  <div className="text-xs text-gray-500">{t.badge_hosted_sub}</div>
-                </div>
+              <div className="flex items-center gap-2 px-6">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect width="20" height="20" rx="2" fill="#D52B1E"/>
+                  <rect x="8.5" y="3.5" width="3" height="13" fill="white"/>
+                  <rect x="3.5" y="8.5" width="13" height="3" fill="white"/>
+                </svg>
+                <span className="text-sm font-medium text-gray-700">{t.badge_hosted}</span>
               </div>
 
-              {/* Divider — hidden on mobile */}
-              <div className="hidden sm:block w-px h-8 bg-gray-200" />
+              <div className="hidden sm:block w-px h-5 bg-gray-200" />
 
-              {/* Badge 2: Swiss AI — Apertus logo */}
-              <div className="flex items-center gap-2.5">
+              {/* Badge 2: Swiss AI · Apertus 70B */}
+              <div className="flex items-center gap-2 px-6">
                 <Image
                   src="/apertus-logo.jpg"
                   alt="Apertus"
-                  width={28}
-                  height={28}
-                  className="rounded-sm object-cover"
+                  width={20}
+                  height={20}
+                  className="rounded-sm object-cover flex-shrink-0"
                 />
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{t.badge_ai_title}</div>
-                  <div className="text-xs text-gray-500">{t.badge_ai_sub}</div>
-                </div>
+                <span className="text-sm font-medium text-gray-700">{t.badge_ai}</span>
               </div>
 
-              {/* Divider — hidden on mobile */}
-              <div className="hidden sm:block w-px h-8 bg-gray-200" />
+              <div className="hidden sm:block w-px h-5 bg-gray-200" />
 
-              {/* Badge 3: Zero data retention */}
-              <div className="flex items-center gap-2.5">
-                <span className="text-xl leading-none">🔒</span>
-                <div>
-                  <div className="text-sm font-semibold text-gray-800">{t.badge_privacy_title}</div>
-                  <div className="text-xs text-gray-500">{t.badge_privacy_sub}</div>
-                </div>
+              {/* Badge 3: No data stored */}
+              <div className="flex items-center gap-2 px-6">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="10" cy="10" r="8.5" stroke="#6B7280" strokeWidth="1.5"/>
+                  <line x1="5.5" y1="10" x2="14.5" y2="10" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <span className="text-sm font-medium text-gray-700">{t.badge_privacy}</span>
               </div>
 
             </div>
