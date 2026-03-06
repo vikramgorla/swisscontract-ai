@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://swisscontract.ai/sitemap.xml

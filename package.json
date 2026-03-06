@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "build": "./node_modules/.bin/next build",
+    "start": "./node_modules/.bin/next start -p ${PORT:-3000} -H 0.0.0.0"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.78.0",
+    "jsonrepair": "^3.13.2",
     "mammoth": "^1.11.0",
     "next": "16.1.6",
     "react": "19.2.3",

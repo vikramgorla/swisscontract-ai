@@ -32,7 +32,7 @@ swisscontract.ai was missing several key SEO signals that prevent it from rankin
 - og:image served as SVG (no rasterisation needed, Next.js serves from /public)
 - FAQPage schema enables Google FAQ rich results in SERPs
 - Organization schema establishes entity-level SEO signals
-- sitemap.ts uses Next.js 14 MetadataRoute API for automatic XML generation at /sitemap.xml
+- sitemap.ts uses Next.js MetadataRoute API for automatic XML generation at /sitemap.xml
 - "How it works" section only shown when no analysis is active (keeps UX clean)
 
 ## Open Questions

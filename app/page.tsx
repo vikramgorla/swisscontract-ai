@@ -1,6 +1,5 @@
-import { cookies } from 'next/headers';
 import type { Metadata } from 'next';
-import { Locale, translations } from './i18n/translations';
+import { translations } from './i18n/translations';
 import HomeClient from './components/HomeClient';
 
 export const metadata: Metadata = {
@@ -16,12 +15,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Home() {
-  const cookieStore = await cookies();
-  const locale = (cookieStore.get('locale')?.value ?? 'en') as Locale;
-  const validLocales: Locale[] = ['en', 'de', 'fr', 'it'];
-  const safeLocale: Locale = validLocales.includes(locale) ? locale : 'en';
-  const t = translations[safeLocale];
-
-  return <HomeClient locale={safeLocale} t={t} />;
+export default function Home() {
+  // Root path '/' is always English — other locales are at /de /fr /it
+  const t = translations['en'];
+  return <HomeClient locale="en" t={t} />;
 }

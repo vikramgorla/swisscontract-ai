@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
-import CookieBanner from './CookieBanner';
+
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, TranslationKeys } from '../i18n/translations';
 
@@ -29,79 +30,161 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
+  const [awarenessChecked, setAwarenessChecked] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
     setAnalysis(null);
     setError(null);
+    setWarning(null);
+    if (file.size > 5 * 1024 * 1024) {
+      setWarning(t.warn_large_file);
+    }
   };
 
   const handleAnalyse = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !awarenessChecked) return;
+
+    // Client-side size check before uploading — gives immediate feedback
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setError(t.error_file_too_large);
+      return;
+    }
 
     setIsAnalysing(true);
     setError(null);
+    setWarning(null);
+
+    // Read file into ArrayBuffer first — Google Drive / Android content URIs
+    // are streams that may not be locally available yet, causing fetch() to fail.
+    let fileBlob: Blob;
+    try {
+      const buffer = await selectedFile.arrayBuffer();
+      if (buffer.byteLength === 0) {
+        setError(t.error_file_unreadable);
+        setIsAnalysing(false);
+        return;
+      }
+      fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
+    } catch {
+      setError(t.error_file_unreadable);
+      setIsAnalysing(false);
+      return;
+    }
 
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('file', fileBlob, selectedFile.name);
     formData.append('locale', locale);
     if (question.trim()) {
       formData.append('question', question.trim());
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    let response: Response;
     try {
-      const response = await fetch('/api/analyse', {
+      response = await fetch('/api/analyse', {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Analysis failed. Please try again.');
-      } else {
-        setAnalysis(data.analysis);
-        setTimeout(() => {
-          document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    } catch {
-      setError(t.error_network);
-    } finally {
+      clearTimeout(timeoutId);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      setError(err instanceof Error && err.name === 'AbortError' ? t.error_timeout : t.error_network);
       setIsAnalysing(false);
+      return;
     }
+
+    let data: Record<string, unknown>;
+    try {
+      data = await response.json();
+    } catch {
+      // Server returned non-JSON (nginx error page, 502, etc.)
+      setError(t.error_network);
+      setIsAnalysing(false);
+      return;
+    }
+    if (!response.ok) {
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : data.error === 'ERR_DOC_TOO_LONG' ? t.error_doc_too_long : (String(data.error) || 'Analysis failed. Please try again.');
+      setError(errorMessage);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setAnalysis(data.analysis as any);
+      setTimeout(() => {
+        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+    setIsAnalysing(false);
   };
 
   const handleAskQuestion = async () => {
     if (!selectedFile || !question.trim()) return;
     setIsAnalysing(true);
     setError(null);
+    setWarning(null);
+
+    let fileBlob: Blob;
+    try {
+      const buffer = await selectedFile.arrayBuffer();
+      if (buffer.byteLength === 0) {
+        setError(t.error_file_unreadable);
+        setIsAnalysing(false);
+        return;
+      }
+      fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
+    } catch {
+      setError(t.error_file_unreadable);
+      setIsAnalysing(false);
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('file', fileBlob, selectedFile.name);
     formData.append('question', question.trim());
     formData.append('locale', locale);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    let response: Response;
     try {
-      const response = await fetch('/api/analyse', { method: 'POST', body: formData });
-      const data = await response.json();
-      if (!response.ok) {
-        setError(data.error || 'Analysis failed. Please try again.');
-      } else {
-        setAnalysis(data.analysis);
-      }
+      response = await fetch('/api/analyse', { method: 'POST', body: formData, signal: controller.signal });
+      clearTimeout(timeoutId);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      setError(err instanceof Error && err.name === 'AbortError' ? t.error_timeout : t.error_network);
+      setIsAnalysing(false);
+      return;
+    }
+
+    let data: Record<string, unknown>;
+    try {
+      data = await response.json();
     } catch {
       setError(t.error_network);
-    } finally {
       setIsAnalysing(false);
+      return;
     }
+    if (!response.ok) {
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : data.error === 'ERR_DOC_TOO_LONG' ? t.error_doc_too_long : (String(data.error) || 'Analysis failed. Please try again.');
+      setError(errorMessage);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setAnalysis(data.analysis as any);
+    }
+    setIsAnalysing(false);
   };
 
   const handleReset = () => {
     setSelectedFile(null);
     setAnalysis(null);
     setError(null);
+    setWarning(null);
     setQuestion('');
+    setAwarenessChecked(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -125,7 +208,9 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
         "NDA analysis",
         "Insurance contract analysis",
         "PDF and Word document support",
-        "Private — documents not stored"
+        "Private — documents not stored",
+        "Swiss AI — powered by Apertus 70B",
+        "AI runs on infrastructure hosted in Switzerland"
       ]
     },
     {
@@ -156,6 +241,8 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     <path key="lock" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />,
   ];
 
+
+
   return (
     <main className="min-h-screen bg-white">
       <script
@@ -166,7 +253,6 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       <header className="border-b border-gray-100 bg-white sticky top-0 z-10 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Document + magnifying glass icon */}
             <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -187,25 +273,6 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       {/* Hero */}
       <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-20 text-center">
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-3 sm:mb-6">
-            <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-green-100">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              {t.privacy_badge}
-            </div>
-            <a
-              href="https://github.com/vikramgorla/swisscontract-ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-200 hover:bg-gray-200 transition-colors"
-            >
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-              </svg>
-              {t.opensource_badge}
-            </a>
-          </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-3 sm:mb-5">
             {t.h1}<br className="hidden sm:block" />
             <span className="text-red-600"> {t.h1_accent}</span>
@@ -213,6 +280,48 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           <p className="text-base sm:text-xl text-gray-500 max-w-2xl mx-auto mb-4 sm:mb-6 leading-relaxed">
             {t.subtitle}
           </p>
+
+          {/* Trust badges — single line, 3 items */}
+          {!analysis && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-0 my-6">
+
+              {/* Badge 1: Hosted in Switzerland */}
+              <div className="flex items-center gap-2 px-6">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect width="20" height="20" rx="2" fill="#D52B1E"/>
+                  <rect x="8.5" y="3.5" width="3" height="13" fill="white"/>
+                  <rect x="3.5" y="8.5" width="13" height="3" fill="white"/>
+                </svg>
+                <span className="text-sm font-medium text-gray-700">{t.badge_hosted}</span>
+              </div>
+
+              <div className="hidden sm:block w-px h-5 bg-gray-200" />
+
+              {/* Badge 2: Swiss AI · Apertus 70B */}
+              <div className="flex items-center gap-2 px-6">
+                <Image
+                  src="/apertus-logo.jpg"
+                  alt="Apertus"
+                  width={20}
+                  height={20}
+                  className="rounded-sm object-cover flex-shrink-0"
+                />
+                <span className="text-sm font-medium text-gray-700">{t.badge_ai}</span>
+              </div>
+
+              <div className="hidden sm:block w-px h-5 bg-gray-200" />
+
+              {/* Badge 3: No data stored */}
+              <div className="flex items-center gap-2 px-6">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="10" cy="10" r="8.5" stroke="#6B7280" strokeWidth="1.5"/>
+                  <line x1="5.5" y1="10" x2="14.5" y2="10" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <span className="text-sm font-medium text-gray-700">{t.badge_privacy}</span>
+              </div>
+
+            </div>
+          )}
 
           {/* Upload + Analyse area */}
           {!analysis && (
@@ -244,12 +353,46 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                 </div>
               )}
 
+              {warning && !error && (
+                <div className="mt-4 flex items-start gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-left">
+                  <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  <p className="text-sm">{warning}</p>
+                </div>
+              )}
+
+              {/* nFADP awareness checkbox */}
+              <label className="mt-4 flex items-start gap-3 text-left cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={awarenessChecked}
+                  onChange={(e) => setAwarenessChecked(e.target.checked)}
+                  disabled={isAnalysing}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
+                />
+                <span className="text-xs text-gray-600 leading-relaxed">
+                  {t.awareness_checkbox_pre}{' '}
+                  <strong className="text-gray-800">{t.awareness_checkbox_no_store}</strong>
+                  {t.awareness_checkbox_mid}{' '}
+                  <strong className="text-gray-800">{t.awareness_checkbox_no_third_party}</strong>
+                  {' '}{t.awareness_checkbox_post}{' '}
+                  <a
+                    href="https://github.com/vikramgorla/swisscontract-ai"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-red-600 transition-colors"
+                  >{t.awareness_checkbox_opensource}</a>
+                  .
+                </span>
+              </label>
+
               <button
                 onClick={handleAnalyse}
-                disabled={!selectedFile || isAnalysing}
+                disabled={!selectedFile || isAnalysing || !awarenessChecked}
                 className={`
                   mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
-                  ${selectedFile && !isAnalysing
+                  ${selectedFile && !isAnalysing && awarenessChecked
                     ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }
@@ -270,7 +413,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
         </div>
       </section>
 
-      {/* Results */}
+      {/* Results — Single Model View */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
           {/* Question panel */}
@@ -330,7 +473,30 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             </div>
           )}
 
-          <AnalysisResult analysis={analysis} onReset={handleReset} resetLabel={t.results_reset} languageLabel={t.language_label} />
+          <AnalysisResult
+            analysis={analysis}
+            onReset={handleReset}
+            resetLabel={t.results_reset}
+            languageLabel={t.language_label}
+            languageNames={t.language_names}
+            contractTypeLabels={{
+              employment: t.contract_type_employment,
+              tenancy: t.contract_type_tenancy,
+              NDA: t.contract_type_nda,
+              freelance: t.contract_type_freelance,
+              insurance: t.contract_type_insurance,
+              other: t.contract_type_other,
+            }}
+            labels={{
+              summary: t.result_summary,
+              keyTerms: t.result_key_terms,
+              redFlags: t.result_red_flags,
+              positiveClauses: t.result_positive_clauses,
+              swissLaw: t.result_swiss_law,
+              yourQuestion: t.result_your_question,
+              disclaimer: t.result_disclaimer,
+            }}
+          />
         </section>
       )}
 
@@ -438,7 +604,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
               {t.footer_disclaimer}
             </div>
             <div className="flex items-center gap-4 text-xs text-gray-400">
-              <a href="/privacy" className="hover:text-gray-600 transition-colors">{t.footer_privacy}</a>
+              <a href={`/privacy?lang=${locale}`} className="hover:text-gray-600 transition-colors">{t.footer_privacy}</a>
               <span>·</span>
               <a
                 href="https://github.com/vikramgorla/swisscontract-ai"
@@ -457,7 +623,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           </div>
         </div>
       </footer>
-      <CookieBanner locale={locale} />
+      
     </main>
   );
 }

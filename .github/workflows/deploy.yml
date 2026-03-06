@@ -1,8 +1,8 @@
-name: Deploy to Vercel
+name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, preprod]
     paths:
       - 'app/**'
       - 'public/**'
@@ -11,36 +11,121 @@ on:
       - 'next.config.ts'
       - 'tsconfig.json'
       - 'postcss.config.mjs'
-      - '.github/workflows/**'
+      - 'proxy.ts'
+      - 'Dockerfile'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
 
-env:
-  VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.ref_name == 'main' && 'production' || github.ref_name }}
+    timeout-minutes: 30
+
+    env:
+      ENVIRONMENT: ${{ github.ref_name == 'main' && 'production' || github.ref_name }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          node-version: '22'
-          cache: 'npm'
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/vikramgorla/swisscontract-ai:${{ env.ENVIRONMENT }}
+          build-args: |
+            NEXT_PUBLIC_ENV=${{ env.ENVIRONMENT }}
+          cache-from: type=gha,scope=${{ env.ENVIRONMENT }}
+          cache-to: type=gha,mode=max,scope=${{ env.ENVIRONMENT }}
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
-      - name: Pull Vercel environment
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to VPS
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USER: ${{ secrets.VPS_USER }}
+          DOMAIN: ${{ vars.DOMAIN }}
+          INFOMANIAK_AI_TOKEN: ${{ secrets.INFOMANIAK_AI_TOKEN }}
+          INFOMANIAK_AI_PRODUCT_ID: ${{ secrets.INFOMANIAK_AI_PRODUCT_ID }}
+          GITHUB_TOKEN_FOR_DOCKER: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
 
-      - name: Build
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          ssh "$USER@$HOST" \
+            ENVIRONMENT="$ENVIRONMENT" \
+            DOMAIN="$DOMAIN" \
+            INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
+            INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
+            GITHUB_TOKEN_FOR_DOCKER="$GITHUB_TOKEN_FOR_DOCKER" \
+            GITHUB_ACTOR="$GITHUB_ACTOR" \
+            bash << 'ENDSSH'
+          set -e
+          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:${ENVIRONMENT}"
 
-      - name: Deploy
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          echo "$GITHUB_TOKEN_FOR_DOCKER" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+          docker pull "$IMAGE"
+
+          docker stop "swisscontract-${ENVIRONMENT}" 2>/dev/null || true
+          docker rm   "swisscontract-${ENVIRONMENT}" 2>/dev/null || true
+
+          docker network create traefik-net 2>/dev/null || true
+
+          docker run -d \
+            --name "swisscontract-${ENVIRONMENT}" \
+            --restart unless-stopped \
+            --network traefik-net \
+            -e INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
+            -e INFOMANIAK_AI_PRODUCT_ID="$INFOMANIAK_AI_PRODUCT_ID" \
+            -e NEXT_PUBLIC_ENV="$ENVIRONMENT" \
+            -e NODE_ENV=production \
+            -e PORT=3000 \
+            -e HOSTNAME=0.0.0.0 \
+            --label "traefik.enable=true" \
+            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.rule=Host(\`${DOMAIN}\`)" \
+            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.entrypoints=websecure" \
+            --label "traefik.http.routers.swisscontract-${ENVIRONMENT}.tls.certresolver=letsencrypt" \
+            --label "traefik.http.services.swisscontract-${ENVIRONMENT}.loadbalancer.server.port=3000" \
+            "$IMAGE"
+
+          sleep 10
+          for i in 1 2 3 4 5; do
+            STATUS=$(docker exec "swisscontract-${ENVIRONMENT}" \
+              wget -qO- http://localhost:3000/api/health 2>/dev/null || true)
+            echo "$STATUS" | grep -q '"ok"' && echo "Healthy ✅" && break
+            echo "Attempt $i — retrying in 5s..."
+            sleep 5
+          done
+
+          docker image prune -f
+          ENDSSH
+
+      - name: External health check
+        env:
+          DOMAIN: ${{ vars.DOMAIN }}
+        run: |
+          sleep 5
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://${DOMAIN}/api/health" --max-time 20)
+          echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
+          [ "$HTTP" = "200" ] || exit 1
+          echo "✅ Deployment complete"

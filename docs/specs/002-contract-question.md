@@ -40,13 +40,13 @@ After getting an analysis, users want a specific answer to their own question ab
   - Style: `bg-indigo-50 border-indigo-200` (distinct from other sections)
 
 ## Acceptance Criteria
-- [ ] Question input shown below upload zone
-- [ ] Placeholder with example question
-- [ ] Question sent with FormData on analyse
-- [ ] API handles question presence/absence gracefully
-- [ ] Answer shown at top of results when question was asked
-- [ ] No visible change when no question asked
-- [ ] Question cleared on reset
+- [x] Question input shown below upload zone
+- [x] Placeholder with example question
+- [x] Question sent with FormData on analyse
+- [x] API handles question presence/absence gracefully
+- [x] Answer shown at top of results when question was asked
+- [x] No visible change when no question asked
+- [x] Question cleared on reset
 
 ## What This Is NOT
 - Not a multi-turn chat

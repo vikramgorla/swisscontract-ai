@@ -1,5 +1,5 @@
-// Rate limiting — in-memory, per Vercel instance.
-// Resets on cold start, but effective for abuse prevention.
+// Rate limiting — in-memory, per server instance.
+// Resets on restart, but effective for abuse prevention.
 
 const LIMIT = 5;
 const WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours

@@ -25,9 +25,7 @@ export default function LanguageSwitcher({ current }: { current: string }) {
   }, []);
 
   const switchLocale = (code: string) => {
-    document.cookie = `locale=${code};path=/;max-age=31536000`;
     setOpen(false);
-    // Navigate to the locale sub-path
     const path = code === 'en' ? '/' : `/${code}`;
     router.push(path);
   };

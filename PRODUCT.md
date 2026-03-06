@@ -1,8 +1,9 @@
 # PRODUCT.md — swisscontract.ai
 
 **Live:** https://swisscontract.ai  
+**Preprod:** https://preprod.swisscontract.ai  
 **Repo:** https://github.com/vikramgorla/swisscontract-ai  
-**Stack:** Next.js 16, TypeScript, Tailwind CSS, Claude API, Vercel
+**Stack:** Next.js 16, TypeScript, Tailwind CSS, Infomaniak AI (Apertus 70B)
 
 ---
 
@@ -10,7 +11,7 @@
 
 swisscontract.ai lets anyone in Switzerland upload a contract and get an instant plain-language AI analysis — key clauses, red flags, positive terms, and Switzerland-specific legal context.
 
-No account required. No data stored.
+No account required. No data stored. 100% Swiss infrastructure.
 
 ---
 
@@ -27,9 +28,10 @@ No account required. No data stored.
 - Question answered inline at the top of results
 - Re-submits contract + question to AI, no separate storage
 
-### ✅ Scanned PDF OCR — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
-- Image-only PDFs (scanned contracts) supported via Claude vision OCR
-- Fallback triggers automatically when text extraction returns < 100 chars
+### ✅ Scanned PDF Handling — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
+- Scanned/image-only PDFs detected when text extraction returns < 100 chars
+- Clear error message asks user to upload a searchable (text-based) PDF or Word document
+- No OCR is performed — deferred due to Node.js compatibility constraints
 
 ### ✅ Multilingual UI — [SPEC-005](docs/specs/005-multilingual.md)
 - Full UI in English, German, French, Italian
@@ -39,8 +41,18 @@ No account required. No data stored.
 ### ✅ SEO & Trust — [SPEC-003](docs/specs/003-seo-improvements.md)
 - og:image, sitemap.xml, robots.txt, FAQPage schema
 - Privacy Promise section on homepage
-- Cookie consent banner (GDPR/nFADP compliant)
-- GA fires only after consent
+- No analytics, no cookies — zero tracking
+
+### ✅ Swiss Sovereignty — [SPEC-006](docs/specs/006-swiss-model-comparison.md)
+- **Apertus 70B** — Swiss-sovereign LLM, sole AI model
+- Hosted by Infomaniak on Swiss data centres
+- No analytics, no tracking, no third-party data flows outside Switzerland
+- Swiss sovereignty badges on homepage (3 badges: hosted in CH, Swiss AI, no data stored)
+- Awareness checkbox (required before analysis) — user acknowledges third-party data obligations
+- Updated privacy policy: Infomaniak section, third-party data warning
+- All 4 locales (EN/DE/FR/IT) updated
+
+**Note:** The multi-model comparison mode (Qwen3, Kimi K2.5, Apertus) was explored but not shipped. Apertus 70B is the sole model.
 
 ---
 
@@ -51,11 +63,11 @@ No account required. No data stored.
 | Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
-| AI | Anthropic Claude API (`claude-sonnet-4-5`) |
-| PDF parsing | unpdf + Claude vision OCR fallback |
+| AI | Infomaniak AI API (Apertus 70B — Swiss-sovereign) |
+| PDF parsing | unpdf |
 | DOCX parsing | mammoth |
-| Hosting | Vercel |
-| CI/CD | GitHub Actions → Vercel (production environment) |
+| Hosting | Infomaniak VPS with Docker + Traefik |
+| CI/CD | GitHub Actions → Docker → VPS deploy |
 
 ---
 
@@ -63,8 +75,10 @@ No account required. No data stored.
 
 1. **Privacy by design** — no persistent storage, ephemeral processing only
 2. **Swiss-first** — analysis grounded in Swiss legal context (OR, CO, tenancy law)
-3. **Plain language** — jargon-free output for non-lawyers
-4. **Accessible** — no account, works on mobile, 4 languages
+3. **Swiss sovereignty** — all AI processing on Swiss infrastructure (Infomaniak)
+4. **Plain language** — jargon-free output for non-lawyers
+5. **Accessible** — no account, works on mobile, 4 languages
+6. **Transparency** — awareness checkbox, open source, privacy policy explains data flow
 
 ---
 
