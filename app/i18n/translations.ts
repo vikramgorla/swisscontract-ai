@@ -111,14 +111,12 @@ export const translations = {
     awareness_checkbox_no_third_party: 'informing those parties',
     awareness_checkbox_post: 'that their data was processed by an AI system.',
     awareness_checkbox_opensource: 'View source code',
-    badge_hosted: 'Hosted in Switzerland',
-    badge_hosted_sub: 'AI runs on infrastructure in Switzerland',
-    badge_swiss_ai: 'Swiss AI',
-    badge_swiss_ai_sub: 'Powered by Apertus 70B',
-    badge_zero_retention: 'Zero data retention',
-    badge_zero_retention_sub: 'Your contract is never stored',
-    badge_nfadp: 'Privacy-first',
-    badge_nfadp_sub: 'Designed with Swiss data protection in mind',
+    badge_hosted_title: 'Hosted in Switzerland',
+    badge_hosted_sub: 'Infomaniak infrastructure',
+    badge_ai_title: 'Swiss AI',
+    badge_ai_sub: 'Powered by Apertus 70B',
+    badge_privacy_title: 'Zero data retention',
+    badge_privacy_sub: 'Your contract is never stored',
     pp_title: 'Privacy Policy',
     pp_updated: 'Last updated: March 2026',
     pp_short_title: 'The short version',
@@ -275,14 +273,12 @@ export const translations = {
     awareness_checkbox_no_third_party: 'diese Parteien zu informieren',
     awareness_checkbox_post: 'dass ihre Daten von einem KI-System verarbeitet wurden.',
     awareness_checkbox_opensource: 'Quellcode ansehen',
-    badge_hosted: 'In der Schweiz gehostet',
-    badge_hosted_sub: 'KI läuft auf Infrastruktur in der Schweiz',
-    badge_swiss_ai: 'Schweizer KI',
-    badge_swiss_ai_sub: 'Powered by Apertus 70B',
-    badge_zero_retention: 'Keine Datenspeicherung',
-    badge_zero_retention_sub: 'Ihr Vertrag wird niemals gespeichert',
-    badge_nfadp: 'Datenschutz zuerst',
-    badge_nfadp_sub: 'Mit Blick auf das Schweizer Datenschutzrecht entwickelt',
+    badge_hosted_title: 'Gehostet in der Schweiz',
+    badge_hosted_sub: 'Infomaniak-Infrastruktur',
+    badge_ai_title: 'Schweizer KI',
+    badge_ai_sub: 'Powered by Apertus 70B',
+    badge_privacy_title: 'Keine Datenspeicherung',
+    badge_privacy_sub: 'Ihr Vertrag wird nie gespeichert',
     pp_title: 'Datenschutzerklärung',
     pp_updated: 'Letzte Aktualisierung: März 2026',
     pp_short_title: 'Die Kurzfassung',
@@ -439,14 +435,12 @@ export const translations = {
     awareness_checkbox_no_third_party: ' informer ces parties',
     awareness_checkbox_post: "que leurs données ont été traitées par un système d'IA.",
     awareness_checkbox_opensource: 'Voir le code source',
-    badge_hosted: 'Hébergé en Suisse',
-    badge_hosted_sub: "L'IA tourne sur une infrastructure en Suisse",
-    badge_swiss_ai: 'IA suisse',
-    badge_swiss_ai_sub: 'Propulsé par Apertus 70B',
-    badge_zero_retention: 'Zéro rétention de données',
-    badge_zero_retention_sub: "Votre contrat n'est jamais stocké",
-    badge_nfadp: 'Confidentialité d\'abord',
-    badge_nfadp_sub: 'Conçu en tenant compte de la protection des données suisse',
+    badge_hosted_title: 'Hébergé en Suisse',
+    badge_hosted_sub: 'Infrastructure Infomaniak',
+    badge_ai_title: 'IA suisse',
+    badge_ai_sub: 'Propulsé par Apertus 70B',
+    badge_privacy_title: 'Zéro rétention de données',
+    badge_privacy_sub: "Votre contrat n'est jamais stocké",
     pp_title: 'Politique de confidentialité',
     pp_updated: 'Dernière mise à jour : mars 2026',
     pp_short_title: 'La version courte',
@@ -603,14 +597,12 @@ export const translations = {
     awareness_checkbox_no_third_party: 'informare tali parti',
     awareness_checkbox_post: 'che i loro dati sono stati elaborati da un sistema di IA.',
     awareness_checkbox_opensource: 'Vedi il codice sorgente',
-    badge_hosted: 'Ospitato in Svizzera',
-    badge_hosted_sub: "L'IA gira su infrastruttura in Svizzera",
-    badge_swiss_ai: 'IA svizzera',
-    badge_swiss_ai_sub: 'Alimentato da Apertus 70B',
-    badge_zero_retention: 'Nessuna conservazione dei dati',
-    badge_zero_retention_sub: 'Il tuo contratto non viene mai archiviato',
-    badge_nfadp: 'Privacy prima di tutto',
-    badge_nfadp_sub: 'Progettato con la protezione dei dati svizzera in mente',
+    badge_hosted_title: 'Ospitato in Svizzera',
+    badge_hosted_sub: 'Infrastruttura Infomaniak',
+    badge_ai_title: 'IA svizzera',
+    badge_ai_sub: 'Alimentato da Apertus 70B',
+    badge_privacy_title: 'Zero conservazione dati',
+    badge_privacy_sub: 'Il tuo contratto non viene mai archiviato',
     pp_title: 'Informativa sulla privacy',
     pp_updated: 'Ultimo aggiornamento: marzo 2026',
     pp_short_title: 'La versione breve',
@@ -740,14 +732,12 @@ export type TranslationKeys = {
   awareness_checkbox_no_third_party: string;
   awareness_checkbox_post: string;
   awareness_checkbox_opensource: string;
-  badge_hosted: string;
+  badge_hosted_title: string;
   badge_hosted_sub: string;
-  badge_swiss_ai: string;
-  badge_swiss_ai_sub: string;
-  badge_zero_retention: string;
-  badge_zero_retention_sub: string;
-  badge_nfadp: string;
-  badge_nfadp_sub: string;
+  badge_ai_title: string;
+  badge_ai_sub: string;
+  badge_privacy_title: string;
+  badge_privacy_sub: string;
   pp_title: string;
   pp_updated: string;
   pp_short_title: string;

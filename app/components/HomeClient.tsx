@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -240,13 +241,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     <path key="lock" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />,
   ];
 
-  /* Swiss sovereignty badges */
-  const badges = [
-    { icon: '🇨🇭', title: t.badge_hosted, sub: t.badge_hosted_sub },
-    { icon: '🏔️', title: t.badge_swiss_ai, sub: t.badge_swiss_ai_sub },
-    { icon: '🔒', title: t.badge_zero_retention, sub: t.badge_zero_retention_sub },
-    { icon: '🛡️', title: t.badge_nfadp, sub: t.badge_nfadp_sub },
-  ];
+
 
   return (
     <main className="min-h-screen bg-white">
@@ -286,21 +281,49 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             {t.subtitle}
           </p>
 
-          {/* Swiss sovereignty badges */}
+          {/* Trust badges — 3 items, clean inline layout */}
           {!analysis && (
-            <div className="flex flex-wrap justify-center gap-2 mb-6 sm:mb-8">
-              {badges.map((b, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
-                >
-                  <span className="text-sm leading-none" role="img" aria-hidden="true">{b.icon}</span>
-                  <div className="text-left">
-                    <div className="text-xs font-medium text-gray-700 leading-tight">{b.title}</div>
-                    <div className="text-[10px] text-gray-400 leading-tight">{b.sub}</div>
-                  </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-8 mb-2">
+
+              {/* Badge 1: Hosted in Switzerland */}
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl leading-none">🇨🇭</span>
+                <div>
+                  <div className="text-sm font-semibold text-gray-800">{t.badge_hosted_title}</div>
+                  <div className="text-xs text-gray-500">{t.badge_hosted_sub}</div>
                 </div>
-              ))}
+              </div>
+
+              {/* Divider — hidden on mobile */}
+              <div className="hidden sm:block w-px h-8 bg-gray-200" />
+
+              {/* Badge 2: Swiss AI — Apertus logo */}
+              <div className="flex items-center gap-2.5">
+                <Image
+                  src="/apertus-logo.jpg"
+                  alt="Apertus"
+                  width={28}
+                  height={28}
+                  className="rounded-sm object-cover"
+                />
+                <div>
+                  <div className="text-sm font-semibold text-gray-800">{t.badge_ai_title}</div>
+                  <div className="text-xs text-gray-500">{t.badge_ai_sub}</div>
+                </div>
+              </div>
+
+              {/* Divider — hidden on mobile */}
+              <div className="hidden sm:block w-px h-8 bg-gray-200" />
+
+              {/* Badge 3: Zero data retention */}
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl leading-none">🔒</span>
+                <div>
+                  <div className="text-sm font-semibold text-gray-800">{t.badge_privacy_title}</div>
+                  <div className="text-xs text-gray-500">{t.badge_privacy_sub}</div>
+                </div>
+              </div>
+
             </div>
           )}
 
