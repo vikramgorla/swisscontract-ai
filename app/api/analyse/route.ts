@@ -141,12 +141,6 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Truncate if too long
-    const maxChars = 50000;
-    if (contractText.length > maxChars) {
-      contractText = contractText.substring(0, maxChars) + '\n\n[Document truncated — first 50,000 characters analysed]';
-    }
-
     // Build the full prompt
     let userContent = `Please analyse this contract:\n\n${contractText}`;
     if (question && question.trim().length > 0) {
