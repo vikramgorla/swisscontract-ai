@@ -51,7 +51,9 @@ export const translations = {
     og_locale: 'en_CH',
     error_short: 'Contract text is too short or empty. Please upload a valid contract document.',
     error_network: 'Network error. Please check your connection and try again.',
+    error_timeout: 'Analysis is taking longer than expected. Please try again — large documents can take up to 60 seconds.',
     error_scanned_pdf: 'This document appears to be a scanned PDF. Please upload a searchable (text-based) PDF, or copy the text into a Word document.',
+    warn_large_file: 'Large file detected (>2MB). Analysis may take up to 60 seconds — please be patient.',
     contract_type_employment: 'Employment Contract',
     contract_type_tenancy: 'Tenancy Agreement',
     contract_type_nda: 'Non-Disclosure Agreement',
@@ -202,7 +204,9 @@ export const translations = {
     og_locale: 'de_CH',
     error_short: 'Vertragstext ist zu kurz oder leer. Bitte laden Sie ein gültiges Vertragsdokument hoch.',
     error_network: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
+    error_timeout: 'Die Analyse dauert länger als erwartet. Bitte versuchen Sie es erneut — grosse Dokumente können bis zu 60 Sekunden benötigen.',
     error_scanned_pdf: 'Dieses Dokument scheint ein gescanntes PDF zu sein. Bitte laden Sie ein durchsuchbares (textbasiertes) PDF hoch oder kopieren Sie den Text in ein Word-Dokument.',
+    warn_large_file: 'Große Datei erkannt (>2MB). Die Analyse kann bis zu 60 Sekunden dauern — bitte haben Sie Geduld.',
     contract_type_employment: 'Arbeitsvertrag',
     contract_type_tenancy: 'Mietvertrag',
     contract_type_nda: 'Geheimhaltungsvereinbarung',
@@ -353,7 +357,9 @@ export const translations = {
     og_locale: 'fr_CH',
     error_short: 'Le texte du contrat est trop court ou vide. Veuillez télécharger un document contractuel valide.',
     error_network: 'Erreur réseau. Veuillez vérifier votre connexion.',
+    error_timeout: "L'analyse prend plus de temps que prévu. Veuillez réessayer — les documents volumineux peuvent prendre jusqu'à 60 secondes.",
     error_scanned_pdf: 'Ce document semble être un PDF scanné. Veuillez télécharger un PDF consultable (basé sur du texte) ou copier le texte dans un document Word.',
+    warn_large_file: "Fichier volumineux détecté (>2MB). L'analyse peut prendre jusqu'à 60 secondes — merci de patienter.",
     contract_type_employment: 'Contrat de travail',
     contract_type_tenancy: 'Contrat de bail',
     contract_type_nda: 'Accord de confidentialité',
@@ -504,7 +510,9 @@ export const translations = {
     og_locale: 'it_CH',
     error_short: 'Il testo del contratto è troppo breve o vuoto. Carica un documento contrattuale valido.',
     error_network: 'Errore di rete. Controlla la connessione.',
+    error_timeout: "L'analisi sta richiedendo più tempo del previsto. Riprova — i documenti di grandi dimensioni possono richiedere fino a 60 secondi.",
     error_scanned_pdf: 'Questo documento sembra essere un PDF scansionato. Caricate un PDF ricercabile (basato su testo) o copiate il testo in un documento Word.',
+    warn_large_file: "File di grandi dimensioni rilevato (>2MB). L'analisi può richiedere fino a 60 secondi — attendere.",
     contract_type_employment: 'Contratto di lavoro',
     contract_type_tenancy: 'Contratto di locazione',
     contract_type_nda: 'Accordo di riservatezza',
@@ -645,7 +653,9 @@ export type TranslationKeys = {
   og_locale: string;
   error_short: string;
   error_network: string;
+  error_timeout: string;
   error_scanned_pdf: string;
+  warn_large_file: string;
   contract_type_employment: string;
   contract_type_tenancy: string;
   contract_type_nda: string;

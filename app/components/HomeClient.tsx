@@ -29,6 +29,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
@@ -37,6 +38,10 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setSelectedFile(file);
     setAnalysis(null);
     setError(null);
+    setWarning(null);
+    if (file.size > 2 * 1024 * 1024) {
+      setWarning(t.warn_large_file);
+    }
   };
 
   const handleAnalyse = async () => {
@@ -44,6 +49,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
 
     setIsAnalysing(true);
     setError(null);
+    setWarning(null);
 
     const formData = new FormData();
     formData.append('file', selectedFile);
@@ -52,58 +58,74 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       formData.append('question', question.trim());
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    let response: Response;
     try {
-      const response = await fetch('/api/analyse', {
+      response = await fetch('/api/analyse', {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
-        setError(errorMessage);
-      } else {
-        setAnalysis(data.analysis);
-        setTimeout(() => {
-          document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    } catch {
-      setError(t.error_network);
-    } finally {
+      clearTimeout(timeoutId);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      setError(err instanceof Error && err.name === 'AbortError' ? t.error_timeout : t.error_network);
       setIsAnalysing(false);
+      return;
     }
+
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
+      setError(errorMessage);
+    } else {
+      setAnalysis(data.analysis);
+      setTimeout(() => {
+        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+    setIsAnalysing(false);
   };
 
   const handleAskQuestion = async () => {
     if (!selectedFile || !question.trim()) return;
     setIsAnalysing(true);
     setError(null);
+    setWarning(null);
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('question', question.trim());
     formData.append('locale', locale);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    let response: Response;
     try {
-      const response = await fetch('/api/analyse', { method: 'POST', body: formData });
-      const data = await response.json();
-      if (!response.ok) {
-        const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
-        setError(errorMessage);
-      } else {
-        setAnalysis(data.analysis);
-      }
-    } catch {
-      setError(t.error_network);
-    } finally {
+      response = await fetch('/api/analyse', { method: 'POST', body: formData, signal: controller.signal });
+      clearTimeout(timeoutId);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      setError(err instanceof Error && err.name === 'AbortError' ? t.error_timeout : t.error_network);
       setIsAnalysing(false);
+      return;
     }
+
+    const data = await response.json();
+    if (!response.ok) {
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
+      setError(errorMessage);
+    } else {
+      setAnalysis(data.analysis);
+    }
+    setIsAnalysing(false);
   };
 
   const handleReset = () => {
     setSelectedFile(null);
     setAnalysis(null);
     setError(null);
+    setWarning(null);
     setQuestion('');
     setAwarenessChecked(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -253,6 +275,15 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p className="text-sm">{error}</p>
+                </div>
+              )}
+
+              {warning && !error && (
+                <div className="mt-4 flex items-start gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-left">
+                  <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  <p className="text-sm">{warning}</p>
                 </div>
               )}
 
