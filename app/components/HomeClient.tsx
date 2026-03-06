@@ -81,12 +81,21 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       return;
     }
 
-    const data = await response.json();
+    let data: Record<string, unknown>;
+    try {
+      data = await response.json();
+    } catch {
+      // Server returned non-JSON (nginx error page, 502, etc.)
+      setError(t.error_network);
+      setIsAnalysing(false);
+      return;
+    }
     if (!response.ok) {
-      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (data.error || 'Analysis failed. Please try again.');
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (String(data.error) || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
-      setAnalysis(data.analysis);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setAnalysis(data.analysis as any);
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -117,9 +126,16 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       return;
     }
 
-    const data = await response.json();
+    let data: Record<string, unknown>;
+    try {
+      data = await response.json();
+    } catch {
+      setError(t.error_network);
+      setIsAnalysing(false);
+      return;
+    }
     if (!response.ok) {
-      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (data.error || 'Analysis failed. Please try again.');
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (String(data.error) || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
       setAnalysis(data.analysis);
