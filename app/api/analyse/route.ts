@@ -170,13 +170,21 @@ export async function POST(request: NextRequest) {
     const cleanedResponse = extractJSON(responseText);
     try {
       analysis = JSON.parse(cleanedResponse);
-    } catch {
+    } catch (parseErr1) {
+      console.error('JSON parse attempt 1 failed:', parseErr1 instanceof Error ? parseErr1.message : parseErr1);
+      console.error('Cleaned response (first 500):', cleanedResponse.slice(0, 500));
+      // Try to extract the outermost JSON object and parse again
       const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        analysis = JSON.parse(jsonMatch[0]);
+        try {
+          analysis = JSON.parse(jsonMatch[0]);
+        } catch (parseErr2) {
+          console.error('JSON parse attempt 2 failed:', parseErr2 instanceof Error ? parseErr2.message : parseErr2);
+          return NextResponse.json({ error: 'The AI returned an unexpected response format. Please try again.' }, { status: 500 });
+        }
       } else {
-        console.error('Failed to parse AI response as JSON');
-        return NextResponse.json({ error: 'Failed to parse analysis response. Please try again.' }, { status: 500 });
+        console.error('No JSON object found in response');
+        return NextResponse.json({ error: 'The AI returned an unexpected response format. Please try again.' }, { status: 500 });
       }
     }
 
