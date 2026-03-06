@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Locale, translations } from '../i18n/translations';
@@ -9,11 +9,22 @@ export const metadata: Metadata = {
   robots: 'index, follow',
 };
 
+function detectLocale(acceptLanguage: string | null): Locale {
+  if (!acceptLanguage) return 'en';
+  const valid: Locale[] = ['en', 'de', 'fr', 'it'];
+  const langs = acceptLanguage.split(',').map(p => p.trim().split(';')[0].trim().toLowerCase());
+  for (const lang of langs) {
+    const exact = valid.find(l => l === lang);
+    if (exact) return exact;
+    const prefix = valid.find(l => lang.startsWith(l));
+    if (prefix) return prefix;
+  }
+  return 'en';
+}
+
 export default async function PrivacyPage() {
-  const cookieStore = await cookies();
-  const locale = (cookieStore.get('locale')?.value ?? 'en') as Locale;
-  const validLocales: Locale[] = ['en', 'de', 'fr', 'it'];
-  const safeLocale: Locale = validLocales.includes(locale) ? locale : 'en';
+  const headerStore = await headers();
+  const safeLocale = detectLocale(headerStore.get('accept-language'));
   const t = translations[safeLocale];
 
   return (

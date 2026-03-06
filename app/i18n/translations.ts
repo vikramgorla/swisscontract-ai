@@ -123,7 +123,7 @@ export const translations = {
     pp_no_tracking_title: 'No analytics, no cookies',
     pp_no_tracking_body: 'We do not use Google Analytics or any other tracking service. We set no cookies and collect no usage data. There is nothing to accept or decline.',
     pp_lang_title: 'Language preference',
-    pp_lang_body: 'Your language preference (EN/DE/FR/IT) is stored as a cookie in your browser. It is used only to remember your chosen interface language and is never sent to any third party.',
+    pp_lang_body: 'Your language (EN/DE/FR/IT) is determined by the URL you visit — /de, /fr, /it, or the default at /. No preference is stored.',
     pp_no_collect_title: 'Data we do not collect',
     pp_no_collect_items: [
       'We do not collect your name, email, or any personal details.',
@@ -258,7 +258,7 @@ export const translations = {
     pp_no_tracking_title: 'Keine Analyse-Tools, keine Cookies',
     pp_no_tracking_body: 'Wir verwenden weder Google Analytics noch andere Tracking-Dienste. Wir setzen keine Cookies und erheben keine Nutzungsdaten. Es gibt nichts zu akzeptieren oder abzulehnen.',
     pp_lang_title: 'Spracheinstellung',
-    pp_lang_body: 'Ihre Spracheinstellung (EN/DE/FR/IT) wird als Cookie in Ihrem Browser gespeichert. Er dient ausschliesslich dazu, Ihre gewählte Sprache zu speichern, und wird niemals an Dritte weitergegeben.',
+    pp_lang_body: 'Ihre Sprache (DE/EN/FR/IT) wird durch die aufgerufene URL bestimmt — /de, /fr, /it oder die Standardseite /. Es werden keine Einstellungen gespeichert.',
     pp_no_collect_title: 'Daten, die wir nicht erheben',
     pp_no_collect_items: [
       'Wir erheben weder Ihren Namen, Ihre E-Mail-Adresse noch andere persönliche Daten.',
@@ -393,7 +393,7 @@ export const translations = {
     pp_no_tracking_title: 'Aucun outil d\'analyse, aucun cookie',
     pp_no_tracking_body: 'Nous n\'utilisons ni Google Analytics ni aucun autre service de suivi. Nous ne définissons aucun cookie et ne collectons aucune donnée d\'utilisation. Il n\'y a rien à accepter ou refuser.',
     pp_lang_title: 'Préférence linguistique',
-    pp_lang_body: 'Votre préférence linguistique (EN/DE/FR/IT) est enregistrée sous forme de cookie dans votre navigateur. Elle sert uniquement à mémoriser la langue choisie et n\'est jamais transmise à un tiers.',
+    pp_lang_body: "Votre langue (FR/EN/DE/IT) est déterminée par l'URL que vous visitez — /fr, /de, /it ou la page par défaut /. Aucune préférence n'est enregistrée.",
     pp_no_collect_title: 'Données que nous ne collectons pas',
     pp_no_collect_items: [
       'Nous ne collectons ni votre nom, ni votre e-mail, ni aucun détail personnel.',
@@ -528,7 +528,7 @@ export const translations = {
     pp_no_tracking_title: 'Nessuno strumento di analisi, nessun cookie',
     pp_no_tracking_body: 'Non utilizziamo Google Analytics né alcun altro servizio di tracciamento. Non impostiamo cookie e non raccogliamo dati di utilizzo. Non c\'è nulla da accettare o rifiutare.',
     pp_lang_title: 'Preferenza linguistica',
-    pp_lang_body: 'La vostra preferenza linguistica (EN/DE/FR/IT) viene salvata come cookie nel vostro browser. Serve unicamente a ricordare la lingua scelta e non viene mai trasmessa a terzi.',
+    pp_lang_body: "La lingua (IT/EN/DE/FR) è determinata dall'URL visitato — /it, /de, /fr o la pagina predefinita /. Nessuna preferenza viene memorizzata.",
     pp_no_collect_title: 'Dati che non raccogliamo',
     pp_no_collect_items: [
       'Non raccogliamo il vostro nome, e-mail o altri dati personali.',
