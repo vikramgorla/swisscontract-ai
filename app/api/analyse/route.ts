@@ -42,7 +42,7 @@ async function extractText(file: File): Promise<string> {
     const { text } = await pdfExtract(new Uint8Array(arrayBuffer.slice(0)), { mergePages: true });
 
     if (text.trim().length < 100) {
-      throw new Error('This document appears to be a scanned PDF. Please upload a searchable (text-based) PDF, or copy the text into a Word document.');
+      throw new Error('ERR_SCANNED_PDF');
     }
 
     return text;
@@ -137,8 +137,8 @@ export async function POST(request: NextRequest) {
 
     if (!contractText || contractText.trim().length < 50) {
       return NextResponse.json({
-        error: 'Could not extract text from this document. If it is a scanned PDF, try a higher quality scan or a searchable PDF version.',
-      }, { status: 400 });
+        error: 'ERR_SCANNED_PDF',
+      }, { status: 422 });
     }
 
     // Build the full prompt

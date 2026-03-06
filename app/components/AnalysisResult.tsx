@@ -24,9 +24,10 @@ interface AnalysisResultProps {
   resetLabel?: string;
   languageLabel?: string;
   compact?: boolean;
+  contractTypeLabels?: Record<string, string>;
 }
 
-const contractTypeLabels: Record<string, string> = {
+const contractTypeLabelsFallback: Record<string, string> = {
   employment: 'Employment Contract',
   tenancy: 'Tenancy Agreement',
   NDA: 'Non-Disclosure Agreement',
@@ -72,8 +73,8 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
   );
 }
 
-export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', compact = false }: AnalysisResultProps) {
-  const contractLabel = contractTypeLabels[analysis.contract_type] || 'Contract';
+export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', compact = false, contractTypeLabels: labelMap }: AnalysisResultProps) {
+  const contractLabel = (labelMap && labelMap[analysis.contract_type]) || contractTypeLabelsFallback[analysis.contract_type] || analysis.contract_type || 'Contract';
   const contractColor = contractTypeColors[analysis.contract_type] || contractTypeColors.other;
 
   return (

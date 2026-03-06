@@ -61,7 +61,8 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Analysis failed. Please try again.');
+        const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
+        setError(errorMessage);
       } else {
         setAnalysis(data.analysis);
         setTimeout(() => {
@@ -87,7 +88,8 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       const response = await fetch('/api/analyse', { method: 'POST', body: formData });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || 'Analysis failed. Please try again.');
+        const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
+        setError(errorMessage);
       } else {
         setAnalysis(data.analysis);
       }
@@ -365,7 +367,20 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             </div>
           )}
 
-          <AnalysisResult analysis={analysis} onReset={handleReset} resetLabel={t.results_reset} languageLabel={t.language_label} />
+          <AnalysisResult
+            analysis={analysis}
+            onReset={handleReset}
+            resetLabel={t.results_reset}
+            languageLabel={t.language_label}
+            contractTypeLabels={{
+              employment: t.contract_type_employment,
+              tenancy: t.contract_type_tenancy,
+              NDA: t.contract_type_nda,
+              freelance: t.contract_type_freelance,
+              insurance: t.contract_type_insurance,
+              other: t.contract_type_other,
+            }}
+          />
         </section>
       )}
 

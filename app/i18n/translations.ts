@@ -51,6 +51,13 @@ export const translations = {
     og_locale: 'en_CH',
     error_short: 'Contract text is too short or empty. Please upload a valid contract document.',
     error_network: 'Network error. Please check your connection and try again.',
+    error_scanned_pdf: 'This document appears to be a scanned PDF. Please upload a searchable (text-based) PDF, or copy the text into a Word document.',
+    contract_type_employment: 'Employment Contract',
+    contract_type_tenancy: 'Tenancy Agreement',
+    contract_type_nda: 'Non-Disclosure Agreement',
+    contract_type_freelance: 'Freelance Contract',
+    contract_type_insurance: 'Insurance Contract',
+    contract_type_other: 'Contract',
     file_change: 'Click to change file',
     analysing_time: 'This usually takes 10–20 seconds',
     question_placeholder_fallback: 'Ask a question about this contract…',
@@ -191,6 +198,13 @@ export const translations = {
     og_locale: 'de_CH',
     error_short: 'Vertragstext ist zu kurz oder leer. Bitte laden Sie ein gültiges Vertragsdokument hoch.',
     error_network: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
+    error_scanned_pdf: 'Dieses Dokument scheint ein gescanntes PDF zu sein. Bitte laden Sie ein durchsuchbares (textbasiertes) PDF hoch oder kopieren Sie den Text in ein Word-Dokument.',
+    contract_type_employment: 'Arbeitsvertrag',
+    contract_type_tenancy: 'Mietvertrag',
+    contract_type_nda: 'Geheimhaltungsvereinbarung',
+    contract_type_freelance: 'Freelance-Vertrag',
+    contract_type_insurance: 'Versicherungsvertrag',
+    contract_type_other: 'Vertrag',
     file_change: 'Zum Ändern klicken',
     analysing_time: 'Dies dauert normalerweise 10–20 Sekunden',
     question_placeholder_fallback: 'Stellen Sie eine Frage zu diesem Vertrag…',
@@ -331,6 +345,13 @@ export const translations = {
     og_locale: 'fr_CH',
     error_short: 'Le texte du contrat est trop court ou vide. Veuillez télécharger un document contractuel valide.',
     error_network: 'Erreur réseau. Veuillez vérifier votre connexion.',
+    error_scanned_pdf: 'Ce document semble être un PDF scanné. Veuillez télécharger un PDF consultable (basé sur du texte) ou copier le texte dans un document Word.',
+    contract_type_employment: 'Contrat de travail',
+    contract_type_tenancy: 'Contrat de bail',
+    contract_type_nda: 'Accord de confidentialité',
+    contract_type_freelance: 'Contrat freelance',
+    contract_type_insurance: "Contrat d'assurance",
+    contract_type_other: 'Contrat',
     file_change: 'Cliquer pour changer le fichier',
     analysing_time: 'Cela prend généralement 10 à 20 secondes',
     question_placeholder_fallback: 'Posez une question sur ce contrat…',
@@ -471,6 +492,13 @@ export const translations = {
     og_locale: 'it_CH',
     error_short: 'Il testo del contratto è troppo breve o vuoto. Carica un documento contrattuale valido.',
     error_network: 'Errore di rete. Controlla la connessione.',
+    error_scanned_pdf: 'Questo documento sembra essere un PDF scansionato. Caricate un PDF ricercabile (basato su testo) o copiate il testo in un documento Word.',
+    contract_type_employment: 'Contratto di lavoro',
+    contract_type_tenancy: 'Contratto di locazione',
+    contract_type_nda: 'Accordo di riservatezza',
+    contract_type_freelance: 'Contratto freelance',
+    contract_type_insurance: 'Contratto assicurativo',
+    contract_type_other: 'Contratto',
     file_change: 'Clicca per cambiare file',
     analysing_time: 'Di solito richiede 10-20 secondi',
     question_placeholder_fallback: 'Fai una domanda su questo contratto…',
@@ -601,6 +629,13 @@ export type TranslationKeys = {
   og_locale: string;
   error_short: string;
   error_network: string;
+  error_scanned_pdf: string;
+  contract_type_employment: string;
+  contract_type_tenancy: string;
+  contract_type_nda: string;
+  contract_type_freelance: string;
+  contract_type_insurance: string;
+  contract_type_other: string;
   file_change: string;
   analysing_time: string;
   question_placeholder_fallback: string;
