@@ -19,7 +19,7 @@ const SYSTEM_PROMPT = `You are a Swiss contract analysis assistant. Analyse the 
 Be practical and helpful. Use plain English. Avoid legal jargon.
 Format each item in key_terms, red_flags, positive_clauses as: { title: string, explanation: string }
 
-Return ONLY valid JSON, no markdown, no code blocks.`;
+Return ONLY valid JSON, no markdown, no code blocks. All string values must be on a single line — do not use line breaks inside string values.`;
 
 /**
  * Extract text from the uploaded file (PDF, DOCX, or plain text).
