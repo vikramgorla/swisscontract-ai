@@ -26,6 +26,15 @@ interface AnalysisResultProps {
   languageNames?: Record<string, string>;
   compact?: boolean;
   contractTypeLabels?: Record<string, string>;
+  labels?: {
+    summary: string;
+    keyTerms: string;
+    redFlags: string;
+    positiveClauses: string;
+    swissLaw: string;
+    yourQuestion: string;
+    disclaimer: string;
+  };
 }
 
 const contractTypeLabelsFallback: Record<string, string> = {
@@ -74,7 +83,16 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
   );
 }
 
-export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', languageNames, compact = false, contractTypeLabels: labelMap }: AnalysisResultProps) {
+export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', languageNames, compact = false, contractTypeLabels: labelMap, labels }: AnalysisResultProps) {
+  const l = labels ?? {
+    summary: 'Summary',
+    keyTerms: 'Key Terms & Clauses',
+    redFlags: 'Red Flags',
+    positiveClauses: 'Positive Clauses',
+    swissLaw: 'Swiss Law Context',
+    yourQuestion: 'Your Question Answered',
+    disclaimer: 'Not legal advice. This AI summary is for informational purposes only. Consult a qualified Swiss lawyer for legal matters.',
+  };
   const contractLabel = (labelMap && labelMap[analysis.contract_type]) || contractTypeLabelsFallback[analysis.contract_type] || analysis.contract_type || 'Contract';
   const contractColor = contractTypeColors[analysis.contract_type] || contractTypeColors.other;
   const displayLanguage = languageNames
@@ -113,7 +131,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            Your Question Answered
+            {l.yourQuestion}
           </h2>
           <p className="text-indigo-800 text-sm leading-relaxed">{analysis.question_answer}</p>
         </div>
@@ -125,7 +143,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Summary
+          {l.summary}
         </h2>
         <p className="text-gray-700 leading-relaxed whitespace-pre-line">{analysis.summary}</p>
       </div>
@@ -137,7 +155,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            Red Flags ({analysis.red_flags.length})
+            {l.redFlags} ({analysis.red_flags.length})
           </h2>
           <div className="space-y-3">
             {analysis.red_flags.map((flag, i) => (
@@ -157,7 +175,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Positive Clauses ({analysis.positive_clauses.length})
+            {l.positiveClauses} ({analysis.positive_clauses.length})
           </h2>
           <div className="space-y-3">
             {analysis.positive_clauses.map((clause, i) => (
@@ -177,7 +195,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            Key Terms & Clauses
+            {l.keyTerms}
           </h2>
           <div className="space-y-2">
             {analysis.key_terms.map((term, i) => (
@@ -194,7 +212,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Swiss Law Context
+            {l.swissLaw}
           </h2>
           <p className="text-blue-800 text-sm leading-relaxed whitespace-pre-line">{analysis.swiss_law_notes}</p>
         </div>
@@ -207,7 +225,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
           </svg>
           <p className="text-sm text-amber-800 leading-relaxed">
-            <strong>Not legal advice.</strong> This AI summary is for self-review purposes — to help you understand what you&apos;re reading before you sign. For binding legal decisions, always consult a qualified Swiss lawyer.
+            {l.disclaimer}
           </p>
         </div>
       )}

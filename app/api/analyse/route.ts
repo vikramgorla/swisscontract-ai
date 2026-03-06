@@ -152,9 +152,9 @@ export async function POST(request: NextRequest) {
 
     // Build the full prompt
     // Apertus 70B context limit: 16,384 tokens (~12,000 chars safe limit)
-    const MAX_CHARS = 12000;
+    const MAX_CHARS = 50000;
     if (contractText.length > MAX_CHARS) {
-      contractText = contractText.substring(0, MAX_CHARS) + '\n\n[Document truncated for analysis — first 12,000 characters]';
+      contractText = contractText.substring(0, MAX_CHARS) + '\n\n[Document truncated for analysis — first 50,000 characters]';
     }
 
     let userContent = `Please analyse this contract:\n\n${contractText}`;
@@ -254,7 +254,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Analysis error:', error instanceof Error ? error.message : 'Unknown error');
+    if (process.env.NEXT_PUBLIC_ENV === 'preprod') {
+      console.error('[preprod] Analysis error:', error instanceof Error ? error.message : 'Unknown error');
+    }
 
     if (error instanceof Error) {
       if (error.message.includes('context length') || error.message.includes('input tokens') || error.message.includes('maximum context')) {

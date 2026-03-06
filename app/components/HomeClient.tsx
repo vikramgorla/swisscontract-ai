@@ -468,6 +468,15 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
               insurance: t.contract_type_insurance,
               other: t.contract_type_other,
             }}
+            labels={{
+              summary: t.result_summary,
+              keyTerms: t.result_key_terms,
+              redFlags: t.result_red_flags,
+              positiveClauses: t.result_positive_clauses,
+              swissLaw: t.result_swiss_law,
+              yourQuestion: t.result_your_question,
+              disclaimer: t.result_disclaimer,
+            }}
           />
         </section>
       )}

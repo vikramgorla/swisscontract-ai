@@ -18,7 +18,7 @@ export const MODELS: ModelInfo[] = [
 
 // Infomaniak v2 API requires a product_id in the URL path.
 // Get it from: curl -H "Authorization: Bearer $TOKEN" https://api.infomaniak.com/1/ai
-const PRODUCT_ID = process.env.INFOMANIAK_PRODUCT_ID || '107324';
+const PRODUCT_ID = process.env.INFOMANIAK_PRODUCT_ID ?? '';
 const BASE_URL = `https://api.infomaniak.com/2/ai/${PRODUCT_ID}/openai/v1`;
 
 /**
@@ -74,6 +74,9 @@ export async function callAI(
   const apiKey = process.env.INFOMANIAK_AI_TOKEN || process.env.INFOMANIAK_API_TOKEN;
   if (!apiKey) {
     throw new Error('INFOMANIAK_AI_TOKEN not set.');
+  }
+  if (!PRODUCT_ID) {
+    throw new Error('INFOMANIAK_PRODUCT_ID not set.');
   }
 
   const response = await fetch(`${BASE_URL}/chat/completions`, {

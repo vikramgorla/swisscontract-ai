@@ -1,8 +1,8 @@
-name: Deploy to preprod (Docker)
+name: Deploy to production (Docker)
 
 on:
   push:
-    branches: [preprod]
+    branches: [main]
     paths:
       - 'app/**'
       - 'public/**'
@@ -13,7 +13,7 @@ on:
       - 'postcss.config.mjs'
       - 'proxy.ts'
       - 'Dockerfile'
-      - '.github/workflows/deploy-preprod.yml'
+      - '.github/workflows/deploy-prod.yml'
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ permissions:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: preprod
+    environment: production
     timeout-minutes: 30
 
     steps:
@@ -45,9 +45,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/vikramgorla/swisscontract-ai:preprod
+          tags: |
+            ghcr.io/vikramgorla/swisscontract-ai:prod
+            ghcr.io/vikramgorla/swisscontract-ai:latest
           build-args: |
-            NEXT_PUBLIC_ENV=preprod
+            NEXT_PUBLIC_ENV=production
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -69,32 +71,27 @@ jobs:
             INFOMANIAK_PRODUCT_ID="$INFOMANIAK_PRODUCT_ID" \
             bash << 'ENDSSH'
           set -e
+          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:prod"
 
-          IMAGE="ghcr.io/vikramgorla/swisscontract-ai:preprod"
-
-          echo "=== Pulling image ==="
           docker pull $IMAGE
 
-          echo "=== Stopping old container ==="
-          docker stop swisscontract-preprod 2>/dev/null || true
-          docker rm swisscontract-preprod 2>/dev/null || true
+          docker stop swisscontract-prod 2>/dev/null || true
+          docker rm swisscontract-prod 2>/dev/null || true
 
-          echo "=== Starting new container ==="
           docker run -d \
-            --name swisscontract-preprod \
+            --name swisscontract-prod \
             --restart unless-stopped \
-            -p 3000:3000 \
+            -p 3001:3000 \
             -e INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
             -e INFOMANIAK_PRODUCT_ID="$INFOMANIAK_PRODUCT_ID" \
-            -e NEXT_PUBLIC_ENV=preprod \
+            -e NEXT_PUBLIC_ENV=production \
             -e NODE_ENV=production \
             -e PORT=3000 \
             -e HOSTNAME=0.0.0.0 \
             $IMAGE
 
-          echo "=== Waiting for startup ==="
           sleep 8
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/health --max-time 10 || echo "000")
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3001/api/health --max-time 10 || echo "000")
           echo "Health check: HTTP $HTTP"
           [ "$HTTP" = "200" ] || exit 1
 
@@ -104,7 +101,7 @@ jobs:
       - name: Health check
         run: |
           sleep 5
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://preprod.swisscontract.ai/api/health" --max-time 20)
-          echo "preprod.swisscontract.ai → HTTP $HTTP"
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://swisscontract.ai/api/health" --max-time 20)
+          echo "swisscontract.ai → HTTP $HTTP"
           [ "$HTTP" = "200" ] || exit 1
-          echo "✅ Preprod health check passed"
+          echo "✅ Production health check passed"

@@ -23,6 +23,8 @@ interface UploadZoneProps {
     progress_done: string;
     file_change: string;
     analysing_time: string;
+    error_file_too_large: string;
+    error_invalid_file_type: string;
   };
 }
 
@@ -85,12 +87,12 @@ export default function UploadZone({ onFileSelect, isAnalysing, t }: UploadZoneP
     const hasAllowedExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
 
     if (!allowedTypes.includes(file.type) && !hasAllowedExtension) {
-      setError('Please upload a PDF, Word document (.docx), or text (.txt) file.');
+      setError(t.error_invalid_file_type);
       return;
     }
     
-    if (file.size > 5 * 1024 * 1024) {
-      setError('File is too large. Maximum size is 5MB.');
+    if (file.size > 10 * 1024 * 1024) {
+      setError(t.error_file_too_large);
       return;
     }
     

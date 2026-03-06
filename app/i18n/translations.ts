@@ -156,6 +156,14 @@ export const translations = {
     pp_opensource_body: 'swisscontract.ai is open source. You can review exactly how your contract is processed, what is sent to the AI, and what is discarded.',
     pp_rights_title: 'Your rights (nFADP / GDPR)',
     pp_rights_body: 'Because we do not store personal data or link any information to individuals, most data subject rights (access, deletion, portability) do not apply in practice — there is nothing to access or delete.',
+    result_summary: 'Summary',
+    result_key_terms: 'Key Terms & Clauses',
+    result_red_flags: 'Red Flags',
+    result_positive_clauses: 'Positive Clauses',
+    result_swiss_law: 'Swiss Law Context',
+    result_your_question: 'Your Question Answered',
+    result_disclaimer: 'Not legal advice. This AI summary is for informational purposes only. Consult a qualified Swiss lawyer for legal matters.',
+    error_invalid_file_type: 'Please upload a PDF, Word document (.docx), or text (.txt) file.',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -312,6 +320,14 @@ export const translations = {
     pp_opensource_body: 'swisscontract.ai ist Open Source. Sie können genau nachvollziehen, wie Ihr Vertrag verarbeitet wird, was an die KI gesendet wird und was gelöscht wird.',
     pp_rights_title: 'Ihre Rechte (nDSG / DSGVO)',
     pp_rights_body: 'Da wir keine personenbezogenen Daten speichern oder Informationen mit Einzelpersonen verknüpfen, sind die meisten Betroffenenrechte (Auskunft, Löschung, Datenportabilität) in der Praxis nicht anwendbar — es gibt nichts abzufragen oder zu löschen.',
+    result_summary: 'Zusammenfassung',
+    result_key_terms: 'Wichtige Klauseln',
+    result_red_flags: 'Risiken',
+    result_positive_clauses: 'Positive Klauseln',
+    result_swiss_law: 'Schweizer Rechtskontext',
+    result_your_question: 'Ihre Frage beantwortet',
+    result_disclaimer: 'Keine Rechtsberatung. Diese KI-Zusammenfassung dient nur zur Information. Konsultieren Sie für rechtliche Fragen einen qualifizierten Schweizer Anwalt.',
+    error_invalid_file_type: 'Bitte laden Sie eine PDF-, Word-Datei (.docx) oder Textdatei (.txt) hoch.',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -468,6 +484,14 @@ export const translations = {
     pp_opensource_body: 'swisscontract.ai est open source. Vous pouvez vérifier exactement comment votre contrat est traité, ce qui est envoyé à l\'IA et ce qui est supprimé.',
     pp_rights_title: 'Vos droits (nLPD / RGPD)',
     pp_rights_body: 'Étant donné que nous ne stockons pas de données personnelles et ne lions aucune information à des individus, la plupart des droits des personnes concernées (accès, suppression, portabilité) ne s\'appliquent pas en pratique — il n\'y a rien à consulter ou supprimer.',
+    result_summary: 'Résumé',
+    result_key_terms: 'Clauses importantes',
+    result_red_flags: 'Points d\'attention',
+    result_positive_clauses: 'Clauses positives',
+    result_swiss_law: 'Contexte juridique suisse',
+    result_your_question: 'Votre question répondue',
+    result_disclaimer: 'Pas un conseil juridique. Ce résumé IA est fourni à titre informatif uniquement. Consultez un avocat suisse qualifié pour toute question juridique.',
+    error_invalid_file_type: 'Veuillez télécharger un fichier PDF, Word (.docx) ou texte (.txt).',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -624,6 +648,14 @@ export const translations = {
     pp_opensource_body: 'swisscontract.ai è open source. Potete verificare esattamente come viene elaborato il vostro contratto, cosa viene inviato all\'IA e cosa viene eliminato.',
     pp_rights_title: 'I vostri diritti (nLPD / GDPR)',
     pp_rights_body: 'Dato che non conserviamo dati personali né colleghiamo informazioni a individui, la maggior parte dei diritti degli interessati (accesso, cancellazione, portabilità) non si applica in pratica — non c\'è nulla da consultare o cancellare.',
+    result_summary: 'Riepilogo',
+    result_key_terms: 'Clausole importanti',
+    result_red_flags: 'Punti di attenzione',
+    result_positive_clauses: 'Clausole positive',
+    result_swiss_law: 'Contesto giuridico svizzero',
+    result_your_question: 'La tua domanda risposta',
+    result_disclaimer: 'Non è una consulenza legale. Questo riepilogo IA è solo a scopo informativo. Consulta un avvocato svizzero qualificato per questioni legali.',
+    error_invalid_file_type: 'Carica un file PDF, Word (.docx) o testo (.txt).',
   },
 } as const;
 
@@ -736,4 +768,12 @@ export type TranslationKeys = {
   pp_opensource_body: string;
   pp_rights_title: string;
   pp_rights_body: string;
+  result_summary: string;
+  result_key_terms: string;
+  result_red_flags: string;
+  result_positive_clauses: string;
+  result_swiss_law: string;
+  result_your_question: string;
+  result_disclaimer: string;
+  error_invalid_file_type: string;
 };
