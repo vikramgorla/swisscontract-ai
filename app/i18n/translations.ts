@@ -10,7 +10,7 @@ export const translations = {
     subtitle: 'Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context. Powered by Swiss AI.',
     upload_title: 'Drop your contract here',
     upload_browse: 'click to browse',
-    upload_hint: 'PDF, Word (.docx) or .txt · Max 5MB · Max 20 pages',
+    upload_hint: 'PDF, Word (.docx) or .txt · Max 10MB · Max 20 pages',
     question_label: 'Your question',
     question_optional: '(optional)',
     analyse_btn: 'Analyse Contract',
@@ -53,7 +53,8 @@ export const translations = {
     error_network: 'Network error. Please check your connection and try again.',
     error_timeout: 'Analysis is taking longer than expected. Please try again — large documents can take up to 60 seconds.',
     error_scanned_pdf: 'This document appears to be a scanned PDF. Please upload a searchable (text-based) PDF, or copy the text into a Word document.',
-    warn_large_file: 'Large file detected (>2MB). Analysis may take up to 60 seconds — please be patient.',
+    error_file_too_large: 'File too large. Maximum size is 10MB.',
+    warn_large_file: 'Large file detected (>5MB). Analysis may take up to 60 seconds — please be patient.',
     contract_type_employment: 'Employment Contract',
     contract_type_tenancy: 'Tenancy Agreement',
     contract_type_nda: 'Non-Disclosure Agreement',
@@ -163,7 +164,7 @@ export const translations = {
     subtitle: 'Laden Sie Ihren Arbeits-, Miet-, Versicherungs- oder NDA-Vertrag hoch — erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken und Schweizer Rechtskontext. Powered by Schweizer KI.',
     upload_title: 'Vertrag hier ablegen',
     upload_browse: 'zum Durchsuchen klicken',
-    upload_hint: 'PDF, Word (.docx) oder .txt · Max. 5 MB · Max. 20 Seiten',
+    upload_hint: 'PDF, Word (.docx) oder .txt · Max. 10 MB · Max. 20 Seiten',
     question_label: 'Ihre Frage',
     question_optional: '(optional)',
     analyse_btn: 'Vertrag analysieren',
@@ -206,7 +207,8 @@ export const translations = {
     error_network: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
     error_timeout: 'Die Analyse dauert länger als erwartet. Bitte versuchen Sie es erneut — grosse Dokumente können bis zu 60 Sekunden benötigen.',
     error_scanned_pdf: 'Dieses Dokument scheint ein gescanntes PDF zu sein. Bitte laden Sie ein durchsuchbares (textbasiertes) PDF hoch oder kopieren Sie den Text in ein Word-Dokument.',
-    warn_large_file: 'Große Datei erkannt (>2MB). Die Analyse kann bis zu 60 Sekunden dauern — bitte haben Sie Geduld.',
+    error_file_too_large: 'Datei zu gross. Maximale Größe ist 10MB.',
+    warn_large_file: 'Große Datei erkannt (>5MB). Die Analyse kann bis zu 60 Sekunden dauern — bitte haben Sie Geduld.',
     contract_type_employment: 'Arbeitsvertrag',
     contract_type_tenancy: 'Mietvertrag',
     contract_type_nda: 'Geheimhaltungsvereinbarung',
@@ -316,7 +318,7 @@ export const translations = {
     subtitle: "Déposez votre contrat de travail, bail, assurance ou NDA — obtenez un résumé clair avec les points d'attention et le contexte juridique suisse. Propulsé par l'IA suisse.",
     upload_title: 'Déposez votre contrat ici',
     upload_browse: 'cliquez pour parcourir',
-    upload_hint: 'PDF, Word (.docx) ou .txt · Max 5 Mo · Max 20 pages',
+    upload_hint: 'PDF, Word (.docx) ou .txt · Max 10 Mo · Max 20 pages',
     question_label: 'Votre question',
     question_optional: '(optionnel)',
     analyse_btn: 'Analyser le contrat',
@@ -359,7 +361,8 @@ export const translations = {
     error_network: 'Erreur réseau. Veuillez vérifier votre connexion.',
     error_timeout: "L'analyse prend plus de temps que prévu. Veuillez réessayer — les documents volumineux peuvent prendre jusqu'à 60 secondes.",
     error_scanned_pdf: 'Ce document semble être un PDF scanné. Veuillez télécharger un PDF consultable (basé sur du texte) ou copier le texte dans un document Word.',
-    warn_large_file: "Fichier volumineux détecté (>2MB). L'analyse peut prendre jusqu'à 60 secondes — merci de patienter.",
+    error_file_too_large: 'Fichier trop volumineux. La taille maximale est de 10MB.',
+    warn_large_file: "Fichier volumineux détecté (>5MB). L'analyse peut prendre jusqu'à 60 secondes — merci de patienter.",
     contract_type_employment: 'Contrat de travail',
     contract_type_tenancy: 'Contrat de bail',
     contract_type_nda: 'Accord de confidentialité',
@@ -469,7 +472,7 @@ export const translations = {
     subtitle: "Carica il tuo contratto di lavoro, affitto, assicurazione o NDA — ottieni un riassunto chiaro con i rischi evidenziati e il contesto giuridico svizzero. Alimentato dall'IA svizzera.",
     upload_title: 'Trascina qui il tuo contratto',
     upload_browse: 'clicca per sfogliare',
-    upload_hint: 'PDF, Word (.docx) o .txt · Max 5 MB · Max 20 pagine',
+    upload_hint: 'PDF, Word (.docx) o .txt · Max 10 MB · Max 20 pagine',
     question_label: 'La tua domanda',
     question_optional: '(opzionale)',
     analyse_btn: 'Analizza il contratto',
@@ -512,7 +515,8 @@ export const translations = {
     error_network: 'Errore di rete. Controlla la connessione.',
     error_timeout: "L'analisi sta richiedendo più tempo del previsto. Riprova — i documenti di grandi dimensioni possono richiedere fino a 60 secondi.",
     error_scanned_pdf: 'Questo documento sembra essere un PDF scansionato. Caricate un PDF ricercabile (basato su testo) o copiate il testo in un documento Word.',
-    warn_large_file: "File di grandi dimensioni rilevato (>2MB). L'analisi può richiedere fino a 60 secondi — attendere.",
+    error_file_too_large: 'File troppo grande. La dimensione massima è 10MB.',
+    warn_large_file: "File di grandi dimensioni rilevato (>5MB). L'analisi può richiedere fino a 60 secondi — attendere.",
     contract_type_employment: 'Contratto di lavoro',
     contract_type_tenancy: 'Contratto di locazione',
     contract_type_nda: 'Accordo di riservatezza',
@@ -655,6 +659,7 @@ export type TranslationKeys = {
   error_network: string;
   error_timeout: string;
   error_scanned_pdf: string;
+  error_file_too_large: string;
   warn_large_file: string;
   contract_type_employment: string;
   contract_type_tenancy: string;

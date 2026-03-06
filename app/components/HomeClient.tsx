@@ -39,13 +39,19 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setAnalysis(null);
     setError(null);
     setWarning(null);
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       setWarning(t.warn_large_file);
     }
   };
 
   const handleAnalyse = async () => {
     if (!selectedFile || !awarenessChecked) return;
+
+    // Client-side size check before uploading — gives immediate feedback
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setError(t.error_file_too_large);
+      return;
+    }
 
     setIsAnalysing(true);
     setError(null);
@@ -77,7 +83,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
 
     const data = await response.json();
     if (!response.ok) {
-      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (data.error || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
       setAnalysis(data.analysis);
@@ -113,7 +119,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
 
     const data = await response.json();
     if (!response.ok) {
-      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : (data.error || 'Analysis failed. Please try again.');
+      const errorMessage = data.error === 'ERR_SCANNED_PDF' ? t.error_scanned_pdf : data.error === 'ERR_FILE_TOO_LARGE' ? t.error_file_too_large : (data.error || 'Analysis failed. Please try again.');
       setError(errorMessage);
     } else {
       setAnalysis(data.analysis);
