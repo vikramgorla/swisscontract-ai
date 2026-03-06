@@ -45,7 +45,7 @@ People living and working in Switzerland regularly encounter contracts written i
 ## Technical Notes
 
 ### Stack
-- **Frontend:** Next.js 14 App Router, TypeScript, Tailwind CSS
+- **Frontend:** Next.js 16 App Router, TypeScript, Tailwind CSS
 - **Backend:** Next.js API Route (`/api/analyse`) running on Node.js runtime
 - **AI:** Infomaniak AI API — Apertus 70B (`swiss-ai/Apertus-70B-Instruct-2509`), max 8192 output tokens
 - **PDF extraction:** `unpdf` library

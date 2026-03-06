@@ -43,14 +43,16 @@ No account required. No data stored. 100% Swiss infrastructure.
 - Privacy Promise section on homepage
 - No analytics, no cookies — zero tracking
 
-### ✅ Swiss Sovereignty — [SPEC-006](docs/specs/006-swiss-model-comparison.md) (updated)
+### ✅ Swiss Sovereignty — [SPEC-006](docs/specs/006-swiss-model-comparison.md)
 - **Apertus 70B** — Swiss-sovereign LLM, sole AI model
 - Hosted by Infomaniak on Swiss data centres
 - No analytics, no tracking, no third-party data flows outside Switzerland
-- Swiss sovereignty USP badges on homepage
-- nFADP awareness checkbox (required before analysis)
+- Swiss sovereignty badges on homepage (3 badges: hosted in CH, Swiss AI, no data stored)
+- Awareness checkbox (required before analysis) — user acknowledges third-party data obligations
 - Updated privacy policy: Infomaniak section, third-party data warning
 - All 4 locales (EN/DE/FR/IT) updated
+
+**Note:** The multi-model comparison mode (Qwen3, Kimi K2.5, Apertus) was explored but not shipped. Apertus 70B is the sole model.
 
 ---
 
@@ -64,8 +66,8 @@ No account required. No data stored. 100% Swiss infrastructure.
 | AI | Infomaniak AI API (Apertus 70B — Swiss-sovereign) |
 | PDF parsing | unpdf |
 | DOCX parsing | mammoth |
-| Hosting | Infomaniak / Swiss VPS |
-| CI/CD | GitHub → VPS deploy |
+| Hosting | Infomaniak VPS with Docker + Traefik |
+| CI/CD | GitHub Actions → Docker → VPS deploy |
 
 ---
 
@@ -76,7 +78,7 @@ No account required. No data stored. 100% Swiss infrastructure.
 3. **Swiss sovereignty** — all AI processing on Swiss infrastructure (Infomaniak)
 4. **Plain language** — jargon-free output for non-lawyers
 5. **Accessible** — no account, works on mobile, 4 languages
-6. **nFADP compliant** — awareness checkbox, transparent data processing
+6. **Transparency** — awareness checkbox, open source, privacy policy explains data flow
 
 ---
 
