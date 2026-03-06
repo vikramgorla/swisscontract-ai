@@ -4,6 +4,8 @@
 // Endpoint: https://api.infomaniak.com/1/ai/openai/v1/chat/completions
 // Auth: Bearer token from INFOMANIAK_AI_TOKEN env var
 
+import { jsonrepair } from 'jsonrepair';
+
 export interface ModelInfo {
   id: string;
   name: string;
@@ -21,150 +23,39 @@ const BASE_URL = `https://api.infomaniak.com/2/ai/${PRODUCT_ID}/openai/v1`;
 
 /**
  * Extract JSON from a response that may be wrapped in markdown code fences.
- * Infomaniak models (especially Apertus and Mistral) sometimes wrap output.
+ * Infomaniak models (especially Apertus) sometimes wrap output or emit malformed JSON.
+ * Uses jsonrepair to handle all structural issues robustly.
  */
 export function extractJSON(raw: string): string {
   // Strip <think>...</think> reasoning blocks (qwen3 and similar)
   let cleaned = raw.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
 
-  // Try to extract from markdown code fences first
+  // Extract from markdown code fences if present
   const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fenceMatch) {
     cleaned = fenceMatch[1].trim();
   } else {
-    // Extract the outermost JSON object if there's surrounding text
+    // Extract the outermost JSON object
     const objMatch = cleaned.match(/\{[\s\S]*\}/);
     if (objMatch) cleaned = objMatch[0];
   }
 
-  // Remove control characters (except \n \r \t) that break JSON.parse
+  // Remove control characters (except \n \r \t)
   cleaned = cleaned.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ' ');
 
-  // Fix literal newlines inside JSON string values (Apertus bug: emits \n\n inside strings)
-  // Walk the string and replace bare \n/\r inside quoted values with \n escape sequence
-  cleaned = fixNewlinesInStrings(cleaned);
-
-  // Fix trailing commas before ] or } (all models do this occasionally)
-  cleaned = cleaned.replace(/,(\s*[\]\}])/g, '$1');
-
-  // Fix missing commas between tokens (structural repair, outside strings only)
-  cleaned = fixMissingCommas(cleaned);
-
-  // Fix nested arrays wrapping objects — sometimes emits [[{...}]]
+  // Fix nested arrays wrapping objects — sometimes Apertus emits [[{...}]]
   cleaned = cleaned.replace(/\[\s*\[(\s*\{)/g, '[$1');
   cleaned = cleaned.replace(/(\})\s*\]\s*\]/g, '$1]');
 
-  // Fix truncated JSON — if response was cut off mid-stream, close open structures
-  cleaned = repairTruncatedJSON(cleaned);
+  // Use jsonrepair to fix everything else: missing commas, trailing commas,
+  // bare newlines in strings, truncated JSON, etc.
+  try {
+    cleaned = jsonrepair(cleaned);
+  } catch {
+    // jsonrepair failed — return as-is and let JSON.parse handle the error
+  }
 
   return cleaned.trim();
-}
-
-/**
- * Fix missing commas between JSON tokens outside string values.
- * Apertus sometimes emits: } "next_key" or ] "next_key" without a comma.
- */
-function fixMissingCommas(str: string): string {
-  let result = '';
-  let inString = false;
-  let escape = false;
-
-  for (let i = 0; i < str.length; i++) {
-    const c = str[i];
-    if (escape) { escape = false; result += c; continue; }
-    if (c === '\\' && inString) { escape = true; result += c; continue; }
-    if (c === '"') { inString = !inString; result += c; continue; }
-    if (!inString) {
-      // After } or ], skip whitespace, and if next non-space is " { [ add comma
-      if ((c === '}' || c === ']')) {
-        result += c;
-        // Look ahead: skip whitespace to see what follows
-        let j = i + 1;
-        while (j < str.length && (str[j] === ' ' || str[j] === '\n' || str[j] === '\r' || str[j] === '\t')) j++;
-        const next = str[j];
-        // If next token starts a new value but there's no comma, insert one
-        if (next === '"' || next === '{' || next === '[') {
-          // Only insert comma if this isn't already followed by } or ]
-          // (i.e. we're not at the end of an outer container)
-          result += ',';
-        }
-        continue;
-      }
-    }
-    result += c;
-  }
-  return result;
-}
-
-/**
- * Replace literal newlines/carriage-returns inside JSON string values with \n escape.
- * Apertus 70B emits multi-paragraph strings with bare \n which breaks JSON.parse.
- */
-function fixNewlinesInStrings(str: string): string {
-  let result = '';
-  let inString = false;
-  let escape = false;
-
-  for (let i = 0; i < str.length; i++) {
-    const c = str[i];
-    if (escape) {
-      escape = false;
-      result += c;
-      continue;
-    }
-    if (c === '\\' && inString) {
-      escape = true;
-      result += c;
-      continue;
-    }
-    if (c === '"') {
-      inString = !inString;
-      result += c;
-      continue;
-    }
-    if (inString && (c === '\n' || c === '\r')) {
-      // Replace bare newline inside string with JSON escape
-      result += c === '\n' ? '\\n' : '\\r';
-      continue;
-    }
-    result += c;
-  }
-  return result;
-}
-
-/**
- * Attempt to repair JSON truncated mid-output (e.g. due to token limits).
- * Closes any unclosed arrays/objects so JSON.parse has a chance to succeed.
- */
-function repairTruncatedJSON(str: string): string {
-  // Count unclosed brackets/braces
-  let inString = false;
-  let escape = false;
-  const stack: string[] = [];
-
-  for (let i = 0; i < str.length; i++) {
-    const c = str[i];
-    if (escape) { escape = false; continue; }
-    if (c === '\\' && inString) { escape = true; continue; }
-    if (c === '"') { inString = !inString; continue; }
-    if (inString) continue;
-    if (c === '{') stack.push('}');
-    else if (c === '[') stack.push(']');
-    else if (c === '}' || c === ']') stack.pop();
-  }
-
-  // If we're still inside a string, close it
-  if (inString) str += '"';
-
-  // Close any trailing comma before we add closing brackets
-  str = str.replace(/,\s*$/, '');
-
-  // Close unclosed structures
-  while (stack.length > 0) {
-    str += stack.pop();
-  }
-
-  return str;
 }
 
 /**

@@ -142,10 +142,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Truncate if too long
-    // Apertus 70B produces malformed JSON on very long inputs — keep prompt short
-    const maxChars = 8000;
+    const maxChars = 50000;
     if (contractText.length > maxChars) {
-      contractText = contractText.substring(0, maxChars) + '\n\n[Document truncated — first 8,000 characters analysed]';
+      contractText = contractText.substring(0, maxChars) + '\n\n[Document truncated — first 50,000 characters analysed]';
     }
 
     // Build the full prompt
@@ -174,13 +173,6 @@ export async function POST(request: NextRequest) {
     } catch (parseErr1) {
       console.error('JSON parse attempt 1 failed:', parseErr1 instanceof Error ? parseErr1.message : parseErr1);
       console.error('Cleaned response (first 500):', cleanedResponse.slice(0, 500));
-      // Log context around error position
-      const errMsg = parseErr1 instanceof Error ? parseErr1.message : '';
-      const posMatch = errMsg.match(/position (\d+)/);
-      if (posMatch) {
-        const pos = parseInt(posMatch[1]);
-        console.error(`Context at pos ${pos}:`, JSON.stringify(cleanedResponse.slice(Math.max(0, pos-100), pos+100)));
-      }
       // Try to extract the outermost JSON object and parse again
       const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
