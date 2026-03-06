@@ -28,13 +28,14 @@ No account required. No data stored. 100% Swiss infrastructure.
 - Question answered inline at the top of results
 - Re-submits contract + question to AI, no separate storage
 
-### ✅ Scanned PDF OCR — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
-- Image-only PDFs (scanned contracts) supported via AI-powered OCR
-- Fallback triggers automatically when text extraction returns < 100 chars
+### ✅ Scanned PDF Handling — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
+- Scanned/image-only PDFs detected when text extraction returns < 100 chars
+- Clear error message asks user to upload a searchable (text-based) PDF or Word document
+- No OCR is performed — deferred due to Node.js compatibility constraints
 
 ### ✅ Multilingual UI — [SPEC-005](docs/specs/005-multilingual.md)
 - Full UI in English, German, French, Italian
-- Language switcher in header (localStorage-based)
+- Language switcher in header (cookie-based)
 - Analysis results returned in the selected language
 
 ### ✅ SEO & Trust — [SPEC-003](docs/specs/003-seo-improvements.md)

@@ -50,7 +50,7 @@ People living and working in Switzerland regularly encounter contracts written i
 - **AI:** Infomaniak AI API — Apertus 70B (`swiss-ai/Apertus-70B-Instruct-2509`), max 8192 output tokens
 - **PDF extraction:** `unpdf` library
 - **DOCX extraction:** `mammoth` library
-- **Deployment:** Vercel (auto-deploy from `main` branch)
+- **Deployment:** VPS (Infomaniak) with Docker + Traefik, auto-deploy via GitHub Actions
 
 ### Privacy Architecture
 The system is designed with privacy as a hard constraint:
@@ -65,7 +65,7 @@ The system is designed with privacy as a hard constraint:
 - Implemented in `app/lib/rateLimit.ts` using an in-memory Map
 - Keyed by IP address (from `x-forwarded-for` or `x-real-ip` headers)
 - Limit: 5 requests per IP per 24-hour window
-- **Caveat:** Resets on server restart; not shared across Vercel edge instances. Sufficient for MVP abuse prevention.
+- **Caveat:** Resets on server restart; in-memory only, not shared across instances. Sufficient for MVP abuse prevention.
 
 ### AI Prompt Design
 The system prompt instructs the AI to:
@@ -98,7 +98,7 @@ The AI can analyse contracts in any language but the UI is English-first. The `l
 
 ## Open Questions
 
-- Should we add OCR support for scanned PDFs? (Would require a third-party OCR API or self-hosted Tesseract)
+- ~~Should we add OCR support for scanned PDFs?~~ → Evaluated and deferred. Scanned PDFs return a clear error asking for a text-based PDF. See SPEC-004.
 - Should rate limits be persisted (Redis) to survive server restarts and scale across instances?
 - Should we support German/French/Italian UI localisation?
 - What's the right page limit for larger contracts (e.g. complex employment agreements)?

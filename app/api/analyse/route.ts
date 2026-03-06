@@ -22,11 +22,11 @@ Format each item in key_terms, red_flags, positive_clauses as: { title: string, 
 Return ONLY valid JSON, no markdown, no code blocks. All string values must be on a single line — do not use line breaks inside string values.`;
 
 /**
- * Gate verbose logs to preprod only.
+ * Gate verbose logs to non-production environments only.
  */
 function debugLog(...args: unknown[]) {
-  if (process.env.NEXT_PUBLIC_ENV === 'preprod') {
-    console.error('[preprod]', ...args);
+  if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+    console.error('[debug]', ...args);
   }
 }
 
@@ -188,9 +188,9 @@ export async function POST(request: NextRequest) {
           parsed = JSON.parse(cleanedResponse);
         } catch (parseErr1) {
           debugLog(`Attempt ${attempt} - JSON parse failed:`, parseErr1 instanceof Error ? parseErr1.message : parseErr1);
-          if (process.env.NEXT_PUBLIC_ENV === 'preprod') {
-            console.error(`[preprod] attempt ${attempt} raw response:`, responseText.slice(0, 2000));
-            console.error(`[preprod] attempt ${attempt} cleaned:`, cleanedResponse.slice(0, 2000));
+          if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+            console.error(`[debug] attempt ${attempt} raw response:`, responseText.slice(0, 2000));
+            console.error(`[debug] attempt ${attempt} cleaned:`, cleanedResponse.slice(0, 2000));
           }
           // Try to extract outermost object
           const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
@@ -254,8 +254,8 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    if (process.env.NEXT_PUBLIC_ENV === 'preprod') {
-      console.error('[preprod] Analysis error:', error instanceof Error ? error.message : 'Unknown error');
+    if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+      console.error('[debug] Analysis error:', error instanceof Error ? error.message : 'Unknown error');
     }
 
     if (error instanceof Error) {

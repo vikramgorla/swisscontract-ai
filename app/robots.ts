@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const isPreprod = process.env.NEXT_PUBLIC_ENV === 'preprod';
+  const isProd = process.env.NEXT_PUBLIC_ENV === 'production';
 
-  if (isPreprod) {
+  if (!isProd) {
     return {
       rules: { userAgent: '*', disallow: '/' },
     };
