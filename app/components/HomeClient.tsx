@@ -57,14 +57,19 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setError(null);
     setWarning(null);
 
-    // Read file into ArrayBuffer first — Android Chrome content URIs can become
-    // unreadable after file picker closes, causing fetch() to throw immediately
+    // Read file into ArrayBuffer first — Google Drive / Android content URIs
+    // are streams that may not be locally available yet, causing fetch() to fail.
     let fileBlob: Blob;
     try {
       const buffer = await selectedFile.arrayBuffer();
+      if (buffer.byteLength === 0) {
+        setError(t.error_file_unreadable);
+        setIsAnalysing(false);
+        return;
+      }
       fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
     } catch {
-      setError(t.error_network);
+      setError(t.error_file_unreadable);
       setIsAnalysing(false);
       return;
     }
@@ -124,9 +129,14 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     let fileBlob: Blob;
     try {
       const buffer = await selectedFile.arrayBuffer();
+      if (buffer.byteLength === 0) {
+        setError(t.error_file_unreadable);
+        setIsAnalysing(false);
+        return;
+      }
       fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
     } catch {
-      setError(t.error_network);
+      setError(t.error_file_unreadable);
       setIsAnalysing(false);
       return;
     }
