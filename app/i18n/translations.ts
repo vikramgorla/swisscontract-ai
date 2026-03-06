@@ -89,7 +89,12 @@ export const translations = {
     why_free_p1: 'swisscontract.ai is free while we evaluate whether it\'s useful enough to sustain. We built this ourselves — just the two of us — as an experiment.',
     why_free_p2: 'If it grows, we\'ll find a way to cover costs — perhaps through partnerships with Swiss legal or insurance services, or a paid tier for heavy users. If it doesn\'t grow, we\'ll be honest about that too.',
     why_free_p3: 'No data sold. No hidden agenda. Just a tool we think Switzerland needs.',
-    awareness_checkbox: 'I understand that even though swisscontract.ai does not store any data, I should not include personal information of third parties in documents I upload. If my contract contains personal data of other parties, I am responsible for informing them that their data was processed by an AI system.',
+    awareness_checkbox_pre: 'I understand that',
+    awareness_checkbox_no_store: 'swisscontract.ai does not store any data',
+    awareness_checkbox_mid: '— but I should not upload documents containing personal data of third parties. By uploading, I accept responsibility for',
+    awareness_checkbox_no_third_party: 'informing those parties',
+    awareness_checkbox_post: 'that their data was processed by an AI system.',
+    awareness_checkbox_opensource: 'View source code',
     badge_hosted: 'Hosted in Switzerland',
     badge_hosted_sub: 'AI runs on infrastructure in Switzerland',
     badge_swiss_ai: 'Swiss AI',
@@ -224,7 +229,12 @@ export const translations = {
     why_free_p1: 'swisscontract.ai ist kostenlos, während wir evaluieren, ob es nützlich genug ist, um es weiterzubetreiben. Wir haben es selbst entwickelt — nur wir zwei — als Experiment.',
     why_free_p2: 'Wenn es wächst, werden wir einen Weg finden, die Kosten zu decken — vielleicht durch Partnerschaften mit Schweizer Rechts- oder Versicherungsdiensten, oder ein kostenpflichtiges Angebot für Vielnutzer. Wenn nicht, werden wir auch das offen kommunizieren.',
     why_free_p3: 'Keine Datenweitergabe. Keine versteckte Agenda. Nur ein Werkzeug, das die Schweiz braucht.',
-    awareness_checkbox: 'Ich verstehe, dass swisscontract.ai keine Daten speichert, ich jedoch keine persönlichen Daten Dritter in hochgeladene Dokumente einbeziehen sollte. Falls mein Vertrag personenbezogene Daten anderer Parteien enthält, bin ich dafür verantwortlich, diese darüber zu informieren, dass ihre Daten von einem KI-System verarbeitet wurden.',
+    awareness_checkbox_pre: 'Ich verstehe, dass',
+    awareness_checkbox_no_store: 'swisscontract.ai keine Daten speichert',
+    awareness_checkbox_mid: '— ich sollte jedoch keine Dokumente mit personenbezogenen Daten Dritter hochladen. Mit dem Hochladen übernehme ich die Verantwortung,',
+    awareness_checkbox_no_third_party: 'diese Parteien zu informieren',
+    awareness_checkbox_post: 'dass ihre Daten von einem KI-System verarbeitet wurden.',
+    awareness_checkbox_opensource: 'Quellcode ansehen',
     badge_hosted: 'In der Schweiz gehostet',
     badge_hosted_sub: 'KI läuft auf Infrastruktur in der Schweiz',
     badge_swiss_ai: 'Schweizer KI',
@@ -359,7 +369,12 @@ export const translations = {
     why_free_p1: 'swisscontract.ai est gratuit le temps d\'évaluer s\'il est suffisamment utile pour être pérennisé. Nous l\'avons construit nous-mêmes — à deux — comme une expérience.',
     why_free_p2: 'S\'il se développe, nous trouverons un moyen de couvrir les coûts — peut-être via des partenariats avec des services juridiques ou d\'assurance suisses, ou un accès payant pour les grands utilisateurs. Sinon, nous le dirons clairement.',
     why_free_p3: 'Aucune donnée vendue. Aucun agenda caché. Juste un outil dont la Suisse a besoin.',
-    awareness_checkbox: "Je comprends que même si swisscontract.ai ne stocke aucune donnée, je ne devrais pas inclure les données personnelles de tiers dans les documents que je télécharge. Si mon contrat contient des données personnelles d'autres parties, il m'incombe de les informer que leurs données ont été traitées par un système d'IA.",
+    awareness_checkbox_pre: 'Je comprends que',
+    awareness_checkbox_no_store: 'swisscontract.ai ne stocke aucune donnée',
+    awareness_checkbox_mid: "— mais je ne dois pas télécharger de documents contenant des données personnelles de tiers. En téléchargeant, j'accepte la responsabilité d'",
+    awareness_checkbox_no_third_party: 'informer ces parties',
+    awareness_checkbox_post: "que leurs données ont été traitées par un système d'IA.",
+    awareness_checkbox_opensource: 'Voir le code source',
     badge_hosted: 'Hébergé en Suisse',
     badge_hosted_sub: "L'IA tourne sur une infrastructure en Suisse",
     badge_swiss_ai: 'IA suisse',
@@ -494,7 +509,12 @@ export const translations = {
     why_free_p1: 'swisscontract.ai è gratuito mentre valutiamo se è abbastanza utile da sostenere. Lo abbiamo costruito noi stessi — in due — come esperimento.',
     why_free_p2: 'Se cresce, troveremo un modo per coprire i costi — forse attraverso partnership con servizi legali o assicurativi svizzeri, o un piano a pagamento per gli utenti più attivi. Se non cresce, lo diremo chiaramente.',
     why_free_p3: 'Nessun dato venduto. Nessuna agenda nascosta. Solo uno strumento di cui la Svizzera ha bisogno.',
-    awareness_checkbox: "Comprendo che, sebbene swisscontract.ai non memorizzi alcun dato, non dovrei includere dati personali di terzi nei documenti che carico. Se il mio contratto contiene dati personali di altre parti, sono responsabile di informarle che i loro dati sono stati elaborati da un sistema di IA.",
+    awareness_checkbox_pre: 'Comprendo che',
+    awareness_checkbox_no_store: 'swisscontract.ai non memorizza alcun dato',
+    awareness_checkbox_mid: '— ma non dovrei caricare documenti contenenti dati personali di terzi. Caricando, accetto la responsabilità di',
+    awareness_checkbox_no_third_party: 'informare tali parti',
+    awareness_checkbox_post: 'che i loro dati sono stati elaborati da un sistema di IA.',
+    awareness_checkbox_opensource: 'Vedi il codice sorgente',
     badge_hosted: 'Ospitato in Svizzera',
     badge_hosted_sub: "L'IA gira su infrastruttura in Svizzera",
     badge_swiss_ai: 'IA svizzera',
@@ -605,7 +625,12 @@ export type TranslationKeys = {
   why_free_p1: string;
   why_free_p2: string;
   why_free_p3: string;
-  awareness_checkbox: string;
+  awareness_checkbox_pre: string;
+  awareness_checkbox_no_store: string;
+  awareness_checkbox_mid: string;
+  awareness_checkbox_no_third_party: string;
+  awareness_checkbox_post: string;
+  awareness_checkbox_opensource: string;
   badge_hosted: string;
   badge_hosted_sub: string;
   badge_swiss_ai: string;
