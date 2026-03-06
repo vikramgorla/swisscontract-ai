@@ -268,7 +268,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                   <strong className="text-gray-800">{t.awareness_checkbox_no_store}</strong>
                   {t.awareness_checkbox_mid}{' '}
                   <strong className="text-gray-800">{t.awareness_checkbox_no_third_party}</strong>
-                  {t.awareness_checkbox_post}{' '}
+                  {' '}{t.awareness_checkbox_post}{' '}
                   <a
                     href="https://github.com/vikramgorla/swisscontract-ai"
                     target="_blank"

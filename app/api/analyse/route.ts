@@ -166,7 +166,6 @@ export async function POST(request: NextRequest) {
       analysis = JSON.parse(cleanedResponse);
     } catch (parseErr1) {
       console.error('JSON parse attempt 1 failed:', parseErr1 instanceof Error ? parseErr1.message : parseErr1);
-      console.error('Cleaned response (first 500):', cleanedResponse.slice(0, 500));
       // Try to extract the outermost JSON object and parse again
       const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
@@ -208,7 +207,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Analysis error:', error);
+    console.error('Analysis error:', error instanceof Error ? error.message : 'Unknown error');
 
     if (error instanceof Error) {
       if (error.message.includes('API') || error.message.includes('token')) {
