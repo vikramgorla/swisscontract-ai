@@ -22,6 +22,15 @@ Format each item in key_terms, red_flags, positive_clauses as: { title: string, 
 Return ONLY valid JSON, no markdown, no code blocks. All string values must be on a single line — do not use line breaks inside string values.`;
 
 /**
+ * Gate verbose logs to preprod only.
+ */
+function debugLog(...args: unknown[]) {
+  if (process.env.NEXT_PUBLIC_ENV === 'preprod') {
+    console.error('[preprod]', ...args);
+  }
+}
+
+/**
  * Extract text from the uploaded file (PDF, DOCX, or plain text).
  */
 async function extractText(file: File): Promise<string> {
@@ -153,38 +162,69 @@ export async function POST(request: NextRequest) {
     // Clear the contract text from memory
     contractText = '';
 
-    // Single model mode — Apertus 70B
+    // Retry loop — up to MAX_ATTEMPTS calls to Apertus before giving up
     const modelId = 'swiss-ai/Apertus-70B-Instruct-2509';
     const start = Date.now();
 
-    const responseText = await callAI(fullPrompt, undefined, modelId);
-    const durationMs = Date.now() - start;
+    let analysis: Record<string, unknown> | null = null;
+    let lastError: string = '';
+    let attempts = 0;
+    const MAX_ATTEMPTS = 2;
 
-    let analysis;
-    const cleanedResponse = extractJSON(responseText);
-    try {
-      analysis = JSON.parse(cleanedResponse);
-    } catch (parseErr1) {
-      console.error('JSON parse attempt 1 failed:', parseErr1 instanceof Error ? parseErr1.message : parseErr1);
-      // Try to extract the outermost JSON object and parse again
-      const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      attempts = attempt;
+      try {
+        const responseText = await callAI(fullPrompt, undefined, modelId);
+        const cleanedResponse = extractJSON(responseText);
+
+        let parsed: Record<string, unknown> | null = null;
         try {
-          analysis = JSON.parse(jsonMatch[0]);
-        } catch (parseErr2) {
-          console.error('JSON parse attempt 2 failed:', parseErr2 instanceof Error ? parseErr2.message : parseErr2);
-          return NextResponse.json({ error: 'The AI returned an unexpected response format. Please try again.' }, { status: 500 });
+          parsed = JSON.parse(cleanedResponse);
+        } catch (parseErr1) {
+          debugLog(`Attempt ${attempt} - JSON parse failed:`, parseErr1 instanceof Error ? parseErr1.message : parseErr1);
+          if (process.env.NEXT_PUBLIC_ENV === 'preprod') {
+            console.error(`[preprod] attempt ${attempt} raw response:`, responseText.slice(0, 2000));
+            console.error(`[preprod] attempt ${attempt} cleaned:`, cleanedResponse.slice(0, 2000));
+          }
+          // Try to extract outermost object
+          const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              parsed = JSON.parse(jsonMatch[0]);
+            } catch (parseErr2) {
+              debugLog(`Attempt ${attempt} - fallback parse also failed:`, parseErr2 instanceof Error ? parseErr2.message : parseErr2);
+              lastError = 'parse_failed';
+            }
+          } else {
+            debugLog(`Attempt ${attempt} - no JSON object found in response`);
+            lastError = 'no_json';
+          }
         }
-      } else {
-        console.error('No JSON object found in response');
-        return NextResponse.json({ error: 'The AI returned an unexpected response format. Please try again.' }, { status: 500 });
+
+        if (parsed) {
+          analysis = parsed;
+          break; // success — exit retry loop
+        }
+      } catch (callErr) {
+        debugLog(`Attempt ${attempt} - callAI failed:`, callErr instanceof Error ? callErr.message : callErr);
+        lastError = 'call_failed';
+        // Don't retry on API-level errors (auth, network) — only on parse failures
+        if (callErr instanceof Error && (callErr.message.includes('API') || callErr.message.includes('401') || callErr.message.includes('403'))) {
+          throw callErr; // re-throw to outer catch
+        }
       }
     }
 
+    if (!analysis) {
+      return NextResponse.json({ error: 'The AI returned an unexpected response format. Please try again.' }, { status: 500 });
+    }
+
+    const durationMs = Date.now() - start;
+
     // Sanitize array fields — coerce items to {title, explanation}
-    analysis.key_terms = sanitize(analysis.key_terms);
-    analysis.red_flags = sanitize(analysis.red_flags);
-    analysis.positive_clauses = sanitize(analysis.positive_clauses);
+    analysis.key_terms = sanitize(analysis.key_terms as unknown[]);
+    analysis.red_flags = sanitize(analysis.red_flags as unknown[]);
+    analysis.positive_clauses = sanitize(analysis.positive_clauses as unknown[]);
 
     // Coerce scalar fields — Apertus sometimes returns objects instead of strings
     const str = (v: unknown): string => {
@@ -204,6 +244,7 @@ export async function POST(request: NextRequest) {
         provider: 'infomaniak',
         model: modelId,
         durationMs,
+        attempts,
       },
     });
   } catch (error) {
