@@ -24,7 +24,7 @@ Cookie-based locale switching on a single-page Next.js app. Server component (`a
 
 ### Files Modified
 - `app/page.tsx` — Converted to server component; reads cookie, passes locale + translations to HomeClient
-- `app/api/analyse/route.ts` — Accepts `locale` FormData field; instructs Claude to return analysis in the selected language
+- `app/api/analyse/route.ts` — Accepts `locale` FormData field; instructs the AI to return analysis in the selected language
 - `app/layout.tsx` — Added `hreflang` alternate links for SEO
 - `app/components/AnalysisResult.tsx` — Added optional `resetLabel` prop for translated reset button text
 
@@ -54,7 +54,7 @@ Default locale: `en` (when no cookie set).
 
 ## Analysis Results Language
 
-The `locale` field is appended to FormData for both `handleAnalyse` and `handleAskQuestion`. The API route reads this and appends to the Claude system prompt:
+The `locale` field is appended to FormData for both `handleAnalyse` and `handleAskQuestion`. The API route reads this and appends to the AI system prompt:
 
 > "Return all analysis fields (summary, red flags, key terms, swiss_law_notes) in [Language]."
 

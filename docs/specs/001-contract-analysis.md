@@ -31,7 +31,7 @@ People living and working in Switzerland regularly encounter contracts written i
 - [x] Unsupported file types are rejected with a clear error message
 - [x] Text is extracted from the uploaded file (PDF via unpdf, DOCX via mammoth, TXT directly)
 - [x] Scanned/image-only PDFs return a clear error (no OCR)
-- [x] Extracted text is sent to Claude API for analysis
+- [x] Extracted text is sent to the AI for analysis
 - [x] Analysis returns: summary, contract type, key terms, red flags, positive clauses, Swiss law notes, detected language
 - [x] Results displayed in a structured, readable UI with sections for each analysis category
 - [x] Red flags are visually prominent (distinct styling)
@@ -47,7 +47,7 @@ People living and working in Switzerland regularly encounter contracts written i
 ### Stack
 - **Frontend:** Next.js 14 App Router, TypeScript, Tailwind CSS
 - **Backend:** Next.js API Route (`/api/analyse`) running on Node.js runtime
-- **AI:** Anthropic Claude API (`claude-sonnet-4-5`), max 4096 output tokens
+- **AI:** Infomaniak AI API — Apertus 70B (`swiss-ai/Apertus-70B-Instruct-2509`), max 8192 output tokens
 - **PDF extraction:** `unpdf` library
 - **DOCX extraction:** `mammoth` library
 - **Deployment:** Vercel (auto-deploy from `main` branch)
@@ -56,7 +56,7 @@ People living and working in Switzerland regularly encounter contracts written i
 The system is designed with privacy as a hard constraint:
 1. Files are received as multipart form data in the API route
 2. Text is extracted from the file buffer in memory
-3. Only the extracted text string is sent to the Claude API
+3. Only the extracted text string is sent to the AI API
 4. The response (structured JSON analysis) is returned to the client
 5. No file, no extracted text, and no analysis result is written to disk or any database
 6. `contractText` variable is explicitly cleared after sending to the API
@@ -68,7 +68,7 @@ The system is designed with privacy as a hard constraint:
 - **Caveat:** Resets on server restart; not shared across Vercel edge instances. Sufficient for MVP abuse prevention.
 
 ### AI Prompt Design
-The system prompt instructs Claude to:
+The system prompt instructs the AI to:
 - Return only valid JSON (no markdown wrappers)
 - Produce plain-English explanations without legal jargon
 - Be specific about Swiss legal context where relevant
@@ -93,7 +93,7 @@ The AI can analyse contracts in any language but the UI is English-first. The `l
 | Scanned PDF (no text) | 400 with OCR error |
 | Text < 50 chars after extraction | 400 with content error |
 | Rate limit exceeded | 429 with reset time |
-| Claude API failure | 500 with generic error |
+| AI API failure | 500 with generic error |
 | JSON parse failure | 500, fallback regex parse attempted first |
 
 ## Open Questions
@@ -106,5 +106,5 @@ The AI can analyse contracts in any language but the UI is English-first. The `l
 
 ## Changelog
 - 2026-02-24: Spec written retrospectively to document shipped MVP
-- 2026-02-24: MVP shipped — PDF/DOCX upload, Claude analysis, rate limiting, no storage
+- 2026-02-24: MVP shipped — PDF/DOCX upload, AI analysis, rate limiting, no storage
 - 2026-02-24: Added insurance contract type; hero subtitle shortened
