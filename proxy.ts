@@ -24,7 +24,7 @@ function detectLocale(acceptLanguage: string | null): Locale {
   return 'en';
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip: API routes, static files, Next.js internals, privacy page
