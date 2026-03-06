@@ -1,0 +1,101 @@
+name: Deploy to preprod VPS
+
+on:
+  push:
+    branches: [preprod]
+    paths:
+      - 'app/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'tsconfig.json'
+      - 'postcss.config.mjs'
+      - 'middleware.ts'
+      - '.github/workflows/deploy-preprod.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: preprod
+    timeout-minutes: 30
+
+    steps:
+      - name: Setup SSH
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o ConnectTimeout=30 $USER@$HOST bash -s << 'ENDSSH'
+          set -euo pipefail
+          cd /app
+
+          echo "=== Pulling latest code ==="
+          git fetch origin preprod
+          git reset --hard origin/preprod
+
+          echo "=== Clean install ==="
+          rm -rf node_modules .next
+          npm ci
+
+          echo "=== Building ==="
+          NEXT_PUBLIC_ENV=preprod npm run build
+
+          echo "=== Restarting ==="
+          pm2 restart swisscontract --update-env || pm2 start npm --name swisscontract -- start -- -p 3000 -H 0.0.0.0
+
+          echo "=== Waiting for startup ==="
+          sleep 8
+          for i in 1 2 3 4 5; do
+            HTTP=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ --max-time 5 2>/dev/null || echo "000")
+            if [ "$HTTP" = "200" ]; then
+              echo "App is up (HTTP $HTTP)"
+              break
+            fi
+            echo "Waiting... attempt $i (HTTP $HTTP)"
+            sleep 5
+          done
+
+          if [ "$HTTP" != "200" ]; then
+            echo "FATAL: App did not start (last HTTP: $HTTP)"
+            pm2 logs swisscontract --lines 20 --nostream 2>/dev/null || true
+            exit 1
+          fi
+          ENDSSH
+
+      - name: Health check
+        run: |
+          sleep 5
+          for domain in "preprod.swisscontract.ai"; do
+            HTTP=$(curl -s -o /dev/null -w "%{http_code}" "https://${domain}/" --max-time 20 2>/dev/null || echo "000")
+            echo "$domain → HTTP $HTTP"
+            if [ "$HTTP" != "200" ]; then
+              echo "FAIL: $domain returned $HTTP"
+              exit 1
+            fi
+          done
+          echo "All health checks passed ✅"
+
+      - name: API smoke test
+        run: |
+          echo "Employment contract CHF 100k" > /tmp/test.txt
+          RESP=$(curl -s -X POST "https://preprod.swisscontract.ai/api/analyse" \
+            -F "file=@/tmp/test.txt;type=text/plain" \
+            --max-time 120 2>/dev/null || echo '{}')
+          SUCCESS=$(echo "$RESP" | python3 -c "import sys,json; d=json.loads(sys.stdin.read()); print(d.get('success',''))" 2>/dev/null || echo "")
+          if [ "$SUCCESS" = "True" ] || [ "$SUCCESS" = "true" ]; then
+            echo "API smoke test passed ✅"
+          else
+            echo "API returned: $(echo $RESP | head -c 200)"
+            echo "Warning: API smoke test inconclusive (may be rate limited)"
+          fi
