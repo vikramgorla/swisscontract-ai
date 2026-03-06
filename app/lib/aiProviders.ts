@@ -47,6 +47,9 @@ export function extractJSON(raw: string): string {
   // Fix trailing commas before ] or } (all models do this occasionally)
   cleaned = cleaned.replace(/,(\s*[\]\}])/g, '$1');
 
+  // Fix missing commas between tokens (structural repair, outside strings only)
+  cleaned = fixMissingCommas(cleaned);
+
   // Fix nested arrays wrapping objects — sometimes emits [[{...}]]
   cleaned = cleaned.replace(/\[\s*\[(\s*\{)/g, '[$1');
   cleaned = cleaned.replace(/(\})\s*\]\s*\]/g, '$1]');
@@ -55,6 +58,42 @@ export function extractJSON(raw: string): string {
   cleaned = repairTruncatedJSON(cleaned);
 
   return cleaned.trim();
+}
+
+/**
+ * Fix missing commas between JSON tokens outside string values.
+ * Apertus sometimes emits: } "next_key" or ] "next_key" without a comma.
+ */
+function fixMissingCommas(str: string): string {
+  let result = '';
+  let inString = false;
+  let escape = false;
+
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (escape) { escape = false; result += c; continue; }
+    if (c === '\\' && inString) { escape = true; result += c; continue; }
+    if (c === '"') { inString = !inString; result += c; continue; }
+    if (!inString) {
+      // After } or ], skip whitespace, and if next non-space is " { [ add comma
+      if ((c === '}' || c === ']')) {
+        result += c;
+        // Look ahead: skip whitespace to see what follows
+        let j = i + 1;
+        while (j < str.length && (str[j] === ' ' || str[j] === '\n' || str[j] === '\r' || str[j] === '\t')) j++;
+        const next = str[j];
+        // If next token starts a new value but there's no comma, insert one
+        if (next === '"' || next === '{' || next === '[') {
+          // Only insert comma if this isn't already followed by } or ]
+          // (i.e. we're not at the end of an outer container)
+          result += ',';
+        }
+        continue;
+      }
+    }
+    result += c;
+  }
+  return result;
 }
 
 /**
