@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start -p ${PORT:-3000} -H 0.0.0.0"
+    "build": "./node_modules/.bin/next build",
+    "start": "./node_modules/.bin/next start -p ${PORT:-3000} -H 0.0.0.0"
   },
   "dependencies": {
     "mammoth": "^1.11.0",
