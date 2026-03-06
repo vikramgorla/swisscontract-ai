@@ -173,6 +173,13 @@ export async function POST(request: NextRequest) {
     } catch (parseErr1) {
       console.error('JSON parse attempt 1 failed:', parseErr1 instanceof Error ? parseErr1.message : parseErr1);
       console.error('Cleaned response (first 500):', cleanedResponse.slice(0, 500));
+      // Log context around error position
+      const errMsg = parseErr1 instanceof Error ? parseErr1.message : '';
+      const posMatch = errMsg.match(/position (\d+)/);
+      if (posMatch) {
+        const pos = parseInt(posMatch[1]);
+        console.error(`Context at pos ${pos}:`, JSON.stringify(cleanedResponse.slice(Math.max(0, pos-100), pos+100)));
+      }
       // Try to extract the outermost JSON object and parse again
       const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
