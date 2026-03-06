@@ -142,9 +142,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Truncate if too long
-    const maxChars = 50000;
+    // Apertus 70B produces malformed JSON on very long inputs — keep prompt short
+    const maxChars = 8000;
     if (contractText.length > maxChars) {
-      contractText = contractText.substring(0, maxChars) + '\n\n[Document truncated — first 50,000 characters analysed]';
+      contractText = contractText.substring(0, maxChars) + '\n\n[Document truncated — first 8,000 characters analysed]';
     }
 
     // Build the full prompt
