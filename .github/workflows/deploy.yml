@@ -54,9 +54,13 @@ jobs:
           cache-from: type=gha,scope=${{ env.ENVIRONMENT }}
           cache-to: type=gha,mode=max,scope=${{ env.ENVIRONMENT }}
 
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
       - name: Deploy to VPS
         env:
-          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           HOST: ${{ secrets.VPS_HOST }}
           USER: ${{ secrets.VPS_USER }}
           DOMAIN: ${{ vars.DOMAIN }}
@@ -65,12 +69,9 @@ jobs:
           GITHUB_TOKEN_FOR_DOCKER: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
-          mkdir -p ~/.ssh
-          install -m 600 /dev/null ~/.ssh/deploy_key
-          echo "$SSH_KEY" > ~/.ssh/deploy_key
           ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
 
-          ssh -i ~/.ssh/deploy_key "$USER@$HOST" \
+          ssh "$USER@$HOST" \
             ENVIRONMENT="$ENVIRONMENT" \
             DOMAIN="$DOMAIN" \
             INFOMANIAK_AI_TOKEN="$INFOMANIAK_AI_TOKEN" \
