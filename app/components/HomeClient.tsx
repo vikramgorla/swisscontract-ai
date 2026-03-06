@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
-import CookieBanner from './CookieBanner';
+
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, TranslationKeys } from '../i18n/translations';
 
@@ -30,6 +30,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
+  const [awarenessChecked, setAwarenessChecked] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
 
   const handleFileSelect = (file: File) => {
@@ -39,7 +40,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   };
 
   const handleAnalyse = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || !awarenessChecked) return;
 
     setIsAnalysing(true);
     setError(null);
@@ -102,6 +103,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setAnalysis(null);
     setError(null);
     setQuestion('');
+    setAwarenessChecked(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -125,7 +127,9 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
         "NDA analysis",
         "Insurance contract analysis",
         "PDF and Word document support",
-        "Private — documents not stored"
+        "Private — documents not stored",
+        "Swiss AI — powered by Apertus 70B",
+        "AI runs on infrastructure hosted in Switzerland"
       ]
     },
     {
@@ -156,6 +160,14 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     <path key="lock" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />,
   ];
 
+  /* Swiss sovereignty badges */
+  const badges = [
+    { icon: '🇨🇭', title: t.badge_hosted, sub: t.badge_hosted_sub },
+    { icon: '🏔️', title: t.badge_swiss_ai, sub: t.badge_swiss_ai_sub },
+    { icon: '🔒', title: t.badge_zero_retention, sub: t.badge_zero_retention_sub },
+    { icon: '🛡️', title: t.badge_nfadp, sub: t.badge_nfadp_sub },
+  ];
+
   return (
     <main className="min-h-screen bg-white">
       <script
@@ -166,7 +178,6 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       <header className="border-b border-gray-100 bg-white sticky top-0 z-10 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Document + magnifying glass icon */}
             <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -214,6 +225,24 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             {t.subtitle}
           </p>
 
+          {/* Swiss sovereignty badges */}
+          {!analysis && (
+            <div className="flex flex-wrap justify-center gap-2 mb-6 sm:mb-8">
+              {badges.map((b, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
+                >
+                  <span className="text-sm leading-none" role="img" aria-hidden="true">{b.icon}</span>
+                  <div className="text-left">
+                    <div className="text-xs font-medium text-gray-700 leading-tight">{b.title}</div>
+                    <div className="text-[10px] text-gray-400 leading-tight">{b.sub}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Upload + Analyse area */}
           {!analysis && (
             <div className="max-w-xl mx-auto">
@@ -244,12 +273,26 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                 </div>
               )}
 
+              {/* nFADP awareness checkbox */}
+              <label className="mt-4 flex items-start gap-3 text-left cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={awarenessChecked}
+                  onChange={(e) => setAwarenessChecked(e.target.checked)}
+                  disabled={isAnalysing}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
+                />
+                <span className="text-xs text-gray-500 leading-relaxed">
+                  {t.awareness_checkbox}
+                </span>
+              </label>
+
               <button
                 onClick={handleAnalyse}
-                disabled={!selectedFile || isAnalysing}
+                disabled={!selectedFile || isAnalysing || !awarenessChecked}
                 className={`
                   mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
-                  ${selectedFile && !isAnalysing
+                  ${selectedFile && !isAnalysing && awarenessChecked
                     ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }
@@ -270,7 +313,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
         </div>
       </section>
 
-      {/* Results */}
+      {/* Results — Single Model View */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
           {/* Question panel */}
@@ -457,7 +500,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           </div>
         </div>
       </footer>
-      <CookieBanner locale={locale} />
+      
     </main>
   );
 }

@@ -23,6 +23,7 @@ interface AnalysisResultProps {
   onReset: () => void;
   resetLabel?: string;
   languageLabel?: string;
+  compact?: boolean;
 }
 
 const contractTypeLabels: Record<string, string> = {
@@ -71,7 +72,7 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
   );
 }
 
-export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language' }: AnalysisResultProps) {
+export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', compact = false }: AnalysisResultProps) {
   const contractLabel = contractTypeLabels[analysis.contract_type] || 'Contract';
   const contractColor = contractTypeColors[analysis.contract_type] || contractTypeColors.other;
 
@@ -87,15 +88,17 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             {languageLabel}: <span className="font-medium text-gray-700">{analysis.language}</span>
           </span>
         </div>
-        <button
-          onClick={onReset}
-          className="text-sm text-red-600 hover:text-red-800 font-medium flex items-center gap-1 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          {resetLabel}
-        </button>
+        {!compact && (
+          <button
+            onClick={onReset}
+            className="text-sm text-red-600 hover:text-red-800 font-medium flex items-center gap-1 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {resetLabel}
+          </button>
+        )}
       </div>
 
       {/* Question Answer */}
@@ -193,27 +196,31 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
       )}
 
       {/* Disclaimer */}
-      <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4">
-        <svg className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-        </svg>
-        <p className="text-sm text-amber-800 leading-relaxed">
-          <strong>Not legal advice.</strong> This AI summary is for self-review purposes — to help you understand what you're reading before you sign. For binding legal decisions, always consult a qualified Swiss lawyer.
-        </p>
-      </div>
+      {!compact && (
+        <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4">
+          <svg className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          </svg>
+          <p className="text-sm text-amber-800 leading-relaxed">
+            <strong>Not legal advice.</strong> This AI summary is for self-review purposes — to help you understand what you&apos;re reading before you sign. For binding legal decisions, always consult a qualified Swiss lawyer.
+          </p>
+        </div>
+      )}
 
       {/* Bottom Reset Button */}
-      <div className="text-center pt-2 pb-4">
-        <button
-          onClick={onReset}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          {resetLabel}
-        </button>
-      </div>
+      {!compact && (
+        <div className="text-center pt-2 pb-4">
+          <button
+            onClick={onReset}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 hover:bg-gray-700 text-white font-semibold rounded-xl transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {resetLabel}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
