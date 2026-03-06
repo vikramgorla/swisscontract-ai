@@ -25,7 +25,7 @@ swisscontract.ai runs on **100% Swiss infrastructure**:
 - **nFADP compliant** — built for Swiss data protection law
 - **No analytics, no cookies, no tracking** — zero data retention
 
-No Anthropic. No Google. No US cloud providers. Everything stays in Switzerland.
+Everything stays in Switzerland.
 
 ## Stack
 

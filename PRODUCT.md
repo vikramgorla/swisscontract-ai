@@ -45,7 +45,7 @@ No account required. No data stored. 100% Swiss infrastructure.
 ### ✅ Swiss Sovereignty — [SPEC-006](docs/specs/006-swiss-model-comparison.md) (updated)
 - **Apertus 70B** — Swiss-sovereign LLM, sole AI model
 - Hosted by Infomaniak on Swiss data centres
-- No Anthropic, no Google Analytics, no US cloud providers
+- No analytics, no tracking, no third-party data flows outside Switzerland
 - Swiss sovereignty USP badges on homepage
 - nFADP awareness checkbox (required before analysis)
 - Updated privacy policy: Infomaniak section, third-party data warning
