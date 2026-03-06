@@ -372,6 +372,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             onReset={handleReset}
             resetLabel={t.results_reset}
             languageLabel={t.language_label}
+            languageNames={t.language_names}
             contractTypeLabels={{
               employment: t.contract_type_employment,
               tenancy: t.contract_type_tenancy,
@@ -488,7 +489,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
               {t.footer_disclaimer}
             </div>
             <div className="flex items-center gap-4 text-xs text-gray-400">
-              <a href="/privacy" className="hover:text-gray-600 transition-colors">{t.footer_privacy}</a>
+              <a href={`/privacy?lang=${locale}`} className="hover:text-gray-600 transition-colors">{t.footer_privacy}</a>
               <span>·</span>
               <a
                 href="https://github.com/vikramgorla/swisscontract-ai"

@@ -23,6 +23,7 @@ interface AnalysisResultProps {
   onReset: () => void;
   resetLabel?: string;
   languageLabel?: string;
+  languageNames?: Record<string, string>;
   compact?: boolean;
   contractTypeLabels?: Record<string, string>;
 }
@@ -73,9 +74,12 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
   );
 }
 
-export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', compact = false, contractTypeLabels: labelMap }: AnalysisResultProps) {
+export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analyse Another Contract', languageLabel = 'Language', languageNames, compact = false, contractTypeLabels: labelMap }: AnalysisResultProps) {
   const contractLabel = (labelMap && labelMap[analysis.contract_type]) || contractTypeLabelsFallback[analysis.contract_type] || analysis.contract_type || 'Contract';
   const contractColor = contractTypeColors[analysis.contract_type] || contractTypeColors.other;
+  const displayLanguage = languageNames
+    ? (languageNames[analysis.language?.toLowerCase()] || analysis.language)
+    : analysis.language;
 
   return (
     <div className="w-full space-y-6 animate-fadeIn">
@@ -86,7 +90,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             {contractLabel}
           </span>
           <span className="text-sm text-gray-500">
-            {languageLabel}: <span className="font-medium text-gray-700">{analysis.language}</span>
+            {languageLabel}: <span className="font-medium text-gray-700">{displayLanguage}</span>
           </span>
         </div>
         {!compact && (

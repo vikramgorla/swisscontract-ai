@@ -82,6 +82,10 @@ export const translations = {
       'We recommend redacting names, signatures and personal details before uploading — just to be safe.',
       'We built this to help people, not to collect data. That\'s it.',
     ],
+    language_names: {
+      french: 'French', english: 'English', german: 'German', italian: 'Italian',
+      'français': 'French', 'deutsch': 'German', 'italiano': 'Italian',
+    },
     language_label: 'Language',
     typewriter_examples: [
       "Do I need additional insurance for this contract?",
@@ -229,6 +233,10 @@ export const translations = {
       'Wir empfehlen, Namen, Unterschriften und persönliche Daten vor dem Hochladen zu schwärzen — nur zur Sicherheit.',
       'Wir haben das gebaut, um Menschen zu helfen, nicht um Daten zu sammeln. Das ist alles.',
     ],
+    language_names: {
+      french: 'Französisch', english: 'Englisch', german: 'Deutsch', italian: 'Italienisch',
+      'français': 'Französisch', 'deutsch': 'Deutsch', 'italiano': 'Italienisch',
+    },
     language_label: 'Sprache',
     typewriter_examples: [
       "Benötige ich eine zusätzliche Versicherung für diesen Vertrag?",
@@ -376,6 +384,10 @@ export const translations = {
       'Nous recommandons de masquer les noms, signatures et données personnelles avant d\'envoyer — par précaution.',
       'Nous avons construit ceci pour aider les gens, pas pour collecter des données. C\'est tout.',
     ],
+    language_names: {
+      french: 'Français', english: 'Anglais', german: 'Allemand', italian: 'Italien',
+      'français': 'Français', 'deutsch': 'Allemand', 'italiano': 'Italien',
+    },
     language_label: 'Langue',
     typewriter_examples: [
       "Ai-je besoin d'une assurance supplémentaire pour ce contrat ?",
@@ -523,6 +535,10 @@ export const translations = {
       'Consigliamo di oscurare nomi, firme e dati personali prima di caricare — solo per sicurezza.',
       'Abbiamo costruito questo per aiutare le persone, non per raccogliere dati. Tutto qui.',
     ],
+    language_names: {
+      french: 'Francese', english: 'Inglese', german: 'Tedesco', italian: 'Italiano',
+      'français': 'Francese', 'deutsch': 'Tedesco', 'italiano': 'Italiano',
+    },
     language_label: 'Lingua',
     typewriter_examples: [
       "Ho bisogno di un'assicurazione aggiuntiva per questo contratto?",
@@ -654,6 +670,7 @@ export type TranslationKeys = {
   upload_tip: string;
   privacy_title: string;
   privacy_points: ReadonlyArray<string>;
+  language_names: Record<string, string>;
   language_label: string;
   typewriter_examples: ReadonlyArray<string>;
   why_free_title: string;

@@ -22,9 +22,14 @@ function detectLocale(acceptLanguage: string | null): Locale {
   return 'en';
 }
 
-export default async function PrivacyPage() {
+export default async function PrivacyPage({ searchParams }: { searchParams: Promise<{ lang?: string }> }) {
+  const params = await searchParams;
   const headerStore = await headers();
-  const safeLocale = detectLocale(headerStore.get('accept-language'));
+  const valid: Locale[] = ['en', 'de', 'fr', 'it'];
+  const paramLang = params.lang?.toLowerCase();
+  const safeLocale: Locale = (paramLang && valid.includes(paramLang as Locale))
+    ? (paramLang as Locale)
+    : detectLocale(headerStore.get('accept-language'));
   const t = translations[safeLocale];
 
   return (
