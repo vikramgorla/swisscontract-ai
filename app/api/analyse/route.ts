@@ -188,9 +188,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Sanitize array fields — coerce items to {title, explanation}
     analysis.key_terms = sanitize(analysis.key_terms);
     analysis.red_flags = sanitize(analysis.red_flags);
     analysis.positive_clauses = sanitize(analysis.positive_clauses);
+
+    // Coerce scalar fields — Apertus sometimes returns objects instead of strings
+    const str = (v: unknown): string => {
+      if (typeof v === 'string') return v;
+      if (v && typeof v === 'object') return Object.values(v as Record<string, unknown>).join(' ');
+      return v != null ? String(v) : '';
+    };
+    analysis.summary = str(analysis.summary);
+    analysis.contract_type = str(analysis.contract_type);
+    analysis.swiss_law_notes = str(analysis.swiss_law_notes);
+    analysis.language = str(analysis.language);
 
     return NextResponse.json({
       success: true,
