@@ -302,13 +302,14 @@ jobs:
 
       - name: Commit version and create release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           VERSION="${{ steps.version.outputs.new_version }}"
           TAG="${{ steps.version.outputs.tag }}"
 
           git config user.email "vikram.gorla@gmail.com"
           git config user.name "Vikram Gorla"
+          git remote set-url origin "https://${GH_TOKEN}@github.com/vikramgorla/swisscontract-ai.git"
           git add package.json
           git commit -m "chore: release ${TAG}" -m "Written by Léa 🏔️"
           git push origin main
