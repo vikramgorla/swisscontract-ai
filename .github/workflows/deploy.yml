@@ -34,25 +34,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
 
       - name: Bump pre-release version
         id: preversion
         run: |
           CURRENT=$(jq -r .version package.json)
+          # Only bump if currently a beta — clean versions are release candidates, leave them alone
           if echo "$CURRENT" | grep -qE '\-beta\.[0-9]+$'; then
             BASE=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
             N=$(echo "$CURRENT" | grep -oE '[0-9]+$')
             NEW_VERSION="${BASE}-beta.$((N + 1))"
+            echo "Version: $CURRENT → $NEW_VERSION"
+            jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
+            mv package.json.tmp package.json
+            echo "bumped=true" >> $GITHUB_OUTPUT
           else
-            NEW_VERSION="${CURRENT}-beta.1"
+            # Clean version (e.g. 0.5.0) — first push of new cycle, start at beta.1
+            if echo "$CURRENT" | grep -qvE '\-'; then
+              NEW_VERSION="${CURRENT}-beta.1"
+              echo "Version: $CURRENT → $NEW_VERSION"
+              jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
+              mv package.json.tmp package.json
+              echo "bumped=true" >> $GITHUB_OUTPUT
+            else
+              # Some other pre-release suffix (rc, alpha) — leave as-is, this is the release candidate
+              NEW_VERSION="$CURRENT"
+              echo "Version: $CURRENT (release candidate — no bump)"
+              echo "bumped=false" >> $GITHUB_OUTPUT
+            fi
           fi
-          echo "Version: $CURRENT → $NEW_VERSION"
-          jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
-          mv package.json.tmp package.json
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Commit pre-release version
+        if: steps.preversion.outputs.bumped == 'true'
         run: |
           VERSION="${{ steps.preversion.outputs.new_version }}"
           git config user.email "vikram.gorla@gmail.com"
@@ -179,29 +194,26 @@ jobs:
           echo "✅ Preprod deployment complete"
 
   promote-production:
-    # Runs ONLY on main push — strips beta suffix, re-tags image, deploys, creates release, syncs preprod
-    # Skips auto-release commits to avoid infinite loop
+    # Runs ONLY on main push (via PR merge) — version already correct from preprod
+    # NO commits to main — version comes in through the PR itself
+    # Only creates a git tag + GitHub release on the merge commit, then syncs preprod
     runs-on: ubuntu-latest
     environment: production
-    if: "github.ref_name == 'main' && !startsWith(github.event.head_commit.message, 'chore: release')"
+    if: github.ref_name == 'main'
     timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Determine release version
+      - name: Read release version
         id: version
         run: |
+          # Version in package.json is already correct — set by preprod cycle via PR
+          # Strip any pre-release suffix as a safety net (e.g. -beta.N or -rc.N)
           CURRENT=$(jq -r .version package.json)
-          # Strip -beta.N suffix to get the release version
-          RELEASE_VERSION=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
+          RELEASE_VERSION=$(echo "$CURRENT" | sed 's/-[a-z]*\.[0-9]*$//')
           echo "Version: $CURRENT → $RELEASE_VERSION"
-          jq --arg v "$RELEASE_VERSION" '.version = $v' package.json > package.json.tmp
-          mv package.json.tmp package.json
           echo "new_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
           echo "tag=v${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
@@ -300,29 +312,27 @@ jobs:
           [ "$HTTP" = "200" ] || exit 1
           echo "✅ Production deployment complete"
 
-      - name: Commit version and create release
+      - name: Create git tag and GitHub release
+        # Tags the merge commit on main — no extra commit, version already in main via PR
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="${{ steps.version.outputs.new_version }}"
           TAG="${{ steps.version.outputs.tag }}"
-
-          git config user.email "vikram.gorla@gmail.com"
-          git config user.name "Vikram Gorla"
-          git remote set-url origin "https://${GH_TOKEN}@github.com/vikramgorla/swisscontract-ai.git"
-          git add package.json
-          git commit -m "chore: release ${TAG}" -m "Written by Léa 🏔️"
-          git push origin main
-
           printf '## %s\n\n### Container images\n\n```\nghcr.io/vikramgorla/swisscontract-ai:%s\nghcr.io/vikramgorla/swisscontract-ai:production\n```\n' "$TAG" "$TAG" > /tmp/release-notes.md
           gh release create "$TAG" \
             --title "$TAG" \
             --notes-file /tmp/release-notes.md \
             --target main
+          echo "✅ Release $TAG created"
 
       - name: Sync preprod to main
+        # Reset preprod to main so next cycle starts clean — branch management, not a code commit
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git fetch origin
           git checkout preprod
           git reset --hard origin/main
-          git push origin preprod --force-with-lease
+          git remote set-url origin "https://${GH_PAT}@github.com/vikramgorla/swisscontract-ai.git"
+          git push origin preprod --force
+          echo "✅ preprod synced to main"
