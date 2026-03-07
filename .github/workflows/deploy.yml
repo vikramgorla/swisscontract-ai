@@ -40,19 +40,24 @@ jobs:
         id: preversion
         run: |
           CURRENT=$(jq -r .version package.json)
+          # Only bump -beta.N versions — anything else is a release candidate, leave as-is
           if echo "$CURRENT" | grep -qE '\-beta\.[0-9]+$'; then
             BASE=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
             N=$(echo "$CURRENT" | grep -oE '[0-9]+$')
             NEW_VERSION="${BASE}-beta.$((N + 1))"
+            echo "Version: $CURRENT → $NEW_VERSION"
+            jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
+            mv package.json.tmp package.json
+            echo "bumped=true" >> $GITHUB_OUTPUT
           else
-            NEW_VERSION="${CURRENT}-beta.1"
+            NEW_VERSION="$CURRENT"
+            echo "Version: $CURRENT (release candidate — no bump)"
+            echo "bumped=false" >> $GITHUB_OUTPUT
           fi
-          echo "Version: $CURRENT → $NEW_VERSION"
-          jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
-          mv package.json.tmp package.json
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Commit pre-release version
+        if: steps.preversion.outputs.bumped == 'true'
         run: |
           VERSION="${{ steps.preversion.outputs.new_version }}"
           git config user.email "vikram.gorla@gmail.com"
@@ -183,25 +188,21 @@ jobs:
     # Skips auto-release commits to avoid infinite loop
     runs-on: ubuntu-latest
     environment: production
-    if: "github.ref_name == 'main' && !startsWith(github.event.head_commit.message, 'chore: release')"
+    if: github.ref_name == 'main'
     timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Determine release version
+      - name: Read release version
         id: version
         run: |
+          # Version in package.json is already correct — set on preprod as release candidate
+          # Strip any pre-release suffix as safety net (should already be clean)
           CURRENT=$(jq -r .version package.json)
-          # Strip -beta.N suffix to get the release version
-          RELEASE_VERSION=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
+          RELEASE_VERSION=$(echo "$CURRENT" | sed 's/-[a-z]*\.[0-9]*$//')
           echo "Version: $CURRENT → $RELEASE_VERSION"
-          jq --arg v "$RELEASE_VERSION" '.version = $v' package.json > package.json.tmp
-          mv package.json.tmp package.json
           echo "new_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
           echo "tag=v${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
@@ -300,28 +301,27 @@ jobs:
           [ "$HTTP" = "200" ] || exit 1
           echo "✅ Production deployment complete"
 
-      - name: Commit version and create release
+      - name: Create git tag and GitHub release
+        # Tags the merge commit on main — NO commits to main, version arrived via PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="${{ steps.version.outputs.new_version }}"
           TAG="${{ steps.version.outputs.tag }}"
-
-          git config user.email "vikram.gorla@gmail.com"
-          git config user.name "Vikram Gorla"
-          git add package.json
-          git commit -m "chore: release ${TAG}" -m "Written by Léa 🏔️"
-          git push origin main
-
           printf '## %s\n\n### Container images\n\n```\nghcr.io/vikramgorla/swisscontract-ai:%s\nghcr.io/vikramgorla/swisscontract-ai:production\n```\n' "$TAG" "$TAG" > /tmp/release-notes.md
           gh release create "$TAG" \
             --title "$TAG" \
             --notes-file /tmp/release-notes.md \
             --target main
+          echo "✅ Release $TAG created"
 
       - name: Sync preprod to main
+        # Branch management only — not a code commit
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git fetch origin
           git checkout preprod
           git reset --hard origin/main
-          git push origin preprod --force-with-lease
+          git remote set-url origin "https://${GH_PAT}@github.com/vikramgorla/swisscontract-ai.git"
+          git push origin preprod --force
+          echo "✅ preprod synced to main"
