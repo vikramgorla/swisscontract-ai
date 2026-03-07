@@ -151,3 +151,5 @@ The same Docker image runs as any environment. Behaviour differences come from T
 |-------------|--------|--------|---------|
 | `preprod` | `preprod` | `preprod.swisscontract.ai` | `INFOMANIAK_AI_TOKEN`, `INFOMANIAK_AI_PRODUCT_ID`, `VPS_SSH_KEY`, `VPS_HOST`, `VPS_USER` |
 | `production` | `main` | `swisscontract.ai` | same |
+
+<!-- test run 20260307T161547 -->
