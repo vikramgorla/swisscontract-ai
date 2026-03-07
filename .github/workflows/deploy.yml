@@ -123,6 +123,8 @@ jobs:
             --label "traefik.http.routers.swisscontract-preprod.tls.certresolver=letsencrypt" \
             --label "traefik.http.routers.swisscontract-preprod.middlewares=inject-env-preprod" \
             --label "traefik.http.middlewares.inject-env-preprod.headers.customrequestheaders.X-App-Env=preprod" \
+            --label "traefik.http.middlewares.inject-env-preprod.headers.customrequestheaders.X-Show-Banner=true" \
+            --label "traefik.http.middlewares.inject-env-preprod.headers.customrequestheaders.X-Debug-Enabled=true" \
             --label "traefik.http.services.swisscontract-preprod.loadbalancer.server.port=3000" \
             "$IMAGE"
 

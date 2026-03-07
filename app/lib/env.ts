@@ -1,23 +1,29 @@
 import { headers } from 'next/headers';
 
 /**
- * Returns the current environment name, injected by Traefik via X-App-Env header.
- * Falls back to the APP_ENV environment variable (for local dev),
- * then to 'production' as a safe default.
- *
- * Never hardcodes domain names or environment strings.
+ * Returns true if Traefik has injected X-Show-Banner: true.
+ * Used to show the preprod banner and add noindex meta tag.
+ * Safe default: false (production behaviour).
  */
-export async function getAppEnv(): Promise<string> {
+export async function isBannerEnabled(): Promise<boolean> {
   try {
-    const headersList = await headers();
-    const fromHeader = headersList.get('x-app-env');
-    if (fromHeader) return fromHeader;
+    const h = await headers();
+    return h.get('x-show-banner') === 'true';
   } catch {
-    // headers() throws outside request context (e.g. during build)
+    return false;
   }
-  return process.env.APP_ENV ?? 'production';
 }
 
-export async function isProd(): Promise<boolean> {
-  return (await getAppEnv()) === 'production';
+/**
+ * Returns true if Traefik has injected X-Debug-Enabled: true.
+ * Used to gate verbose debug logging in API routes.
+ * Safe default: false (no debug output in production).
+ */
+export async function isDebugEnabled(): Promise<boolean> {
+  try {
+    const h = await headers();
+    return h.get('x-debug-enabled') === 'true';
+  } catch {
+    return false;
+  }
 }
