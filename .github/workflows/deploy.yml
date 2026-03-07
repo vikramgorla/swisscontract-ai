@@ -40,7 +40,7 @@ jobs:
         id: preversion
         run: |
           CURRENT=$(jq -r .version package.json)
-          # Only bump if currently a beta — clean versions are release candidates, leave them alone
+          # Only bump -beta.N versions — clean versions are release candidates, leave them alone
           if echo "$CURRENT" | grep -qE '\-beta\.[0-9]+$'; then
             BASE=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
             N=$(echo "$CURRENT" | grep -oE '[0-9]+$')
@@ -50,19 +50,10 @@ jobs:
             mv package.json.tmp package.json
             echo "bumped=true" >> $GITHUB_OUTPUT
           else
-            # Clean version (e.g. 0.5.0) — first push of new cycle, start at beta.1
-            if echo "$CURRENT" | grep -qvE '\-'; then
-              NEW_VERSION="${CURRENT}-beta.1"
-              echo "Version: $CURRENT → $NEW_VERSION"
-              jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
-              mv package.json.tmp package.json
-              echo "bumped=true" >> $GITHUB_OUTPUT
-            else
-              # Some other pre-release suffix (rc, alpha) — leave as-is, this is the release candidate
-              NEW_VERSION="$CURRENT"
-              echo "Version: $CURRENT (release candidate — no bump)"
-              echo "bumped=false" >> $GITHUB_OUTPUT
-            fi
+            # Clean version (0.5.0) or other suffix — release candidate, do NOT bump
+            NEW_VERSION="$CURRENT"
+            echo "Version: $CURRENT (release candidate — no bump)"
+            echo "bumped=false" >> $GITHUB_OUTPUT
           fi
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
