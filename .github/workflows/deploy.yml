@@ -17,7 +17,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  packages: write
   packages: write
 
 jobs:
@@ -150,7 +151,7 @@ jobs:
           echo "✅ Preprod deployment complete"
 
   promote-production:
-    # Runs ONLY on main push — re-tags the preprod image, no rebuild
+    # Runs ONLY on main push — bumps version, re-tags image, deploys, creates release, syncs preprod
     runs-on: ubuntu-latest
     environment: production
     if: github.ref_name == 'main'
@@ -159,6 +160,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -167,25 +171,49 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Promote preprod image to production
+      - name: Determine version bump
+        id: bump
         run: |
-          # Pull the preprod image (already tested on preprod.swisscontract.ai)
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          echo "Commit: $COMMIT_MSG"
+          if echo "$COMMIT_MSG" | grep -qiE '^feat!:|BREAKING CHANGE'; then
+            BUMP=major
+          elif echo "$COMMIT_MSG" | grep -qiE '^feat(\(.+\))?(\!)?:'; then
+            BUMP=minor
+          else
+            BUMP=patch
+          fi
+          echo "Bump type: $BUMP"
+          echo "bump=$BUMP" >> $GITHUB_OUTPUT
+
+      - name: Bump version in package.json
+        id: version
+        run: |
+          BUMP="${{ steps.bump.outputs.bump }}"
+          CURRENT=$(jq -r .version package.json)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          case "$BUMP" in
+            major) NEW_VERSION="$((MAJOR + 1)).0.0" ;;
+            minor) NEW_VERSION="${MAJOR}.$((MINOR + 1)).0" ;;
+            patch) NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))" ;;
+          esac
+          echo "Version: $CURRENT → $NEW_VERSION"
+          jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Promote image to production
+        run: |
+          VERSION="${{ steps.version.outputs.new_version }}"
           docker pull ghcr.io/vikramgorla/swisscontract-ai:preprod
-
-          # Derive semver tag from package.json
-          VERSION=$(jq -r .version package.json)
-          echo "Tagging as :production and :v${VERSION}"
-
-          # Re-tag as :production and :vX.Y.Z — same image, three names
           docker tag ghcr.io/vikramgorla/swisscontract-ai:preprod \
                      ghcr.io/vikramgorla/swisscontract-ai:production
           docker tag ghcr.io/vikramgorla/swisscontract-ai:preprod \
                      ghcr.io/vikramgorla/swisscontract-ai:v${VERSION}
-
           docker push ghcr.io/vikramgorla/swisscontract-ai:production
           docker push ghcr.io/vikramgorla/swisscontract-ai:v${VERSION}
-
-          echo "✅ Image promoted: preprod → production + v${VERSION}"
+          echo "✅ Promoted: preprod → production + v${VERSION}"
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -262,3 +290,29 @@ jobs:
           echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
           [ "$HTTP" = "200" ] || exit 1
           echo "✅ Production deployment complete"
+
+      - name: Commit version bump and create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.new_version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+
+          git config user.email "vikram.gorla@gmail.com"
+          git config user.name "Vikram Gorla"
+          git add package.json
+          git commit -m "chore: release ${TAG}" -m "Written by Léa 🏔️"
+          git push origin main
+
+          printf '## %s\n\n### Container images\n\n```\nghcr.io/vikramgorla/swisscontract-ai:%s\nghcr.io/vikramgorla/swisscontract-ai:production\n```\n' "$TAG" "$TAG" > /tmp/release-notes.md
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file /tmp/release-notes.md \
+            --target main
+
+      - name: Sync preprod to main
+        run: |
+          git fetch origin
+          git checkout preprod
+          git reset --hard origin/main
+          git push origin preprod --force-with-lease
