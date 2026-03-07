@@ -34,7 +34,7 @@ Before any merge to main, verify on `https://preprod.swisscontract.ai`:
 - [ ] All 4 languages render correctly (EN/DE/FR/IT)
 - [ ] Section headers translated
 - [ ] File upload errors show correctly
-- [ ] `/api/health` returns `{"status":"ok","env":"preprod"}`
+- [ ] `/api/health` returns `{"status":"ok","timestamp":"..."}`
 - [ ] No console errors
 
 ### 3. Open a Pull Request
@@ -80,20 +80,21 @@ Or create via GitHub Releases UI — include what shipped and the Docker image d
 
 ```bash
 curl https://swisscontract.ai/api/health
-# Expected: {"status":"ok","env":"production","timestamp":"..."}
+# Expected: {"status":"ok","timestamp":"..."}
 ```
 
 ---
 
-## How environment is determined
+## Feature flags
 
-The app never hardcodes domain names or environment strings. Instead:
+Environment behaviour is controlled by Traefik-injected request headers — no env vars, no build args.
 
-1. **Traefik injects** `X-App-Env: preprod` or `X-App-Env: production` as a request header via middleware labels on each container
-2. **The app reads** `X-App-Env` from request headers at runtime via `app/lib/env.ts`
-3. **Fallback** for local development: `APP_ENV` environment variable (set in `.env.local`)
+| Header | preprod | production | Effect |
+|--------|---------|------------|--------|
+| `X-Show-Banner` | `true` | not set | Shows preprod banner; adds `noindex` meta tag |
+| `X-Debug-Enabled` | `true` | not set | Enables verbose debug logging in API routes |
 
-This means the same Docker image runs as any environment. Adding a new environment requires zero code changes — just a new container with the appropriate Traefik label.
+Adding a new environment or toggling a feature requires zero code changes — only Traefik label updates.
 
 ---
 
@@ -101,12 +102,11 @@ This means the same Docker image runs as any environment. Adding a new environme
 
 | Variable | Where set | Purpose |
 |----------|-----------|---------|
-| `APP_ENV` | Docker `-e` at runtime | Controls banner, robots, debug logs. `production` = prod behaviour; anything else = non-prod |
 | `INFOMANIAK_AI_TOKEN` | GitHub environment secret | Infomaniak AI API key |
 | `INFOMANIAK_AI_PRODUCT_ID` | GitHub environment secret | Infomaniak AI product ID |
 | `NODE_ENV` | Docker `-e` at runtime | Always `production` for both envs |
 
-`APP_ENV` is **never** baked into the Docker image — always injected at runtime. Same image, different behaviour per environment.
+The same Docker image runs as any environment. Behaviour differences come from Traefik-injected headers, not env vars.
 
 ---
 

@@ -22,15 +22,6 @@ Format each item in key_terms, red_flags, positive_clauses as: { title: string, 
 Return ONLY valid JSON, no markdown, no code blocks. All string values must be on a single line — do not use line breaks inside string values.`;
 
 /**
- * Gate verbose logs to non-production environments only.
- */
-function debugLog(...args: unknown[]) {
-  if (process.env.APP_ENV !== 'production') {
-    console.error('[debug]', ...args);
-  }
-}
-
-/**
  * Extract text from the uploaded file (PDF, DOCX, or plain text).
  */
 async function extractText(file: File): Promise<string> {
@@ -89,6 +80,11 @@ function sanitize(arr: unknown): Array<{ title: string; explanation: string }> {
 }
 
 export async function POST(request: NextRequest) {
+  const debugEnabled = request.headers.get('x-debug-enabled') === 'true';
+  const debugLog = (...args: unknown[]) => {
+    if (debugEnabled) console.error('[debug]', ...args);
+  };
+
   try {
     // Rate limiting
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
@@ -188,10 +184,8 @@ export async function POST(request: NextRequest) {
           parsed = JSON.parse(cleanedResponse);
         } catch (parseErr1) {
           debugLog(`Attempt ${attempt} - JSON parse failed:`, parseErr1 instanceof Error ? parseErr1.message : parseErr1);
-          if (process.env.APP_ENV !== 'production') {
-            console.error(`[debug] attempt ${attempt} raw response:`, responseText.slice(0, 2000));
-            console.error(`[debug] attempt ${attempt} cleaned:`, cleanedResponse.slice(0, 2000));
-          }
+          debugLog(`attempt ${attempt} raw response:`, responseText.slice(0, 2000));
+          debugLog(`attempt ${attempt} cleaned:`, cleanedResponse.slice(0, 2000));
           // Try to extract outermost object
           const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
@@ -254,9 +248,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    if (process.env.APP_ENV !== 'production') {
-      console.error('[debug] Analysis error:', error instanceof Error ? error.message : 'Unknown error');
-    }
+    debugLog('Analysis error:', error instanceof Error ? error.message : 'Unknown error');
 
     if (error instanceof Error) {
       if (error.message.includes('context length') || error.message.includes('input tokens') || error.message.includes('maximum context')) {

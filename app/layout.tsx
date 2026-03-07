@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { translations } from './i18n/translations';
-import { getAppEnv } from './lib/env';
+import { isBannerEnabled } from './lib/env';
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"] });
@@ -79,11 +79,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const env = await getAppEnv();
-  const showBanner = env !== 'production';
+  const showBanner = await isBannerEnabled();
 
   return (
     <html lang="en">
+      <head>
+        {showBanner && <meta name="robots" content="noindex,nofollow" />}
+      </head>
       <body className={geist.className}>
         {showBanner && (
           <div className="bg-amber-400 text-amber-900 text-xs font-bold text-center py-1 px-4">
