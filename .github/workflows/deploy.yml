@@ -17,21 +17,56 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
   build:
     # Build runs ONLY on preprod push — produces a single image
-    # On main push, we skip build and promote the existing preprod image
+    # Skips auto-bump commits to avoid infinite loop
     runs-on: ubuntu-latest
-    if: github.ref_name == 'preprod'
+    if: "github.ref_name == 'preprod' && !startsWith(github.event.head_commit.message, 'chore: preprod')"
     outputs:
       sha_tag: ${{ steps.meta.outputs.sha_tag }}
+      new_version: ${{ steps.preversion.outputs.new_version }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump pre-release version
+        id: preversion
+        run: |
+          CURRENT=$(jq -r .version package.json)
+          if echo "$CURRENT" | grep -qE '\-beta\.[0-9]+$'; then
+            BASE=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
+            N=$(echo "$CURRENT" | grep -oE '[0-9]+$')
+            NEW_VERSION="${BASE}-beta.$((N + 1))"
+          else
+            NEW_VERSION="${CURRENT}-beta.1"
+          fi
+          echo "Version: $CURRENT → $NEW_VERSION"
+          jq --arg v "$NEW_VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit pre-release version
+        run: |
+          VERSION="${{ steps.preversion.outputs.new_version }}"
+          git config user.email "vikram.gorla@gmail.com"
+          git config user.name "Vikram Gorla"
+          git add package.json
+          git commit -m "chore: preprod ${VERSION}" -m "Written by Léa 🏔️"
+          git push origin preprod
+
+      - name: Set image metadata
+        id: meta
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          echo "sha_tag=sha-${SHA_SHORT}" >> $GITHUB_OUTPUT
+          echo "Building image: ghcr.io/vikramgorla/swisscontract-ai:sha-${SHA_SHORT}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -43,13 +78,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set image metadata
-        id: meta
-        run: |
-          SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
-          echo "sha_tag=sha-${SHA_SHORT}" >> $GITHUB_OUTPUT
-          echo "Building image: ghcr.io/vikramgorla/swisscontract-ai:sha-${SHA_SHORT}"
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -58,6 +86,7 @@ jobs:
           tags: |
             ghcr.io/vikramgorla/swisscontract-ai:preprod
             ghcr.io/vikramgorla/swisscontract-ai:${{ steps.meta.outputs.sha_tag }}
+            ghcr.io/vikramgorla/swisscontract-ai:${{ steps.preversion.outputs.new_version }}
           cache-from: type=gha,scope=app
           cache-to: type=gha,mode=max,scope=app
 
@@ -65,7 +94,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment: preprod
-    if: github.ref_name == 'preprod'
+    if: "github.ref_name == 'preprod' && !startsWith(github.event.head_commit.message, 'chore: preprod')"
     timeout-minutes: 15
 
     steps:
@@ -150,15 +179,31 @@ jobs:
           echo "✅ Preprod deployment complete"
 
   promote-production:
-    # Runs ONLY on main push — re-tags the preprod image, no rebuild
+    # Runs ONLY on main push — strips beta suffix, re-tags image, deploys, creates release, syncs preprod
+    # Skips auto-release commits to avoid infinite loop
     runs-on: ubuntu-latest
     environment: production
-    if: github.ref_name == 'main'
+    if: "github.ref_name == 'main' && !startsWith(github.event.head_commit.message, 'chore: release')"
     timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine release version
+        id: version
+        run: |
+          CURRENT=$(jq -r .version package.json)
+          # Strip -beta.N suffix to get the release version
+          RELEASE_VERSION=$(echo "$CURRENT" | sed 's/-beta\.[0-9]*$//')
+          echo "Version: $CURRENT → $RELEASE_VERSION"
+          jq --arg v "$RELEASE_VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+          echo "new_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -167,25 +212,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Promote preprod image to production
+      - name: Promote image to production
         run: |
-          # Pull the preprod image (already tested on preprod.swisscontract.ai)
+          VERSION="${{ steps.version.outputs.new_version }}"
           docker pull ghcr.io/vikramgorla/swisscontract-ai:preprod
-
-          # Derive semver tag from package.json
-          VERSION=$(jq -r .version package.json)
-          echo "Tagging as :production and :v${VERSION}"
-
-          # Re-tag as :production and :vX.Y.Z — same image, three names
           docker tag ghcr.io/vikramgorla/swisscontract-ai:preprod \
                      ghcr.io/vikramgorla/swisscontract-ai:production
           docker tag ghcr.io/vikramgorla/swisscontract-ai:preprod \
                      ghcr.io/vikramgorla/swisscontract-ai:v${VERSION}
-
           docker push ghcr.io/vikramgorla/swisscontract-ai:production
           docker push ghcr.io/vikramgorla/swisscontract-ai:v${VERSION}
-
-          echo "✅ Image promoted: preprod → production + v${VERSION}"
+          echo "✅ Promoted: preprod → production + v${VERSION}"
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -262,3 +299,29 @@ jobs:
           echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
           [ "$HTTP" = "200" ] || exit 1
           echo "✅ Production deployment complete"
+
+      - name: Commit version and create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.new_version }}"
+          TAG="${{ steps.version.outputs.tag }}"
+
+          git config user.email "vikram.gorla@gmail.com"
+          git config user.name "Vikram Gorla"
+          git add package.json
+          git commit -m "chore: release ${TAG}" -m "Written by Léa 🏔️"
+          git push origin main
+
+          printf '## %s\n\n### Container images\n\n```\nghcr.io/vikramgorla/swisscontract-ai:%s\nghcr.io/vikramgorla/swisscontract-ai:production\n```\n' "$TAG" "$TAG" > /tmp/release-notes.md
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file /tmp/release-notes.md \
+            --target main
+
+      - name: Sync preprod to main
+        run: |
+          git fetch origin
+          git checkout preprod
+          git reset --hard origin/main
+          git push origin preprod --force-with-lease
