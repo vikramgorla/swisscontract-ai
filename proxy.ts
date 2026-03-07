@@ -64,3 +64,5 @@ export const config = {
     '/((?!_next/static|_next/image|favicon\\.svg|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml)).*)',
   ],
 };
+
+// v0.4.0 release cycle
