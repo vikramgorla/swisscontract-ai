@@ -34,7 +34,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
 
       - name: Bump pre-release version
         id: preversion
@@ -191,7 +191,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
 
       - name: Determine release version
         id: version
@@ -302,7 +302,7 @@ jobs:
 
       - name: Commit version and create release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           VERSION="${{ steps.version.outputs.new_version }}"
           TAG="${{ steps.version.outputs.tag }}"
@@ -320,8 +320,11 @@ jobs:
             --target main
 
       - name: Sync preprod to main
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git fetch origin
           git checkout preprod
           git reset --hard origin/main
-          git push origin preprod --force-with-lease
+          git remote set-url origin https://${GH_PAT}@github.com/vikramgorla/swisscontract-ai.git
+          git push origin preprod --force
