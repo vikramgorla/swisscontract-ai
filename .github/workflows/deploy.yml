@@ -170,7 +170,20 @@ jobs:
             sleep 5
           done
 
+          # Remove unused swisscontract images — keep only those referenced by running containers
+          IN_USE=$(docker ps -q | xargs -r docker inspect --format '{{.Image}}' | sort -u)
+          docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' \
+            | grep 'vikramgorla/swisscontract-ai' \
+            | while read tag id; do
+              if echo "$IN_USE" | grep -q "$id"; then
+                echo "KEEP (in use): $tag"
+              else
+                echo "REMOVE: $tag"
+                docker rmi "$tag" 2>/dev/null || true
+              fi
+            done
           docker image prune -f
+          df -h / | tail -1
           ENDSSH
 
       - name: External health check
@@ -288,7 +301,20 @@ jobs:
             sleep 5
           done
 
+          # Remove unused swisscontract images — keep only those referenced by running containers
+          IN_USE=$(docker ps -q | xargs -r docker inspect --format '{{.Image}}' | sort -u)
+          docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' \
+            | grep 'vikramgorla/swisscontract-ai' \
+            | while read tag id; do
+              if echo "$IN_USE" | grep -q "$id"; then
+                echo "KEEP (in use): $tag"
+              else
+                echo "REMOVE: $tag"
+                docker rmi "$tag" 2>/dev/null || true
+              fi
+            done
           docker image prune -f
+          df -h / | tail -1
           ENDSSH
 
       - name: External health check

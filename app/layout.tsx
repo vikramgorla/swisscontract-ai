@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     locale: "en_CH",
     images: [
       {
-        url: 'https://swisscontract.ai/og-image.svg',
+        url: 'https://swisscontract.ai/og-image.png',
         width: 1200,
         height: 630,
         alt: 'swisscontract.ai — AI contract analysis for Switzerland',
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: enT.meta_title,
     description: enT.meta_description,
-    images: ['https://swisscontract.ai/og-image.svg'],
+    images: ['https://swisscontract.ai/og-image.png'],
   },
 };
 
