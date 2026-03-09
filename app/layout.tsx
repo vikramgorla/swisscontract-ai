@@ -85,6 +85,10 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         {showBanner && <meta name="robots" content="noindex,nofollow" />}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#DC2626" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={geist.className}>
         {showBanner && (
