@@ -159,6 +159,7 @@ export const translations = {
     result_your_question: 'Your Question Answered',
     result_disclaimer: 'Not legal advice. This AI summary is for informational purposes only. Consult a qualified Swiss lawyer for legal matters.',
     error_invalid_file_type: 'Please upload a PDF, Word document (.docx), or text (.txt) file.',
+    download_pdf: 'Download PDF',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -318,6 +319,7 @@ export const translations = {
     result_your_question: 'Ihre Frage beantwortet',
     result_disclaimer: 'Keine Rechtsberatung. Diese KI-Zusammenfassung dient nur zur Information. Konsultieren Sie für rechtliche Fragen einen qualifizierten Schweizer Anwalt.',
     error_invalid_file_type: 'Bitte laden Sie eine PDF-, Word-Datei (.docx) oder Textdatei (.txt) hoch.',
+    download_pdf: 'PDF herunterladen',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -477,6 +479,7 @@ export const translations = {
     result_your_question: 'Votre question répondue',
     result_disclaimer: 'Pas un conseil juridique. Ce résumé IA est fourni à titre informatif uniquement. Consultez un avocat suisse qualifié pour toute question juridique.',
     error_invalid_file_type: 'Veuillez télécharger un fichier PDF, Word (.docx) ou texte (.txt).',
+    download_pdf: 'Télécharger PDF',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -636,6 +639,7 @@ export const translations = {
     result_your_question: 'La tua domanda risposta',
     result_disclaimer: 'Non è una consulenza legale. Questo riepilogo IA è solo a scopo informativo. Consulta un avvocato svizzero qualificato per questioni legali.',
     error_invalid_file_type: 'Carica un file PDF, Word (.docx) o testo (.txt).',
+    download_pdf: 'Scarica PDF',
   },
 } as const;
 
@@ -751,4 +755,5 @@ export type TranslationKeys = {
   result_your_question: string;
   result_disclaimer: string;
   error_invalid_file_type: string;
+  download_pdf: string;
 };
