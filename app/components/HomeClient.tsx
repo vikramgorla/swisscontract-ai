@@ -495,6 +495,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
               swissLaw: t.result_swiss_law,
               yourQuestion: t.result_your_question,
               disclaimer: t.result_disclaimer,
+              download: t.download_pdf,
             }}
           />
         </section>
