@@ -54,6 +54,9 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       const text = await res.text();
       const file = new File([text], 'employment-contract-sample.txt', { type: 'text/plain' });
       handleFileSelect(file);
+      setAwarenessChecked(true);
+      // Auto-analyse — pass file directly since state won't update until next render
+      await runAnalysis(file);
     } catch {
       // silently ignore — user can still upload manually
     } finally {
@@ -63,9 +66,12 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
 
   const handleAnalyse = async () => {
     if (!selectedFile || !awarenessChecked) return;
+    await runAnalysis(selectedFile);
+  };
 
+  const runAnalysis = async (fileToAnalyse: File) => {
     // Client-side size check before uploading — gives immediate feedback
-    if (selectedFile.size > 10 * 1024 * 1024) {
+    if (fileToAnalyse.size > 10 * 1024 * 1024) {
       setError(t.error_file_too_large);
       return;
     }
@@ -78,13 +84,13 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     // are streams that may not be locally available yet, causing fetch() to fail.
     let fileBlob: Blob;
     try {
-      const buffer = await selectedFile.arrayBuffer();
+      const buffer = await fileToAnalyse.arrayBuffer();
       if (buffer.byteLength === 0) {
         setError(t.error_file_unreadable);
         setIsAnalysing(false);
         return;
       }
-      fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
+      fileBlob = new Blob([buffer], { type: fileToAnalyse.type || 'application/octet-stream' });
     } catch {
       setError(t.error_file_unreadable);
       setIsAnalysing(false);
@@ -92,7 +98,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     }
 
     const formData = new FormData();
-    formData.append('file', fileBlob, selectedFile.name);
+    formData.append('file', fileBlob, fileToAnalyse.name);
     formData.append('locale', locale);
     if (question.trim()) {
       formData.append('question', question.trim());
