@@ -107,10 +107,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Question is too long. Maximum 500 characters.' }, { status: 400 });
     }
     const locale = (formData.get('locale') as string | null) ?? 'en';
+    const contractType = (formData.get('contractType') as string | null) ?? null;
     const validLocales = ['en', 'de', 'fr', 'it'];
     const safeLocale = validLocales.includes(locale) ? locale : 'en';
     const outputLanguage = safeLocale === 'de' ? 'German' : safeLocale === 'fr' ? 'French' : safeLocale === 'it' ? 'Italian' : 'English';
-    const localeSystemPrompt = `${SYSTEM_PROMPT}\n\nReturn all analysis fields (summary, red flags, key terms, swiss_law_notes) in ${outputLanguage}.`;
+    // Contract-type-specific analysis hints (from landing pages)
+    const contractTypeHints: Record<string, string> = {
+      employment: 'This is a Swiss employment contract. Pay special attention to: probation period (OR Art. 335b), notice periods (OR Art. 335c), non-compete clauses (OR Art. 340-340c), overtime compensation, vacation entitlement (minimum 4 weeks per OR Art. 329a), working hours (max 45h/50h per ArG), salary continuation during illness, and any clauses that deviate from mandatory employee protections.',
+      tenancy: 'This is a Swiss tenancy/rental agreement. Pay special attention to: deposit amount (max 3 months rent, must be in escrow per OR Art. 257e), rent increase procedures (OR Art. 269d), termination protection (OR Art. 271-271a), initial rent challenge rights (30 days per OR Art. 270), Nebenkosten/charges, renovation obligations, subletting clauses, and any provisions that may be void under Swiss tenancy law.',
+      nda: 'This is a Swiss NDA/confidentiality agreement. Pay special attention to: scope of confidential information (overly broad?), duration (unlimited NDAs are problematic), penalty clauses and proportionality (OR Art. 163), carve-outs for public information, employee duty of confidentiality (OR Art. 321a), return/destruction of materials, and governing law.',
+      insurance: 'This is a Swiss insurance contract. Pay special attention to: coverage exclusions and limitations, duty of disclosure (VVG Art. 6), claims notification deadlines, cancellation rights and lock-in periods, automatic renewal terms, deductibles and co-payments, pre-existing condition exclusions, and any clauses that may conflict with the Swiss Insurance Contract Act (VVG/LCA).',
+      freelance: 'This is a Swiss freelance/service contract. Pay special attention to: distinction between employment and freelance status (OR Art. 319 vs 394 — Scheinselbstständigkeit risk), IP ownership and assignment, liability limitations, payment terms and late payment, termination provisions, social security implications, non-compete restrictions, and data protection obligations.',
+    };
+    const typeHint = contractType && contractTypeHints[contractType] ? `\n\n${contractTypeHints[contractType]}` : '';
+    const localeSystemPrompt = `${SYSTEM_PROMPT}${typeHint}\n\nReturn all analysis fields (summary, red flags, key terms, swiss_law_notes) in ${outputLanguage}.`;
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });

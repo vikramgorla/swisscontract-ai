@@ -78,6 +78,7 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
     const formData = new FormData();
     formData.append('file', fileBlob, selectedFile.name);
     formData.append('locale', locale);
+    formData.append('contractType', contractType);
     if (question.trim()) {
       formData.append('question', question.trim());
     }
