@@ -226,10 +226,24 @@ export async function POST(request: NextRequest) {
     analysis.red_flags = sanitize(analysis.red_flags as unknown[]);
     analysis.positive_clauses = sanitize(analysis.positive_clauses as unknown[]);
 
-    // Coerce scalar fields — Apertus sometimes returns objects instead of strings
+    // Coerce scalar fields — Apertus sometimes returns objects/arrays instead of strings
     const str = (v: unknown): string => {
       if (typeof v === 'string') return v;
-      if (v && typeof v === 'object') return Object.values(v as Record<string, unknown>).join(' ');
+      if (Array.isArray(v)) {
+        return v.map((item: unknown) => {
+          if (typeof item === 'string') return item;
+          if (item && typeof item === 'object') {
+            const o = item as Record<string, unknown>;
+            if (o.title && o.explanation) return `${o.title}: ${o.explanation}`;
+            return Object.values(o).filter(x => typeof x === 'string').join(' ');
+          }
+          return item != null ? String(item) : '';
+        }).join('\n\n');
+      }
+      if (v && typeof v === 'object') {
+        const o = v as Record<string, unknown>;
+        return Object.values(o).filter(x => typeof x === 'string').join(' ');
+      }
       return v != null ? String(v) : '';
     };
     analysis.summary = str(analysis.summary);
