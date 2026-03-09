@@ -31,15 +31,14 @@ No account required. No data stored. 100% Swiss infrastructure.
 ### ✅ Scanned PDF Handling — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
 - Scanned/image-only PDFs detected when text extraction returns < 100 chars
 - Clear error message asks user to upload a searchable (text-based) PDF or Word document
-- No OCR is performed — deferred due to Node.js compatibility constraints
 
 ### ✅ Multilingual UI — [SPEC-005](docs/specs/005-multilingual.md)
 - Full UI in English, German, French, Italian
-- Language switcher in header (cookie-based)
+- Path-based locale routing (/de, /fr, /it) — zero cookies
 - Analysis results returned in the selected language
 
 ### ✅ SEO & Trust — [SPEC-003](docs/specs/003-seo-improvements.md)
-- og:image, sitemap.xml, robots.txt, FAQPage schema
+- og:image (illustrated PNG 1200×630), sitemap.xml, robots.txt, FAQPage schema
 - Privacy Promise section on homepage
 - No analytics, no cookies — zero tracking
 
@@ -47,12 +46,37 @@ No account required. No data stored. 100% Swiss infrastructure.
 - **Apertus 70B** — Swiss-sovereign LLM, sole AI model
 - Hosted by Infomaniak on Swiss data centres
 - No analytics, no tracking, no third-party data flows outside Switzerland
-- Swiss sovereignty badges on homepage (3 badges: hosted in CH, Swiss AI, no data stored)
-- Awareness checkbox (required before analysis) — user acknowledges third-party data obligations
-- Updated privacy policy: Infomaniak section, third-party data warning
-- All 4 locales (EN/DE/FR/IT) updated
+- Swiss sovereignty badges on homepage
+- Awareness checkbox, updated privacy policy, all 4 locales
 
-**Note:** The multi-model comparison mode (Qwen3, Kimi K2.5, Apertus) was explored but not shipped. Apertus 70B is the sole model.
+### ✅ Demo Contract Mode — [SPEC-007](docs/specs/007-demo-contract.md)
+- "Try with a sample" button — one click, zero friction
+- Loads realistic Swiss employment contract, auto-triggers analysis
+- Intentionally aggressive non-compete to demonstrate red flag detection
+
+### ✅ Download Results as PDF — [SPEC-008](docs/specs/008-download-pdf.md)
+- "Download PDF" button in analysis results
+- Browser print-to-PDF with all sections expanded, zero new dependencies
+- Translated in all 4 languages
+
+### ✅ Contract Type Landing Pages — [SPEC-009](docs/specs/009-contract-landing-pages.md)
+- 5 contract types × 4 languages = 20 new indexed URLs
+- Employment, tenancy, NDA, insurance, freelance
+- Swiss-specific legal content with proper terminology per language
+- Contract-type-specific AI prompts (relevant law articles and focus areas)
+- Red flags, key Swiss laws, FAQPage schema, upload widget on each page
+- "Browse by contract type" cards on homepage
+
+### ✅ PWA Manifest — [SPEC-010](docs/specs/010-pwa-manifest.md)
+- Web app manifest, theme-color, Apple meta tags
+- Enables "Add to Home Screen" on mobile
+
+### ✅ CI/CD Pipeline — v0.4.0–v0.5.0
+- Build-once promote: single Docker image per commit, re-tagged on merge
+- Semver pre-release versioning: `-beta.N` auto-bumped on preprod
+- Zero CI commits to main — version arrives via PR merge
+- Docker image cleanup after every deploy (prevents disk exhaustion)
+- Header-driven feature flags (X-Show-Banner, X-Debug-Enabled via Traefik)
 
 ---
 
@@ -84,11 +108,14 @@ No account required. No data stored. 100% Swiss infrastructure.
 
 ## Roadmap
 
-- [ ] Freemium model — CHF 9/mo subscription (Stripe)
-- [ ] Insurance referral integration (HelloSafe/Comparis affiliate)
-- [ ] Export analysis as PDF
-- [ ] Persistent rate limiting (Redis/Upstash) across server instances
-- [ ] Contract comparison (upload two versions, see diffs)
+- [ ] Submit sitemap to Google Search Console
+- [ ] Blog Post #1: "Swiss Employment Contract: 10 Red Flags" (EN + DE)
+- [ ] Privacy-respecting analytics (Plausible or similar)
+- [ ] Contract comparison mode (upload two versions, see diffs)
+- [ ] Freemium model — CHF 9.90/analysis or CHF 29/mo
+- [ ] Insurance referral integration (AXA-ARAG, DAS, Protekta)
+- [ ] WhatsApp bot for contract analysis
+- [ ] Canton-specific analysis
 
 ---
 
