@@ -85,7 +85,7 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
     let response: Response;
     try {
       response = await fetch('/api/analyse', {

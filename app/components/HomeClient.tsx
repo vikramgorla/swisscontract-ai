@@ -107,7 +107,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
     let response: Response;
     try {
       response = await fetch('/api/analyse', {
@@ -172,7 +172,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     formData.append('locale', locale);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
     let response: Response;
     try {
       response = await fetch('/api/analyse', { method: 'POST', body: formData, signal: controller.signal });
