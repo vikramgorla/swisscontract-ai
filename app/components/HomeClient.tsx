@@ -33,6 +33,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [warning, setWarning] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
 
   const handleFileSelect = (file: File) => {
@@ -42,6 +43,21 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     setWarning(null);
     if (file.size > 5 * 1024 * 1024) {
       setWarning(t.warn_large_file);
+    }
+  };
+
+  const handleLoadDemo = async () => {
+    setIsDemoLoading(true);
+    try {
+      const res = await fetch('/samples/employment-contract-en.txt');
+      if (!res.ok) throw new Error('Failed to fetch sample');
+      const text = await res.text();
+      const file = new File([text], 'employment-contract-sample.txt', { type: 'text/plain' });
+      handleFileSelect(file);
+    } catch {
+      // silently ignore — user can still upload manually
+    } finally {
+      setIsDemoLoading(false);
     }
   };
 
@@ -327,6 +343,19 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           {!analysis && (
             <div className="max-w-xl mx-auto">
               <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
+
+              {/* Demo button — loads a pre-built sample contract */}
+              {!selectedFile && (
+                <div className="mt-3 flex justify-center">
+                  <button
+                    onClick={handleLoadDemo}
+                    disabled={isDemoLoading || isAnalysing}
+                    className="text-sm text-red-600 hover:text-red-700 font-medium underline underline-offset-4 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isDemoLoading ? `⏳ ${t.demo_loading}` : `📄 ${t.demo_btn}`}
+                  </button>
+                </div>
+              )}
 
               <div className="mt-3">
                 <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">
