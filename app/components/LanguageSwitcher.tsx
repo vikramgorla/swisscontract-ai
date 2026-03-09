@@ -9,7 +9,7 @@ const LANGUAGES = [
   { code: 'it', label: 'IT', flag: '🇮🇹' },
 ];
 
-export default function LanguageSwitcher({ current }: { current: string }) {
+export default function LanguageSwitcher({ current, contractType }: { current: string; contractType?: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -26,7 +26,9 @@ export default function LanguageSwitcher({ current }: { current: string }) {
 
   const switchLocale = (code: string) => {
     setOpen(false);
-    const path = code === 'en' ? '/' : `/${code}`;
+    const prefix = code === 'en' ? '' : `/${code}`;
+    const suffix = contractType ? `/contracts/${contractType}` : '';
+    const path = prefix + suffix || '/';
     router.push(path);
   };
 

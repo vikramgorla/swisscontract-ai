@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
 
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, TranslationKeys } from '../i18n/translations';
+import { CONTRACT_TYPES, contractBrowse } from '../i18n/contractPages';
 
 interface Analysis {
   question_answer?: string;
@@ -614,6 +616,30 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                 <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Browse by contract type */}
+      {!analysis && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-14 border-t border-gray-100">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">{contractBrowse[locale].title}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {CONTRACT_TYPES.map(ct => {
+              const localePrefix = locale === 'en' ? '' : `/${locale}`;
+              return (
+                <Link
+                  key={ct}
+                  href={`${localePrefix}/contracts/${ct}`}
+                  className="group block p-5 rounded-xl border border-gray-200 bg-white hover:border-red-300 hover:shadow-md transition-all"
+                >
+                  <h3 className="font-semibold text-gray-900 group-hover:text-red-600 transition-colors mb-1">
+                    {contractBrowse[locale].cards[ct].label}
+                  </h3>
+                  <p className="text-sm text-gray-500">{contractBrowse[locale].cards[ct].description}</p>
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}
