@@ -10,6 +10,7 @@ export const translations = {
     subtitle: 'Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context. Powered by Swiss AI.',
     upload_title: 'Drop your contract here',
     upload_browse: 'click to browse',
+    upload_or: 'or',
     upload_hint: 'PDF, Word (.docx) or .txt · Max 10MB · Max 20 pages',
     question_label: 'Your question',
     question_optional: '(optional)',
@@ -159,6 +160,9 @@ export const translations = {
     result_your_question: 'Your Question Answered',
     result_disclaimer: 'Not legal advice. This AI summary is for informational purposes only. Consult a qualified Swiss lawyer for legal matters.',
     error_invalid_file_type: 'Please upload a PDF, Word document (.docx), or text (.txt) file.',
+    download_pdf: 'Download PDF',
+    demo_btn: 'Try with a sample',
+    demo_loading: 'Loading sample…',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -169,6 +173,7 @@ export const translations = {
     subtitle: 'Laden Sie Ihren Arbeits-, Miet-, Versicherungs- oder NDA-Vertrag hoch — erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken und Schweizer Rechtskontext. Powered by Schweizer KI.',
     upload_title: 'Vertrag hier ablegen',
     upload_browse: 'zum Durchsuchen klicken',
+    upload_or: 'oder',
     upload_hint: 'PDF, Word (.docx) oder .txt · Max. 10 MB · Max. 20 Seiten',
     question_label: 'Ihre Frage',
     question_optional: '(optional)',
@@ -318,6 +323,9 @@ export const translations = {
     result_your_question: 'Ihre Frage beantwortet',
     result_disclaimer: 'Keine Rechtsberatung. Diese KI-Zusammenfassung dient nur zur Information. Konsultieren Sie für rechtliche Fragen einen qualifizierten Schweizer Anwalt.',
     error_invalid_file_type: 'Bitte laden Sie eine PDF-, Word-Datei (.docx) oder Textdatei (.txt) hoch.',
+    download_pdf: 'PDF herunterladen',
+    demo_btn: 'Mit Beispiel testen',
+    demo_loading: 'Beispiel wird geladen…',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -328,6 +336,7 @@ export const translations = {
     subtitle: "Déposez votre contrat de travail, bail, assurance ou NDA — obtenez un résumé clair avec les points d'attention et le contexte juridique suisse. Propulsé par l'IA suisse.",
     upload_title: 'Déposez votre contrat ici',
     upload_browse: 'cliquez pour parcourir',
+    upload_or: 'ou',
     upload_hint: 'PDF, Word (.docx) ou .txt · Max 10 Mo · Max 20 pages',
     question_label: 'Votre question',
     question_optional: '(optionnel)',
@@ -477,6 +486,9 @@ export const translations = {
     result_your_question: 'Votre question répondue',
     result_disclaimer: 'Pas un conseil juridique. Ce résumé IA est fourni à titre informatif uniquement. Consultez un avocat suisse qualifié pour toute question juridique.',
     error_invalid_file_type: 'Veuillez télécharger un fichier PDF, Word (.docx) ou texte (.txt).',
+    download_pdf: 'Télécharger PDF',
+    demo_btn: 'Essayer avec un exemple',
+    demo_loading: 'Chargement…',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -487,6 +499,7 @@ export const translations = {
     subtitle: "Carica il tuo contratto di lavoro, affitto, assicurazione o NDA — ottieni un riassunto chiaro con i rischi evidenziati e il contesto giuridico svizzero. Alimentato dall'IA svizzera.",
     upload_title: 'Trascina qui il tuo contratto',
     upload_browse: 'clicca per sfogliare',
+    upload_or: 'oppure',
     upload_hint: 'PDF, Word (.docx) o .txt · Max 10 MB · Max 20 pagine',
     question_label: 'La tua domanda',
     question_optional: '(opzionale)',
@@ -636,6 +649,9 @@ export const translations = {
     result_your_question: 'La tua domanda risposta',
     result_disclaimer: 'Non è una consulenza legale. Questo riepilogo IA è solo a scopo informativo. Consulta un avvocato svizzero qualificato per questioni legali.',
     error_invalid_file_type: 'Carica un file PDF, Word (.docx) o testo (.txt).',
+    download_pdf: 'Scarica PDF',
+    demo_btn: 'Prova con un esempio',
+    demo_loading: 'Caricamento…',
   },
 } as const;
 
@@ -650,6 +666,7 @@ export type TranslationKeys = {
   subtitle: string;
   upload_title: string;
   upload_browse: string;
+  upload_or: string;
   upload_hint: string;
   question_label: string;
   question_optional: string;
@@ -751,4 +768,7 @@ export type TranslationKeys = {
   result_your_question: string;
   result_disclaimer: string;
   error_invalid_file_type: string;
+  download_pdf: string;
+  demo_btn: string;
+  demo_loading: string;
 };

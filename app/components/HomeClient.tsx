@@ -2,12 +2,14 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
 
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, TranslationKeys } from '../i18n/translations';
+import { CONTRACT_TYPES, contractBrowse } from '../i18n/contractPages';
 
 interface Analysis {
   question_answer?: string;
@@ -33,6 +35,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [warning, setWarning] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
 
   const handleFileSelect = (file: File) => {
@@ -45,11 +48,32 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     }
   };
 
+  const handleLoadDemo = async () => {
+    setIsDemoLoading(true);
+    try {
+      const res = await fetch('/samples/employment-contract-en.txt');
+      if (!res.ok) throw new Error('Failed to fetch sample');
+      const text = await res.text();
+      const file = new File([text], 'employment-contract-sample.txt', { type: 'text/plain' });
+      handleFileSelect(file);
+      setAwarenessChecked(true);
+      // Auto-analyse — pass file directly since state won't update until next render
+      await runAnalysis(file);
+    } catch {
+      // silently ignore — user can still upload manually
+    } finally {
+      setIsDemoLoading(false);
+    }
+  };
+
   const handleAnalyse = async () => {
     if (!selectedFile || !awarenessChecked) return;
+    await runAnalysis(selectedFile);
+  };
 
+  const runAnalysis = async (fileToAnalyse: File) => {
     // Client-side size check before uploading — gives immediate feedback
-    if (selectedFile.size > 10 * 1024 * 1024) {
+    if (fileToAnalyse.size > 10 * 1024 * 1024) {
       setError(t.error_file_too_large);
       return;
     }
@@ -62,13 +86,13 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     // are streams that may not be locally available yet, causing fetch() to fail.
     let fileBlob: Blob;
     try {
-      const buffer = await selectedFile.arrayBuffer();
+      const buffer = await fileToAnalyse.arrayBuffer();
       if (buffer.byteLength === 0) {
         setError(t.error_file_unreadable);
         setIsAnalysing(false);
         return;
       }
-      fileBlob = new Blob([buffer], { type: selectedFile.type || 'application/octet-stream' });
+      fileBlob = new Blob([buffer], { type: fileToAnalyse.type || 'application/octet-stream' });
     } catch {
       setError(t.error_file_unreadable);
       setIsAnalysing(false);
@@ -76,7 +100,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     }
 
     const formData = new FormData();
-    formData.append('file', fileBlob, selectedFile.name);
+    formData.append('file', fileBlob, fileToAnalyse.name);
     formData.append('locale', locale);
     if (question.trim()) {
       formData.append('question', question.trim());
@@ -328,6 +352,19 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             <div className="max-w-xl mx-auto">
               <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
 
+              {/* Demo button — loads a pre-built sample contract */}
+              {!selectedFile && (
+                <div className="mt-3 flex justify-center">
+                  <button
+                    onClick={handleLoadDemo}
+                    disabled={isDemoLoading || isAnalysing}
+                    className="text-sm text-red-600 hover:text-red-700 font-medium underline underline-offset-4 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isDemoLoading ? `⏳ ${t.demo_loading}` : `📄 ${t.demo_btn}`}
+                  </button>
+                </div>
+              )}
+
               <div className="mt-3">
                 <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">
                   {t.question_label} <span className="text-gray-400 font-normal">{t.question_optional}</span>
@@ -495,6 +532,7 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
               swissLaw: t.result_swiss_law,
               yourQuestion: t.result_your_question,
               disclaimer: t.result_disclaimer,
+              download: t.download_pdf,
             }}
           />
         </section>
@@ -578,6 +616,30 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                 <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Browse by contract type */}
+      {!analysis && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-14 border-t border-gray-100">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">{contractBrowse[locale].title}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {CONTRACT_TYPES.map(ct => {
+              const localePrefix = locale === 'en' ? '' : `/${locale}`;
+              return (
+                <Link
+                  key={ct}
+                  href={`${localePrefix}/contracts/${ct}`}
+                  className="group block p-5 rounded-xl border border-gray-200 bg-white hover:border-red-300 hover:shadow-md transition-all"
+                >
+                  <h3 className="font-semibold text-gray-900 group-hover:text-red-600 transition-colors mb-1">
+                    {contractBrowse[locale].cards[ct].label}
+                  </h3>
+                  <p className="text-sm text-gray-500">{contractBrowse[locale].cards[ct].description}</p>
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}
