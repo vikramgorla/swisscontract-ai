@@ -1,0 +1,196 @@
+EMPLOYMENT CONTRACT
+(Arbeitsvertrag / Contrat de travail)
+
+Pursuant to Art. 319 ff. of the Swiss Code of Obligations (OR/CO)
+
+─────────────────────────────────────────────────────────────────────────
+
+PARTIES
+
+Employer:   Alpine Tech Solutions AG
+            Technoparkstrasse 1, 8005 Zürich, Switzerland
+            CHE-123.456.789 (registered in the Commercial Register of the
+            Canton of Zurich)
+            (hereinafter: the "Company")
+
+Employee:   [Name]
+            [Address], Switzerland
+            (hereinafter: the "Employee")
+
+─────────────────────────────────────────────────────────────────────────
+
+1. POSITION AND DUTIES
+
+1.1  The Employee is hired in the role of Senior Software Engineer,
+     reporting to the Head of Engineering.
+
+1.2  The Employee shall perform all duties assigned by the Company in
+     good faith and in accordance with Art. 321a OR. The Company
+     reserves the right to assign the Employee to other tasks of
+     comparable responsibility with reasonable notice.
+
+1.3  The place of work is Zürich. The Company may require the Employee
+     to work from other locations or travel on Company business as the
+     role demands.
+
+─────────────────────────────────────────────────────────────────────────
+
+2. COMMENCEMENT AND PROBATIONARY PERIOD
+
+2.1  The employment relationship commences on 1 April 2026.
+
+2.2  The first three (3) months constitute a probationary period
+     (Art. 335b OR). During the probationary period, either party may
+     terminate this contract at any time with seven (7) days' written
+     notice.
+
+─────────────────────────────────────────────────────────────────────────
+
+3. WORKING HOURS
+
+3.1  The standard working week is forty-two (42) hours, distributed
+     over five days Monday to Friday.
+
+3.2  The Employee may be required to work additional hours in accordance
+     with Art. 321c OR. Overtime shall be compensated by time off in
+     lieu or, at the Company's discretion, by additional remuneration
+     at the ordinary hourly rate. No overtime premium is paid.
+
+─────────────────────────────────────────────────────────────────────────
+
+4. REMUNERATION
+
+4.1  The Employee shall receive a gross annual salary of CHF 95,000
+     (ninety-five thousand Swiss francs), paid in twelve equal monthly
+     instalments of CHF 7,916.67 on the last working day of each month.
+
+4.2  Social security contributions (AHV/IV/EO, ALV, SUVA/accident
+     insurance) shall be deducted in accordance with applicable Swiss
+     law.
+
+4.3  Any salary adjustment is at the sole discretion of the Company and
+     does not create a precedent or entitlement for future increases.
+
+─────────────────────────────────────────────────────────────────────────
+
+5. ANNUAL VACATION
+
+5.1  The Employee is entitled to twenty (20) working days of paid
+     vacation per calendar year (Art. 329a OR), pro-rated in the first
+     and last year of employment.
+
+5.2  Vacation dates must be agreed with the line manager in advance.
+     The Company may, in exceptional business circumstances, postpone
+     previously approved vacation with reasonable notice.
+
+─────────────────────────────────────────────────────────────────────────
+
+6. NOTICE PERIODS
+
+6.1  During the probationary period (clause 2.2), notice of seven (7)
+     days applies (Art. 335b OR).
+
+6.2  After completion of the probationary period, the notice period is
+     three (3) months to the end of a calendar month (Art. 335c OR).
+
+6.3  Notice must be given in writing. Termination during periods of
+     protected absence (illness, accident, pregnancy) is governed by
+     Art. 336c OR.
+
+─────────────────────────────────────────────────────────────────────────
+
+7. CONFIDENTIALITY
+
+7.1  The Employee shall keep strictly confidential, both during and
+     after the employment relationship, all trade secrets, technical
+     know-how, business strategies, client lists, pricing, financial
+     information, and any other non-public information of the Company
+     or its clients (Art. 321a para. 4 OR).
+
+7.2  Upon termination of employment for any reason, the Employee shall
+     immediately return all documents, data carriers, and materials
+     belonging to the Company, and shall permanently delete any copies
+     retained on personal devices.
+
+7.3  The confidentiality obligation survives termination of this
+     contract without time limit.
+
+─────────────────────────────────────────────────────────────────────────
+
+8. NON-COMPETE CLAUSE
+
+8.1  For a period of twelve (12) months following termination of this
+     employment contract — for any reason — the Employee shall not,
+     directly or indirectly:
+
+     (a) engage in, or hold any ownership interest in, any business
+         that competes with the Company's business activities;
+
+     (b) solicit or accept business from any client or prospect of the
+         Company with whom the Employee had material contact during the
+         last twenty-four (24) months of employment;
+
+     (c) solicit, recruit, or employ any current employee or contractor
+         of the Company.
+
+8.2  The geographic scope of this restriction is the entire territory
+     of Switzerland.
+
+8.3  No financial compensation is payable by the Company in respect of
+     the non-compete obligation.
+
+8.4  The Company reserves the right to seek injunctive relief and
+     damages in the event of breach, in accordance with Art. 340b OR.
+
+─────────────────────────────────────────────────────────────────────────
+
+9. INTELLECTUAL PROPERTY
+
+9.1  All work results, inventions, software, and other intellectual
+     property created by the Employee in the course of employment — or
+     using Company resources — vest exclusively in the Company upon
+     creation (Art. 332 OR).
+
+9.2  The Employee assigns to the Company all rights not automatically
+     transferred by law, and waives any moral rights to the extent
+     permitted by Swiss law.
+
+─────────────────────────────────────────────────────────────────────────
+
+10. APPLICABLE LAW AND JURISDICTION
+
+10.1 This contract is governed by Swiss law, in particular the Swiss
+     Code of Obligations (Art. 319–362 OR).
+
+10.2 The exclusive place of jurisdiction for any disputes arising from
+     or in connection with this contract is Zürich, Switzerland,
+     subject to mandatory statutory provisions (Art. 34 ZPO).
+
+─────────────────────────────────────────────────────────────────────────
+
+11. MISCELLANEOUS
+
+11.1 Should any provision of this contract be or become invalid or
+     unenforceable, the remaining provisions shall remain in full force.
+     The invalid provision shall be replaced by a valid provision that
+     most closely reflects the original intent.
+
+11.2 Amendments to this contract must be made in writing and signed by
+     both parties.
+
+11.3 This contract supersedes all prior oral or written agreements
+     between the parties relating to the subject matter hereof.
+
+─────────────────────────────────────────────────────────────────────────
+
+SIGNATURES
+
+Zürich, ___________________________
+
+For Alpine Tech Solutions AG:              Employee:
+
+___________________________               ___________________________
+[Name], [Title]                           [Name]
+Date: _____________________               Date: _____________________
+
+─────────────────────────────────────────────────────────────────────────

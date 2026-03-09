@@ -160,6 +160,8 @@ export const translations = {
     result_disclaimer: 'Not legal advice. This AI summary is for informational purposes only. Consult a qualified Swiss lawyer for legal matters.',
     error_invalid_file_type: 'Please upload a PDF, Word document (.docx), or text (.txt) file.',
     download_pdf: 'Download PDF',
+    demo_btn: 'Try with a sample',
+    demo_loading: 'Loading sample…',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -320,6 +322,8 @@ export const translations = {
     result_disclaimer: 'Keine Rechtsberatung. Diese KI-Zusammenfassung dient nur zur Information. Konsultieren Sie für rechtliche Fragen einen qualifizierten Schweizer Anwalt.',
     error_invalid_file_type: 'Bitte laden Sie eine PDF-, Word-Datei (.docx) oder Textdatei (.txt) hoch.',
     download_pdf: 'PDF herunterladen',
+    demo_btn: 'Mit Beispiel testen',
+    demo_loading: 'Beispiel wird geladen…',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -480,6 +484,8 @@ export const translations = {
     result_disclaimer: 'Pas un conseil juridique. Ce résumé IA est fourni à titre informatif uniquement. Consultez un avocat suisse qualifié pour toute question juridique.',
     error_invalid_file_type: 'Veuillez télécharger un fichier PDF, Word (.docx) ou texte (.txt).',
     download_pdf: 'Télécharger PDF',
+    demo_btn: 'Essayer avec un exemple',
+    demo_loading: 'Chargement…',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -640,6 +646,8 @@ export const translations = {
     result_disclaimer: 'Non è una consulenza legale. Questo riepilogo IA è solo a scopo informativo. Consulta un avvocato svizzero qualificato per questioni legali.',
     error_invalid_file_type: 'Carica un file PDF, Word (.docx) o testo (.txt).',
     download_pdf: 'Scarica PDF',
+    demo_btn: 'Prova con un esempio',
+    demo_loading: 'Caricamento…',
   },
 } as const;
 
@@ -756,4 +764,6 @@ export type TranslationKeys = {
   result_disclaimer: string;
   error_invalid_file_type: string;
   download_pdf: string;
+  demo_btn: string;
+  demo_loading: string;
 };
