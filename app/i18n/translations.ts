@@ -10,6 +10,7 @@ export const translations = {
     subtitle: 'Upload your employment, tenancy, insurance, or NDA contract — get a plain-English summary with red flags highlighted and Swiss law context. Powered by Swiss AI.',
     upload_title: 'Drop your contract here',
     upload_browse: 'click to browse',
+    upload_or: 'or',
     upload_hint: 'PDF, Word (.docx) or .txt · Max 10MB · Max 20 pages',
     question_label: 'Your question',
     question_optional: '(optional)',
@@ -172,6 +173,7 @@ export const translations = {
     subtitle: 'Laden Sie Ihren Arbeits-, Miet-, Versicherungs- oder NDA-Vertrag hoch — erhalten Sie eine verständliche Zusammenfassung mit hervorgehobenen Risiken und Schweizer Rechtskontext. Powered by Schweizer KI.',
     upload_title: 'Vertrag hier ablegen',
     upload_browse: 'zum Durchsuchen klicken',
+    upload_or: 'oder',
     upload_hint: 'PDF, Word (.docx) oder .txt · Max. 10 MB · Max. 20 Seiten',
     question_label: 'Ihre Frage',
     question_optional: '(optional)',
@@ -334,6 +336,7 @@ export const translations = {
     subtitle: "Déposez votre contrat de travail, bail, assurance ou NDA — obtenez un résumé clair avec les points d'attention et le contexte juridique suisse. Propulsé par l'IA suisse.",
     upload_title: 'Déposez votre contrat ici',
     upload_browse: 'cliquez pour parcourir',
+    upload_or: 'ou',
     upload_hint: 'PDF, Word (.docx) ou .txt · Max 10 Mo · Max 20 pages',
     question_label: 'Votre question',
     question_optional: '(optionnel)',
@@ -496,6 +499,7 @@ export const translations = {
     subtitle: "Carica il tuo contratto di lavoro, affitto, assicurazione o NDA — ottieni un riassunto chiaro con i rischi evidenziati e il contesto giuridico svizzero. Alimentato dall'IA svizzera.",
     upload_title: 'Trascina qui il tuo contratto',
     upload_browse: 'clicca per sfogliare',
+    upload_or: 'oppure',
     upload_hint: 'PDF, Word (.docx) o .txt · Max 10 MB · Max 20 pagine',
     question_label: 'La tua domanda',
     question_optional: '(opzionale)',
@@ -662,6 +666,7 @@ export type TranslationKeys = {
   subtitle: string;
   upload_title: string;
   upload_browse: string;
+  upload_or: string;
   upload_hint: string;
   question_label: string;
   question_optional: string;
