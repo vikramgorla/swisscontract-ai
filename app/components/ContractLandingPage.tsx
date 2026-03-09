@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import UploadZone from './UploadZone';
+import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, translations } from '../i18n/translations';
@@ -121,8 +122,7 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
     setIsAnalysing(false);
   };
 
-  // Dynamic import for AnalysisResult to avoid loading it until needed
-  const AnalysisResult = React.lazy(() => import('./AnalysisResult'));
+
 
   const handleReset = () => {
     setSelectedFile(null);
@@ -308,8 +308,7 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
       {/* Results */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-          <React.Suspense fallback={<div className="animate-pulse bg-gray-100 rounded-xl p-8" />}>
-            <AnalysisResult
+          <AnalysisResult
               analysis={analysis}
               onReset={handleReset}
               resetLabel={t.results_reset}
@@ -333,7 +332,6 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
                 disclaimer: t.result_disclaimer,
               }}
             />
-          </React.Suspense>
         </section>
       )}
 
