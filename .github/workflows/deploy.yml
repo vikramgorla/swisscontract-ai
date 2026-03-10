@@ -196,6 +196,30 @@ jobs:
           [ "$HTTP" = "200" ] || exit 1
           echo "✅ Preprod deployment complete"
 
+      - name: Check security headers
+        env:
+          DOMAIN: ${{ vars.DOMAIN }}
+        run: |
+          echo "Checking security headers for https://${DOMAIN}..."
+          HEADERS=$(curl -sI "https://${DOMAIN}" --max-time 10)
+
+          check_header() {
+            if echo "$HEADERS" | grep -qi "$1"; then
+              echo "✅ $1 present"
+            else
+              echo "⚠️  $1 MISSING"
+            fi
+          }
+
+          check_header "X-Content-Type-Options"
+          check_header "X-Frame-Options"
+          check_header "Strict-Transport-Security"
+          check_header "Referrer-Policy"
+          check_header "X-XSS-Protection"
+
+          # Don't fail the deploy — just warn
+          echo "ℹ️  Security headers check complete (advisory only)"
+
   promote-production:
     # Runs ONLY on main push — strips beta suffix, re-tags image, deploys, creates release, syncs preprod
     # Skips auto-release commits to avoid infinite loop
@@ -326,6 +350,30 @@ jobs:
           echo "https://${DOMAIN}/api/health → HTTP ${HTTP}"
           [ "$HTTP" = "200" ] || exit 1
           echo "✅ Production deployment complete"
+
+      - name: Check security headers
+        env:
+          DOMAIN: ${{ vars.DOMAIN }}
+        run: |
+          echo "Checking security headers for https://${DOMAIN}..."
+          HEADERS=$(curl -sI "https://${DOMAIN}" --max-time 10)
+
+          check_header() {
+            if echo "$HEADERS" | grep -qi "$1"; then
+              echo "✅ $1 present"
+            else
+              echo "⚠️  $1 MISSING"
+            fi
+          }
+
+          check_header "X-Content-Type-Options"
+          check_header "X-Frame-Options"
+          check_header "Strict-Transport-Security"
+          check_header "Referrer-Policy"
+          check_header "X-XSS-Protection"
+
+          # Don't fail the deploy — just warn
+          echo "ℹ️  Security headers check complete (advisory only)"
 
       - name: Create git tag and GitHub release
         # Tags the merge commit on main — NO commits to main, version arrived via PR
