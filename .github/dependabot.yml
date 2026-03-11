@@ -9,10 +9,6 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
-    ignore:
-      # Don't auto-update major versions
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -24,6 +20,6 @@ updates:
     labels:
       - "ci"
     ignore:
-      # Don't auto-update major versions
+      # Don't auto-update major versions — CI action majors can break workflows
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
