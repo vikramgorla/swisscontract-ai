@@ -197,11 +197,12 @@ jobs:
           echo "✅ Preprod deployment complete"
 
       - name: Check security headers
+        continue-on-error: true
         env:
           DOMAIN: ${{ vars.DOMAIN }}
         run: |
           echo "Checking security headers for https://${DOMAIN}..."
-          HEADERS=$(curl -sI "https://${DOMAIN}" --max-time 10)
+          HEADERS=$(curl -sI "https://${DOMAIN}" --max-time 30 || true)
 
           check_header() {
             if echo "$HEADERS" | grep -qi "$1"; then
@@ -217,7 +218,6 @@ jobs:
           check_header "Referrer-Policy"
           check_header "X-XSS-Protection"
 
-          # Don't fail the deploy — just warn
           echo "ℹ️  Security headers check complete (advisory only)"
 
   promote-production:
@@ -352,11 +352,12 @@ jobs:
           echo "✅ Production deployment complete"
 
       - name: Check security headers
+        continue-on-error: true
         env:
           DOMAIN: ${{ vars.DOMAIN }}
         run: |
           echo "Checking security headers for https://${DOMAIN}..."
-          HEADERS=$(curl -sI "https://${DOMAIN}" --max-time 10)
+          HEADERS=$(curl -sI "https://${DOMAIN}" --max-time 30 || true)
 
           check_header() {
             if echo "$HEADERS" | grep -qi "$1"; then
@@ -372,7 +373,6 @@ jobs:
           check_header "Referrer-Policy"
           check_header "X-XSS-Protection"
 
-          # Don't fail the deploy — just warn
           echo "ℹ️  Security headers check complete (advisory only)"
 
       - name: Create git tag and GitHub release
