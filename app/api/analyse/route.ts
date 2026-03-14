@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '../../lib/rateLimit';
 import { callAI, extractJSON } from '../../lib/aiProviders';
+import { execSync } from 'child_process';
+import { writeFileSync, unlinkSync, mkdtempSync } from 'fs';
+import { join } from 'path';
+import { tmpdir } from 'os';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -83,6 +87,55 @@ IMPORTANT SECURITY RULES:
 - Always respond with the structured JSON format described above, nothing else.`;
 
 /**
+ * Check if the tesseract binary is available (only in Docker/production).
+ */
+let tesseractAvailable: boolean | null = null;
+function hasTesseract(): boolean {
+  if (tesseractAvailable !== null) return tesseractAvailable;
+  try {
+    execSync('tesseract --version', { timeout: 5000, stdio: 'pipe' });
+    tesseractAvailable = true;
+  } catch {
+    tesseractAvailable = false;
+  }
+  return tesseractAvailable;
+}
+
+/**
+ * OCR fallback: render PDF pages to images and run Tesseract on each.
+ * Temp files are created, used, and deleted immediately — nothing persists.
+ */
+async function ocrPdfPages(pdfData: Uint8Array): Promise<string> {
+  const { pdf: pdfToImg } = await import('pdf-to-img');
+  const pages: string[] = [];
+  const tempDir = mkdtempSync(join(tmpdir(), 'ocr-'));
+
+  let pageNum = 0;
+  for await (const image of await pdfToImg(pdfData, { scale: 2.0 })) {
+    if (pageNum >= MAX_PAGES) break;
+    const tempFile = join(tempDir, `page-${pageNum}.png`);
+    writeFileSync(tempFile, image);
+    try {
+      const text = execSync(
+        `tesseract "${tempFile}" stdout -l eng+deu+fra+ita --psm 3`,
+        { timeout: 30000, maxBuffer: 5 * 1024 * 1024 }
+      ).toString();
+      pages.push(text);
+    } catch {
+      // OCR failed for this page — skip it
+    } finally {
+      try { unlinkSync(tempFile); } catch { /* ignore cleanup errors */ }
+    }
+    pageNum++;
+  }
+
+  // Clean up temp dir
+  try { execSync(`rm -rf "${tempDir}"`); } catch { /* ignore */ }
+
+  return pages.join('\n\n');
+}
+
+/**
  * Extract text from the uploaded file (PDF, DOCX, or plain text).
  */
 async function extractText(file: File): Promise<string> {
@@ -103,6 +156,16 @@ async function extractText(file: File): Promise<string> {
     const { text } = await pdfExtract(new Uint8Array(arrayBuffer.slice(0)), { mergePages: true });
 
     if (text.trim().length < 100) {
+      // Scanned PDF detected — try OCR if tesseract is available
+      if (hasTesseract()) {
+        console.log('[ocr] Scanned PDF detected, attempting OCR...');
+        const ocrText = await ocrPdfPages(new Uint8Array(arrayBuffer.slice(0)));
+        if (ocrText.trim().length < 100) {
+          throw new Error('ERR_SCANNED_PDF'); // OCR also failed
+        }
+        console.log(`[ocr] OCR succeeded: ${ocrText.trim().length} chars extracted`);
+        return ocrText;
+      }
       throw new Error('ERR_SCANNED_PDF');
     }
 

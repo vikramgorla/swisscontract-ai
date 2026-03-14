@@ -1,26 +1,41 @@
-# SPEC-004: Scanned PDF Handling
+# SPEC-004: Scanned PDF Handling + OCR
 
-**Status:** shipped (graceful rejection — no OCR)  
+**Status:** shipped (OCR via Tesseract)  
 **Created:** 2026-02-25  
-**Updated:** 2026-03-06  
+**Updated:** 2026-07-12  
 **Author:** Léa 🏔️
 
 ## Problem
-PDFs containing only scanned images return empty text from unpdf, causing "Contract text is too short or empty" error.
+PDFs containing only scanned images return empty text from unpdf, blocking analysis for a common contract format (many Swiss tenancy and employment contracts are scanned).
 
 ## Solution
-Graceful error handling: when extracted text < 100 chars, a clear error (`ERR_SCANNED_PDF`) is returned asking the user to upload a searchable (text-based) PDF or Word document. **No OCR is performed** — Infomaniak AI models are text-only and do not support native PDF vision.
 
-OCR was evaluated and deferred due to Node.js canvas incompatibility and the complexity of self-hosted Tesseract. May be revisited in future.
+### Phase 1 (shipped 2026-03-06): Graceful rejection
+When extracted text < 100 chars, return `ERR_SCANNED_PDF` with a clear error message.
+
+### Phase 2 (shipped 2026-07-12): OCR fallback via Tesseract
+When text extraction yields < 100 chars and the `tesseract` binary is available:
+1. Render each PDF page to a PNG image using `pdf-to-img`
+2. Run `tesseract` on each page with `eng+deu+fra+ita` languages
+3. Concatenate results and proceed with normal analysis
+4. If OCR also yields < 100 chars, return `ERR_SCANNED_PDF` with updated error message
 
 ## Acceptance Criteria
-- [x] Scanned PDFs: user receives clear error asking for text-based PDF
-- [x] Normal (text-based) PDFs unaffected
-- [x] Error message is informative and translated in all 4 locales
+- [x] Scanned PDFs with readable text: OCR extracts text → analysis proceeds
+- [x] Truly unreadable PDFs: user receives clear error (updated message mentioning OCR was attempted)
+- [x] Normal (text-based) PDFs unaffected (OCR not invoked)
+- [x] Error message translated in all 4 locales
 - [x] Max pages limit enforced (20 pages)
+- [x] Temp files created during OCR are deleted immediately after use
+- [x] Graceful fallback when tesseract binary not available (local dev)
 
 ## Technical Notes
-- Uses unpdf for text extraction; scanned PDFs (< 100 chars) return `ERR_SCANNED_PDF`
-- **No OCR is implemented** — the OffscreenCanvas / pdfjs-dist approach was evaluated and rejected
-- For scanned PDFs, users are asked to provide a searchable PDF or Word document
-- pdfjs-dist remains in serverExternalPackages for unpdf compatibility
+- **PDF rendering:** `pdf-to-img` (uses pdfjs internally, works in Node.js without canvas)
+- **OCR engine:** `tesseract-ocr` binary installed in Docker image (Alpine package)
+- **Languages:** `eng` (default) + `deu` + `fra` + `ita` — covering all 4 Swiss national languages
+- **Scale factor:** 2.0× for good OCR quality
+- **Timeout:** 30 seconds per page max
+- **Privacy:** temp PNG files written to `/tmp/ocr-*`, deleted immediately after OCR
+- **Docker:** `tesseract-ocr` + language data packs added to runtime stage (~15MB)
+- **Local dev:** if `tesseract` binary not found, falls back to old ERR_SCANNED_PDF behavior
+- **Config:** `pdf-to-img` added to `serverExternalPackages` in next.config.ts

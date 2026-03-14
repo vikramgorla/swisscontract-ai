@@ -28,9 +28,11 @@ No account required. No data stored. 100% Swiss infrastructure.
 - Question answered inline at the top of results
 - Re-submits contract + question to AI, no separate storage
 
-### ✅ Scanned PDF Handling — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
-- Scanned/image-only PDFs detected when text extraction returns < 100 chars
-- Clear error message asks user to upload a searchable (text-based) PDF or Word document
+### ✅ Scanned PDF Handling + OCR — [SPEC-004](docs/specs/004-ocr-scanned-pdfs.md)
+- Scanned/image-only PDFs automatically processed via Tesseract OCR
+- PDF pages rendered to images, then OCR'd with eng+deu+fra+ita language support
+- Graceful fallback: if OCR also fails, clear error message in all 4 languages
+- Zero persistence: temp files created during OCR are deleted immediately
 
 ### ✅ Multilingual UI — [SPEC-005](docs/specs/005-multilingual.md)
 - Full UI in English, German, French, Italian

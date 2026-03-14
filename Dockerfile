@@ -22,6 +22,9 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
+# Install tesseract OCR + Swiss language packs (eng is included by default)
+RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-deu tesseract-ocr-data-fra tesseract-ocr-data-ita
+
 # Only copy what's needed to run
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next

@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['unpdf', 'mammoth'],
+  serverExternalPackages: ['unpdf', 'mammoth', 'pdf-to-img'],
   async headers() {
     return [
       {
