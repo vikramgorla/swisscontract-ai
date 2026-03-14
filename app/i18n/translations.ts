@@ -57,6 +57,7 @@ export const translations = {
     error_file_too_large: 'File too large. Maximum size is 10MB.',
     error_file_unreadable: 'Could not read this file. If you selected it from Google Drive or cloud storage, please download it to your device first, then upload it.',
     error_doc_too_long: 'This document is too long to analyse in full. Try a shorter contract or copy-paste the key sections as a text file.',
+    error_ai_unavailable: 'The AI service is temporarily unavailable. Please try again in a few minutes.',
     warn_large_file: 'Large file detected (>5MB). Analysis may take up to 60 seconds — please be patient.',
     contract_type_employment: 'Employment Contract',
     contract_type_tenancy: 'Tenancy Agreement',
@@ -220,6 +221,7 @@ export const translations = {
     error_file_too_large: 'Datei zu gross. Maximale Größe ist 10MB.',
     error_file_unreadable: 'Diese Datei konnte nicht gelesen werden. Wenn Sie sie aus Google Drive oder einem Cloud-Speicher ausgewählt haben, laden Sie sie bitte zuerst auf Ihr Gerät herunter.',
     error_doc_too_long: 'Dieses Dokument ist zu lang für eine vollständige Analyse. Versuchen Sie einen kürzeren Vertrag oder fügen Sie die wichtigsten Abschnitte als Textdatei ein.',
+    error_ai_unavailable: 'Der KI-Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in wenigen Minuten erneut.',
     warn_large_file: 'Große Datei erkannt (>5MB). Die Analyse kann bis zu 60 Sekunden dauern — bitte haben Sie Geduld.',
     contract_type_employment: 'Arbeitsvertrag',
     contract_type_tenancy: 'Mietvertrag',
@@ -383,6 +385,7 @@ export const translations = {
     error_file_too_large: 'Fichier trop volumineux. La taille maximale est de 10MB.',
     error_file_unreadable: "Impossible de lire ce fichier. Si vous l'avez sélectionné depuis Google Drive ou un stockage cloud, téléchargez-le d'abord sur votre appareil.",
     error_doc_too_long: "Ce document est trop long pour être analysé en entier. Essayez un contrat plus court ou copiez les sections clés dans un fichier texte.",
+    error_ai_unavailable: "Le service d'IA est temporairement indisponible. Veuillez réessayer dans quelques minutes.",
     warn_large_file: "Fichier volumineux détecté (>5MB). L'analyse peut prendre jusqu'à 60 secondes — merci de patienter.",
     contract_type_employment: 'Contrat de travail',
     contract_type_tenancy: 'Contrat de bail',
@@ -546,6 +549,7 @@ export const translations = {
     error_file_too_large: 'File troppo grande. La dimensione massima è 10MB.',
     error_file_unreadable: 'Impossibile leggere questo file. Se lo hai selezionato da Google Drive o da un archivio cloud, scaricalo prima sul dispositivo.',
     error_doc_too_long: 'Questo documento è troppo lungo per essere analizzato interamente. Prova un contratto più breve o incolla le sezioni principali in un file di testo.',
+    error_ai_unavailable: 'Il servizio di IA è temporaneamente non disponibile. Riprova tra qualche minuto.',
     warn_large_file: "File di grandi dimensioni rilevato (>5MB). L'analisi può richiedere fino a 60 secondi — attendere.",
     contract_type_employment: 'Contratto di lavoro',
     contract_type_tenancy: 'Contratto di locazione',
@@ -699,6 +703,7 @@ export type TranslationKeys = {
   error_file_too_large: string;
   error_file_unreadable: string;
   error_doc_too_long: string;
+  error_ai_unavailable: string;
   warn_large_file: string;
   contract_type_employment: string;
   contract_type_tenancy: string;

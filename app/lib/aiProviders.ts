@@ -96,7 +96,12 @@ export async function callAI(
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Infomaniak AI API error (${response.status}): ${body.slice(0, 500)}`);
+    // Log full error server-side but never expose raw API details to the user
+    console.error(`[ai] Infomaniak API error (${response.status}): ${body.slice(0, 500)}`);
+    if (response.status === 503 || response.status === 502 || body.includes('version') || body.includes('maintenance')) {
+      throw new Error('AI_SERVICE_UNAVAILABLE');
+    }
+    throw new Error(`Infomaniak AI API error (${response.status})`);
   }
 
   const data = await response.json();

@@ -405,6 +405,9 @@ export async function POST(request: NextRequest) {
       if (error.message.includes('context length') || error.message.includes('input tokens') || error.message.includes('maximum context')) {
         return NextResponse.json({ error: 'ERR_DOC_TOO_LONG' }, { status: 400 });
       }
+      if (error.message === 'AI_SERVICE_UNAVAILABLE') {
+        return NextResponse.json({ error: 'ERR_AI_UNAVAILABLE' }, { status: 503 });
+      }
       if (error.message.includes('401') || error.message.includes('403') || (error.message.includes('token') && !error.message.includes('input tokens'))) {
         return NextResponse.json({ error: 'API configuration error. Please contact support.' }, { status: 500 });
       }
