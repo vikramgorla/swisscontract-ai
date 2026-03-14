@@ -94,6 +94,7 @@ function hasTesseract(): boolean {
   if (tesseractAvailable !== null) return tesseractAvailable;
   try {
     execSync('tesseract --version', { timeout: 5000, stdio: 'pipe' });
+    execSync('pdftoppm -v', { timeout: 5000, stdio: 'pipe' });
     tesseractAvailable = true;
   } catch {
     tesseractAvailable = false;
@@ -106,31 +107,43 @@ function hasTesseract(): boolean {
  * Temp files are created, used, and deleted immediately — nothing persists.
  */
 async function ocrPdfPages(pdfData: Uint8Array): Promise<string> {
-  const { pdf: pdfToImg } = await import('pdf-to-img');
   const pages: string[] = [];
   const tempDir = mkdtempSync(join(tmpdir(), 'ocr-'));
+  const pdfFile = join(tempDir, 'input.pdf');
 
-  let pageNum = 0;
-  for await (const image of await pdfToImg(pdfData, { scale: 2.0 })) {
-    if (pageNum >= MAX_PAGES) break;
-    const tempFile = join(tempDir, `page-${pageNum}.png`);
-    writeFileSync(tempFile, image);
-    try {
-      const text = execSync(
-        `tesseract "${tempFile}" stdout -l eng+deu+fra+ita --psm 3`,
-        { timeout: 30000, maxBuffer: 5 * 1024 * 1024 }
-      ).toString();
-      pages.push(text);
-    } catch {
-      // OCR failed for this page — skip it
-    } finally {
-      try { unlinkSync(tempFile); } catch { /* ignore cleanup errors */ }
+  try {
+    // Write PDF to temp file for pdftoppm
+    writeFileSync(pdfFile, pdfData);
+
+    // Use pdftoppm (poppler-utils) to convert PDF pages to PNG images
+    // This avoids pdfjs-dist version conflicts with unpdf
+    execSync(
+      `pdftoppm -png -r 300 -l ${MAX_PAGES} "${pdfFile}" "${join(tempDir, 'page')}"`,
+      { timeout: 60000, maxBuffer: 10 * 1024 * 1024 }
+    );
+
+    // Process each generated PNG
+    const { readdirSync } = await import('fs');
+    const pngFiles = readdirSync(tempDir)
+      .filter(f => f.startsWith('page-') && f.endsWith('.png'))
+      .sort();
+
+    for (const pngFile of pngFiles) {
+      const tempFile = join(tempDir, pngFile);
+      try {
+        const text = execSync(
+          `tesseract "${tempFile}" stdout -l eng+deu+fra+ita --psm 3`,
+          { timeout: 30000, maxBuffer: 5 * 1024 * 1024 }
+        ).toString();
+        pages.push(text);
+      } catch {
+        // OCR failed for this page — skip it
+      }
     }
-    pageNum++;
+  } finally {
+    // Clean up entire temp dir
+    try { execSync(`rm -rf "${tempDir}"`); } catch { /* ignore */ }
   }
-
-  // Clean up temp dir
-  try { execSync(`rm -rf "${tempDir}"`); } catch { /* ignore */ }
 
   return pages.join('\n\n');
 }
