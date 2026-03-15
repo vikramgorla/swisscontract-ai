@@ -278,13 +278,17 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-16 text-center">
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-3 sm:mb-5">
-            {t.compare_title}
-          </h1>
-          <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto mb-6 leading-relaxed">
-            {t.compare_subtitle}
-          </p>
+        <div className={`max-w-4xl mx-auto px-4 sm:px-6 text-center ${isAnalysing || analysis ? 'py-4 sm:py-6' : 'py-6 sm:py-16'}`}>
+          {!isAnalysing && !analysis && (
+            <>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 leading-tight mb-3 sm:mb-5">
+                {t.compare_title}
+              </h1>
+              <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto mb-6 leading-relaxed">
+                {t.compare_subtitle}
+              </p>
+            </>
+          )}
 
           {/* Upload area */}
           {!analysis && (

@@ -7,19 +7,19 @@ export interface ProgressStep {
 }
 
 export const analysisSteps: ProgressStep[] = [
-  { label: 'progress_extracting', emoji: '📄', startPercent: 0, endPercent: 10, durationMs: 2000 },
-  { label: 'progress_identifying', emoji: '🔍', startPercent: 10, endPercent: 25, durationMs: 3000 },
-  { label: 'progress_analysing', emoji: '⚖️', startPercent: 25, endPercent: 50, durationMs: 15000 },
-  { label: 'progress_swiss_law', emoji: '🇨🇭', startPercent: 50, endPercent: 75, durationMs: 30000 },
-  { label: 'progress_preparing', emoji: '📝', startPercent: 75, endPercent: 99, durationMs: 70000 },
+  { label: 'progress_extracting', emoji: '', startPercent: 0, endPercent: 10, durationMs: 2000 },
+  { label: 'progress_identifying', emoji: '', startPercent: 10, endPercent: 25, durationMs: 3000 },
+  { label: 'progress_analysing', emoji: '', startPercent: 25, endPercent: 50, durationMs: 15000 },
+  { label: 'progress_swiss_law', emoji: '', startPercent: 50, endPercent: 75, durationMs: 30000 },
+  { label: 'progress_preparing', emoji: '', startPercent: 75, endPercent: 99, durationMs: 70000 },
 ];
 
 export const comparisonSteps: ProgressStep[] = [
-  { label: 'progress_extracting_both', emoji: '📄', startPercent: 0, endPercent: 10, durationMs: 3000 },
-  { label: 'progress_identifying_changes', emoji: '🔍', startPercent: 10, endPercent: 25, durationMs: 5000 },
-  { label: 'progress_assessing_impact', emoji: '⚖️', startPercent: 25, endPercent: 50, durationMs: 20000 },
-  { label: 'progress_swiss_law', emoji: '🇨🇭', startPercent: 50, endPercent: 75, durationMs: 30000 },
-  { label: 'progress_preparing_comparison', emoji: '📝', startPercent: 75, endPercent: 99, durationMs: 60000 },
+  { label: 'progress_extracting_both', emoji: '', startPercent: 0, endPercent: 10, durationMs: 3000 },
+  { label: 'progress_identifying_changes', emoji: '', startPercent: 10, endPercent: 25, durationMs: 5000 },
+  { label: 'progress_assessing_impact', emoji: '', startPercent: 25, endPercent: 50, durationMs: 20000 },
+  { label: 'progress_swiss_law', emoji: '', startPercent: 50, endPercent: 75, durationMs: 30000 },
+  { label: 'progress_preparing_comparison', emoji: '', startPercent: 75, endPercent: 99, durationMs: 60000 },
 ];
 
 // Returns current step and progress percentage based on elapsed time
