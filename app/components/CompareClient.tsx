@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import ComparisonResult from './ComparisonResult';
 import ProgressBar from './ProgressBar';
@@ -152,6 +152,15 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
   const [question, setQuestion] = useState('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
 
+  // Auto-scroll to results when analysis completes
+  useEffect(() => {
+    if (analysis) {
+      setTimeout(() => {
+        document.getElementById('compare-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
+    }
+  }, [analysis]);
+
   const handleCompare = async () => {
     if (!fileA || !fileB || !awarenessChecked) return;
 
@@ -228,9 +237,6 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
       setError(errorMessage);
     } else {
       setAnalysis(data.analysis as ComparisonAnalysis);
-      setTimeout(() => {
-        document.getElementById('compare-results')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
     }
     setIsAnalysing(false);
   };
@@ -283,28 +289,40 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
           {/* Upload area */}
           {!analysis && (
             <div className="max-w-2xl mx-auto">
-              {/* Two upload zones */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <FileDropZone
-                  label={t.compare_upload_original}
-                  file={fileA}
-                  onSelect={(f) => { setFileA(f); setError(null); }}
-                  isAnalysing={isAnalysing}
-                  t={t}
+              {/* Swap: show ProgressBar in place of upload zones during analysis */}
+              {isAnalysing ? (
+                <ProgressBar
+                  steps={comparisonSteps}
+                  isActive={isAnalysing}
+                  isComplete={false}
+                  translations={t}
                 />
-                <div className="hidden sm:flex items-center justify-center px-2">
-                  <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </div>
-                <FileDropZone
-                  label={t.compare_upload_revised}
-                  file={fileB}
-                  onSelect={(f) => { setFileB(f); setError(null); }}
-                  isAnalysing={isAnalysing}
-                  t={t}
-                />
-              </div>
+              ) : (
+                <>
+                  {/* Two upload zones */}
+                  <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                    <FileDropZone
+                      label={t.compare_upload_original}
+                      file={fileA}
+                      onSelect={(f) => { setFileA(f); setError(null); }}
+                      isAnalysing={isAnalysing}
+                      t={t}
+                    />
+                    <div className="hidden sm:flex items-center justify-center px-2">
+                      <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </div>
+                    <FileDropZone
+                      label={t.compare_upload_revised}
+                      file={fileB}
+                      onSelect={(f) => { setFileB(f); setError(null); }}
+                      isAnalysing={isAnalysing}
+                      t={t}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* Optional question */}
               <div className="mt-3">
@@ -372,20 +390,14 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
                 {isAnalysing ? t.compare_analysing : t.compare_button}
               </button>
 
-              {/* Smart progress bar */}
-              <ProgressBar
-                steps={comparisonSteps}
-                isActive={isAnalysing}
-                isComplete={analysis !== null}
-                translations={t}
-              />
-
               {/* Link back to single analysis */}
-              <div className="mt-4 text-center">
-                <Link href={localePrefix || '/'} className="text-sm text-gray-500 hover:text-red-600 transition-colors">
-                  ← {t.analyse_btn}
-                </Link>
-              </div>
+              {!isAnalysing && (
+                <div className="mt-4 text-center">
+                  <Link href={localePrefix || '/'} className="text-sm text-gray-500 hover:text-red-600 transition-colors">
+                    ← {t.analyse_btn}
+                  </Link>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -394,6 +406,15 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
       {/* Results */}
       {analysis && analysis.identical && (
         <section id="compare-results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Completion summary */}
+          <div className="max-w-xl mx-auto mb-6">
+            <ProgressBar
+              steps={comparisonSteps}
+              isActive={false}
+              isComplete={true}
+              translations={t}
+            />
+          </div>
           <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -414,6 +435,15 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
 
       {analysis && !analysis.identical && (
         <section id="compare-results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Completion summary */}
+          <div className="max-w-xl mx-auto mb-6">
+            <ProgressBar
+              steps={comparisonSteps}
+              isActive={false}
+              isComplete={true}
+              translations={t}
+            />
+          </div>
           {/* Near-identical warning */}
           {analysis.near_identical && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">

@@ -108,6 +108,18 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
     }
   }, [isComplete, steps, showComplete]);
 
+  // Handle mount with isComplete=true (e.g. completion summary in results section)
+  useEffect(() => {
+    if (isComplete && !isActive && startTimeRef.current === 0 && !showComplete) {
+      const displays: StepDisplay[] = steps.map(() => ({
+        status: 'done' as const,
+        time: null,
+      }));
+      setStepDisplays(displays);
+      setShowComplete(true);
+    }
+  }, [isComplete, isActive, steps, showComplete]);
+
   // Reset
   useEffect(() => {
     if (!isActive && !isComplete) {
