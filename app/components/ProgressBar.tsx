@@ -12,26 +12,23 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ steps, isActive, isComplete, translations }: ProgressBarProps) {
-  const [percent, setPercent] = useState(0);
-  const [currentStep, setCurrentStep] = useState<ProgressStep>(steps[0]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
+  const [stepStartTimes, setStepStartTimes] = useState<number[]>([]);
+  const [stepDurations, setStepDurations] = useState<number[]>([]);
   const [showComplete, setShowComplete] = useState(false);
   const startTimeRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
 
   const t = translations;
 
-  const formatElapsed = (ms: number): string => {
-    const seconds = Math.floor(ms / 1000);
+  const formatTime = (ms: number): string => {
+    const seconds = Math.round(ms / 1000);
     if (seconds < 60) return `${seconds}s`;
     const minutes = Math.floor(seconds / 60);
     const remaining = seconds % 60;
     return `${minutes}m ${remaining}s`;
   };
-
-  // Compute total expected duration from steps
-  const totalDurationMs = steps.reduce((sum, s) => sum + s.durationMs, 0);
-  const estimatedMinutes = Math.ceil(totalDurationMs / 60000);
 
   const tick = useCallback(() => {
     if (!startTimeRef.current) return;
@@ -40,20 +37,37 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
     setElapsedMs(elapsed);
 
     const state = getProgressState(steps, elapsed);
-    setCurrentStep(state.step);
-    setPercent(state.percent);
+    const newIndex = steps.indexOf(state.step);
+
+    setCurrentStepIndex(prev => {
+      if (newIndex > prev) {
+        // Moving to next step — record the transition
+        setStepDurations(d => {
+          const updated = [...d];
+          updated[prev] = elapsed - (stepStartTimes[prev] || 0);
+          return updated;
+        });
+        setStepStartTimes(st => {
+          const updated = [...st];
+          updated[newIndex] = elapsed;
+          return updated;
+        });
+      }
+      return newIndex;
+    });
 
     rafRef.current = requestAnimationFrame(tick);
-  }, [steps]);
+  }, [steps, stepStartTimes]);
 
-  // Start / stop the animation loop
+  // Start animation
   useEffect(() => {
     if (isActive && !isComplete) {
       startTimeRef.current = performance.now();
-      setPercent(0);
       setElapsedMs(0);
+      setCurrentStepIndex(0);
       setShowComplete(false);
-      setCurrentStep(steps[0]);
+      setStepStartTimes([0]);
+      setStepDurations([]);
       rafRef.current = requestAnimationFrame(tick);
     }
 
@@ -63,67 +77,122 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
         rafRef.current = null;
       }
     };
-  }, [isActive, isComplete, tick, steps]);
+  }, [isActive, isComplete, tick]);
 
   // Handle completion
   useEffect(() => {
     if (isComplete && isActive) {
-      // Cancel the animation loop
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      setPercent(100);
+      // Record final step duration
+      setStepDurations(d => {
+        const updated = [...d];
+        updated[currentStepIndex] = elapsedMs - (stepStartTimes[currentStepIndex] || 0);
+        return updated;
+      });
       setShowComplete(true);
     }
-  }, [isComplete, isActive]);
+  }, [isComplete, isActive, currentStepIndex, elapsedMs, stepStartTimes]);
 
-  // Reset when no longer active and not complete
+  // Reset
   useEffect(() => {
     if (!isActive && !isComplete) {
-      setPercent(0);
       setElapsedMs(0);
+      setCurrentStepIndex(0);
       setShowComplete(false);
+      setStepStartTimes([]);
+      setStepDurations([]);
       startTimeRef.current = null;
     }
   }, [isActive, isComplete]);
 
   if (!isActive && !showComplete) return null;
 
-  const stepLabel = showComplete
-    ? `✅ ${(t as Record<string, unknown>)['progress_complete'] as string || 'Complete!'}`
-    : `${currentStep.emoji} ${(t as Record<string, unknown>)[currentStep.label] as string || currentStep.label}`;
+  const getStepStatus = (index: number): 'done' | 'active' | 'pending' => {
+    if (showComplete) return 'done';
+    if (index < currentStepIndex) return 'done';
+    if (index === currentStepIndex) return 'active';
+    return 'pending';
+  };
 
+  const getStepTime = (index: number): string | null => {
+    if (stepDurations[index] !== undefined) {
+      return formatTime(stepDurations[index]);
+    }
+    if (index === currentStepIndex && !showComplete) {
+      const elapsed = elapsedMs - (stepStartTimes[index] || 0);
+      return formatTime(elapsed);
+    }
+    return null;
+  };
+
+  const totalElapsed = formatTime(elapsedMs);
   const elapsedLabel = (t as Record<string, unknown>)['progress_elapsed'] as string || 'elapsed';
+  const completeLabel = (t as Record<string, unknown>)['progress_complete'] as string || 'Complete!';
 
   return (
     <div className="mt-5 bg-gray-50 border border-gray-200 rounded-xl p-5">
-      {/* Step label above bar */}
-      <div className="flex items-center justify-between mb-2">
-        <p className={`text-sm font-medium transition-colors duration-300 ${showComplete ? 'text-green-700' : 'text-gray-700'}`}>
-          {stepLabel}
-        </p>
-        <p className={`text-sm font-semibold tabular-nums ${showComplete ? 'text-green-600' : 'text-indigo-600'}`}>
-          {Math.round(percent)}%
-        </p>
+      <div className="space-y-2">
+        {steps.map((step, index) => {
+          const status = getStepStatus(index);
+          const time = getStepTime(index);
+          const label = (t as Record<string, unknown>)[step.label] as string || step.label;
+
+          return (
+            <div
+              key={step.label}
+              className={`flex items-center gap-3 transition-all duration-300 ${
+                status === 'pending' ? 'opacity-30' : 'opacity-100'
+              }`}
+            >
+              {/* Status indicator */}
+              <div className="flex-shrink-0 w-6 text-center">
+                {status === 'done' ? (
+                  <span className="text-green-500 text-sm">✓</span>
+                ) : status === 'active' ? (
+                  <span className="inline-block w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse" />
+                ) : (
+                  <span className="inline-block w-2 h-2 bg-gray-300 rounded-full" />
+                )}
+              </div>
+
+              {/* Step label */}
+              <div className="flex-1 flex items-center gap-2">
+                <span className="text-sm">{step.emoji}</span>
+                <span className={`text-sm ${
+                  status === 'active' ? 'text-gray-900 font-medium' :
+                  status === 'done' ? 'text-gray-500' : 'text-gray-400'
+                }`}>
+                  {label}
+                </span>
+              </div>
+
+              {/* Time for this step */}
+              {time && (
+                <div className="flex-shrink-0">
+                  <span className={`text-xs tabular-nums ${
+                    status === 'active' ? 'text-indigo-600 font-medium' : 'text-gray-400'
+                  }`}>
+                    {time}
+                  </span>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full bg-gray-200 rounded-full h-3.5 overflow-hidden">
-        <div
-          className={`h-3.5 rounded-full transition-all duration-300 ease-out ${
-            showComplete
-              ? 'bg-gradient-to-r from-green-500 to-green-600'
-              : 'bg-gradient-to-r from-indigo-500 to-indigo-600'
-          }`}
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-
-      {/* Elapsed time below bar */}
-      <div className="flex justify-end mt-1.5">
+      {/* Total elapsed + completion */}
+      <div className={`mt-3 pt-3 border-t border-gray-200 flex items-center justify-between`}>
+        {showComplete ? (
+          <p className="text-sm font-medium text-green-600">✅ {completeLabel}</p>
+        ) : (
+          <div />
+        )}
         <p className="text-xs text-gray-500 tabular-nums">
-          {formatElapsed(elapsedMs)} {elapsedLabel}{!showComplete && ` / ~${estimatedMinutes}min`}
+          {totalElapsed} {elapsedLabel}
         </p>
       </div>
     </div>

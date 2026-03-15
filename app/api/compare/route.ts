@@ -4,7 +4,7 @@ import { callAI, extractJSON } from '../../lib/aiProviders';
 import { extractText } from '../analyse/extractText';
 
 export const runtime = 'nodejs';
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 // --- Prompt injection defenses ---
 
