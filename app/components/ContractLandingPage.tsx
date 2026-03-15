@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import UploadZone from './UploadZone';
@@ -41,6 +41,15 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
   const [question, setQuestion] = useState<string>('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
+
+  // Auto-scroll to results when analysis completes
+  useEffect(() => {
+    if (analysis) {
+      setTimeout(() => {
+        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
+    }
+  }, [analysis]);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -117,9 +126,6 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setAnalysis(data.analysis as any);
-      setTimeout(() => {
-        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
     }
     setIsAnalysing(false);
   };
@@ -220,7 +226,17 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
           {/* Upload widget */}
           {!analysis && (
             <div className="max-w-xl mx-auto">
-              <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
+              {/* Swap: show ProgressBar in place of UploadZone during analysis */}
+              {isAnalysing ? (
+                <ProgressBar
+                  steps={analysisSteps}
+                  isActive={isAnalysing}
+                  isComplete={false}
+                  translations={t}
+                />
+              ) : (
+                <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
+              )}
 
               <div className="mt-3">
                 <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">
@@ -294,14 +310,6 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
               >
                 {isAnalysing ? t.analysing : t.analyse_btn}
               </button>
-
-              {/* Smart progress bar */}
-              <ProgressBar
-                steps={analysisSteps}
-                isActive={isAnalysing}
-                isComplete={analysis !== null}
-                translations={t}
-              />
             </div>
           )}
         </div>
@@ -310,6 +318,15 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
       {/* Results */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Completion summary */}
+          <div className="max-w-xl mx-auto mb-6">
+            <ProgressBar
+              steps={analysisSteps}
+              isActive={false}
+              isComplete={true}
+              translations={t}
+            />
+          </div>
           <AnalysisResult
               analysis={analysis}
               onReset={handleReset}

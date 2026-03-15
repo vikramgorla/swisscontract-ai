@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import UploadZone from './UploadZone';
@@ -39,6 +39,15 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
   const [awarenessChecked, setAwarenessChecked] = useState(false);
   const [isDemoLoading, setIsDemoLoading] = useState(false);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
+
+  // Auto-scroll to results when analysis completes
+  useEffect(() => {
+    if (analysis) {
+      setTimeout(() => {
+        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 500);
+    }
+  }, [analysis]);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
@@ -140,9 +149,6 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setAnalysis(data.analysis as any);
-      setTimeout(() => {
-        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
     }
     setIsAnalysing(false);
   };
@@ -352,28 +358,40 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
           {/* Upload + Analyse area */}
           {!analysis && (
             <div className="max-w-xl mx-auto">
-              <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
+              {/* Swap: show ProgressBar in place of UploadZone during/after analysis */}
+              {isAnalysing ? (
+                <ProgressBar
+                  steps={analysisSteps}
+                  isActive={isAnalysing}
+                  isComplete={false}
+                  translations={t}
+                />
+              ) : (
+                <>
+                  <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
 
-              {/* Demo button + Compare link */}
-              {!selectedFile && (
-                <div className="mt-3 flex flex-col items-center gap-2">
-                  <button
-                    onClick={handleLoadDemo}
-                    disabled={isDemoLoading || isAnalysing}
-                    className="text-sm text-red-600 hover:text-red-700 font-medium underline underline-offset-4 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {isDemoLoading ? `⏳ ${t.demo_loading}` : `📄 ${t.demo_btn}`}
-                  </button>
-                  <Link
-                    href={`${locale === 'en' ? '' : `/${locale}`}/compare`}
-                    className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors flex items-center gap-1.5"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    </svg>
-                    {t.compare_nav}
-                  </Link>
-                </div>
+                  {/* Demo button + Compare link */}
+                  {!selectedFile && (
+                    <div className="mt-3 flex flex-col items-center gap-2">
+                      <button
+                        onClick={handleLoadDemo}
+                        disabled={isDemoLoading || isAnalysing}
+                        className="text-sm text-red-600 hover:text-red-700 font-medium underline underline-offset-4 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {isDemoLoading ? `⏳ ${t.demo_loading}` : `📄 ${t.demo_btn}`}
+                      </button>
+                      <Link
+                        href={`${locale === 'en' ? '' : `/${locale}`}/compare`}
+                        className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors flex items-center gap-1.5"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        {t.compare_nav}
+                      </Link>
+                    </div>
+                  )}
+                </>
               )}
 
               <div className="mt-3">
@@ -448,14 +466,6 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
               >
                 {isAnalysing ? t.analysing : t.analyse_btn}
               </button>
-
-              {/* Smart progress bar */}
-              <ProgressBar
-                steps={analysisSteps}
-                isActive={isAnalysing}
-                isComplete={analysis !== null}
-                translations={t}
-              />
             </div>
           )}
         </div>
@@ -464,6 +474,15 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
       {/* Results — Single Model View */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Completion summary */}
+          <div className="max-w-xl mx-auto mb-6">
+            <ProgressBar
+              steps={analysisSteps}
+              isActive={false}
+              isComplete={true}
+              translations={t}
+            />
+          </div>
           {/* Question panel */}
           <div className="mb-6 bg-gray-50 border border-gray-200 rounded-xl p-5">
             <label htmlFor="question-input-results" className="block text-sm font-semibold text-gray-700 mb-2">
