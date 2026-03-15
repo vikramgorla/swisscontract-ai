@@ -59,10 +59,10 @@ function wrapUserQuestion(question: string): string {
 const SYSTEM_PROMPT = `You are a Swiss contract analysis assistant. Analyse the provided contract and return a structured JSON response with:
 1. summary: A 2-3 paragraph plain-English summary of what the contract is about
 2. contract_type: Type of contract (employment, tenancy, NDA, freelance, insurance, other)
-3. key_terms: Array of 5-8 key terms/clauses explained in plain English
-4. red_flags: Array of concerning clauses or unusual terms (can be empty)
-5. positive_clauses: Array of notably good/fair clauses (can be empty)
-6. swiss_law_notes: Any Switzerland-specific legal context relevant to this contract
+3. key_terms: Array of 5-8 key terms/clauses. ALWAYS write title and explanation in the requested output language, even if the contract is in a different language. Translate terms — do not leave them in the contract's original language.
+4. red_flags: Array of concerning clauses or unusual terms (can be empty). Title and explanation MUST be in the requested output language.
+5. positive_clauses: Array of notably good/fair clauses (can be empty). Title and explanation MUST be in the requested output language.
+6. swiss_law_notes: Any Switzerland-specific legal context relevant to this contract. MUST be in the requested output language.
 7. language: Detected language of the contract
 
 Be practical and helpful. Use plain English. Avoid legal jargon.

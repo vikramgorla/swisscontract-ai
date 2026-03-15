@@ -128,7 +128,7 @@ Also note key terms that remained unchanged (to reassure the user).
 Return a JSON object with these fields:
 1. summary: A concise overview of what changed between the two versions (2-3 sentences)
 2. changes: Array of changes, each with: { title: string, original: string, revised: string, impact: "favourable"|"neutral"|"unfavourable", explanation: string }. The "title" and "explanation" must be in the requested output language. The "original" and "revised" fields must be exact quotes from the documents (in their original language).
-3. unchanged_highlights: Array of strings — key terms/clauses that stayed the same. If the contract is in a different language than the requested output language, show each term as "Original term (translation)" e.g. "Durée du contrat (Contract duration)"
+3. unchanged_highlights: Array of strings — key terms/clauses that stayed the same. ALWAYS write these in the requested output language. If the contract is in a different language, translate them. For example, if the contract is in French but output is English: write "The property must be returned in its original condition" NOT "La maison doit être rendue telle qu'elle a été trouvée"
 4. overall_assessment: A paragraph summarising the overall impact of the changes
 5. swiss_law_notes: Swiss-specific legal context relevant to the changes found
 6. language: Detected language of the contracts
