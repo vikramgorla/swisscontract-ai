@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
@@ -11,19 +11,8 @@ interface UploadZoneProps {
     upload_or: string;
     upload_hint: string;
     upload_change: string;
-    upload_time: string;
     upload_tip: string;
-    progress_uploading: string;
-    progress_extracting: string;
-    progress_reading: string;
-    progress_identifying: string;
-    progress_redflags: string;
-    progress_swiss: string;
-    progress_clearing: string;
-    progress_finalising: string;
-    progress_done: string;
     file_change: string;
-    analysing_time: string;
     error_file_too_large: string;
     error_invalid_file_type: string;
   };
@@ -33,51 +22,6 @@ export default function UploadZone({ onFileSelect, isAnalysing, t }: UploadZoneP
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [progressLabel, setProgressLabel] = useState('');
-  const stepRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // PROGRESS_STEPS lives inside the component so it can use translated `t` props
-  const progressSteps = [
-    { pct: 8,  label: t.progress_uploading },
-    { pct: 20, label: t.progress_extracting },
-    { pct: 35, label: t.progress_reading },
-    { pct: 52, label: t.progress_identifying },
-    { pct: 67, label: t.progress_redflags },
-    { pct: 80, label: t.progress_swiss },
-    { pct: 90, label: t.progress_clearing },
-    { pct: 95, label: t.progress_finalising },
-  ];
-
-  useEffect(() => {
-    if (isAnalysing) {
-      stepRef.current = 0;
-      setProgress(0);
-      setProgressLabel(progressSteps[0].label);
-      scheduleNext();
-    } else {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      // Jump to 100% briefly on completion
-      setProgress(100);
-      setProgressLabel(t.progress_done);
-      setTimeout(() => { setProgress(0); setProgressLabel(''); }, 600);
-    }
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [isAnalysing]);
-
-  const scheduleNext = () => {
-    const step = stepRef.current;
-    if (step >= progressSteps.length) return;
-    // Spread steps across ~25s (typical analysis time)
-    const delays = [300, 1500, 2500, 4000, 4500, 3500, 2000, 2000];
-    timerRef.current = setTimeout(() => {
-      setProgress(progressSteps[step].pct);
-      setProgressLabel(progressSteps[step].label);
-      stepRef.current = step + 1;
-      scheduleNext();
-    }, delays[step] ?? 2000);
-  };
 
   const validateAndSetFile = (file: File) => {
     setError(null);
@@ -160,24 +104,7 @@ export default function UploadZone({ onFileSelect, isAnalysing, t }: UploadZoneP
           disabled={isAnalysing}
         />
 
-        {isAnalysing ? (
-          <div className="flex flex-col items-center gap-4 w-full px-2">
-            <div className="w-10 h-10 border-4 border-red-200 border-t-red-600 rounded-full animate-spin" />
-            <div className="w-full">
-              <div className="flex justify-between items-center mb-1.5">
-                <p className="text-sm font-medium text-gray-700">{progressLabel}</p>
-                <p className="text-sm font-semibold text-red-600">{progress}%</p>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                <div
-                  className="bg-red-600 h-2.5 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-            <p className="text-xs text-gray-400">{t.upload_time}</p>
-          </div>
-        ) : selectedFile ? (
+        {selectedFile ? (
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

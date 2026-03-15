@@ -52,13 +52,13 @@ export const translations = {
     og_locale: 'en_CH',
     error_short: 'Contract text is too short or empty. Please upload a valid contract document.',
     error_network: 'Network error. Please check your connection and try again.',
-    error_timeout: 'Analysis is taking longer than expected. Please try again — large documents can take up to 60 seconds.',
+    error_timeout: 'Analysis is taking longer than expected. Please try again — large documents can take up to 2 minutes.',
     error_scanned_pdf: 'This document could not be read — even with text recognition (OCR). Please upload a clearer scan, a text-based PDF, or a Word document.',
     error_file_too_large: 'File too large. Maximum size is 10MB.',
     error_file_unreadable: 'Could not read this file. If you selected it from Google Drive or cloud storage, please download it to your device first, then upload it.',
     error_doc_too_long: 'This document is too long to analyse in full. Try a shorter contract or copy-paste the key sections as a text file.',
     error_ai_unavailable: 'The AI service is temporarily unavailable. Please try again in a few minutes.',
-    warn_large_file: 'Large file detected (>5MB). Analysis may take up to 60 seconds — please be patient.',
+    warn_large_file: 'Large file detected (>5MB). Analysis may take up to 2 minutes — please be patient.',
     contract_type_employment: 'Employment Contract',
     contract_type_tenancy: 'Tenancy Agreement',
     contract_type_nda: 'Non-Disclosure Agreement',
@@ -80,6 +80,15 @@ export const translations = {
     progress_clearing: 'Clearing document from memory…',
     progress_finalising: 'Finalising analysis…',
     progress_done: 'Done!',
+    progress_analysing: 'Analysing clauses and terms…',
+    progress_swiss_law: 'Checking Swiss law compliance…',
+    progress_preparing: 'Preparing your report…',
+    progress_extracting_both: 'Extracting both documents…',
+    progress_identifying_changes: 'Identifying changes…',
+    progress_assessing_impact: 'Assessing impact of changes…',
+    progress_preparing_comparison: 'Preparing comparison report…',
+    progress_complete: 'Complete!',
+    progress_elapsed: 'elapsed',
     upload_tip: 'Tip: redact names, signatures and personal details before uploading',
     privacy_title: 'Your privacy, plainly stated',
     privacy_points: [
@@ -164,6 +173,24 @@ export const translations = {
     download_pdf: 'Download PDF',
     demo_btn: 'Try with a sample',
     demo_loading: 'Loading sample…',
+    compare_title: 'Compare Contract Versions',
+    compare_subtitle: 'Upload original and revised versions to see what changed — with impact flags and Swiss law context.',
+    compare_upload_original: 'Original contract',
+    compare_upload_revised: 'Revised contract',
+    compare_button: 'Compare',
+    compare_analysing: 'Comparing contracts…',
+    compare_favourable: 'Favourable',
+    compare_neutral: 'Neutral',
+    compare_unfavourable: 'Unfavourable',
+    compare_original_text: 'Original',
+    compare_revised_text: 'Revised',
+    compare_unchanged: 'Unchanged key terms',
+    compare_overall: 'Overall assessment',
+    compare_nav: 'Compare versions',
+    compare_error_both_files: 'Please upload both the original and revised contract',
+    compare_identical: 'These documents are identical. No changes were detected.',
+    compare_near_identical: 'These documents are nearly identical.',
+    compare_verified: 'All changes verified against source documents',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -216,13 +243,13 @@ export const translations = {
     og_locale: 'de_CH',
     error_short: 'Vertragstext ist zu kurz oder leer. Bitte laden Sie ein gültiges Vertragsdokument hoch.',
     error_network: 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.',
-    error_timeout: 'Die Analyse dauert länger als erwartet. Bitte versuchen Sie es erneut — grosse Dokumente können bis zu 60 Sekunden benötigen.',
+    error_timeout: 'Die Analyse dauert länger als erwartet. Bitte versuchen Sie es erneut — grosse Dokumente können bis zu 2 Minuten benötigen.',
     error_scanned_pdf: 'Dieses Dokument konnte nicht gelesen werden — auch nicht mit Texterkennung (OCR). Bitte laden Sie einen deutlicheren Scan, ein textbasiertes PDF oder ein Word-Dokument hoch.',
     error_file_too_large: 'Datei zu gross. Maximale Größe ist 10MB.',
     error_file_unreadable: 'Diese Datei konnte nicht gelesen werden. Wenn Sie sie aus Google Drive oder einem Cloud-Speicher ausgewählt haben, laden Sie sie bitte zuerst auf Ihr Gerät herunter.',
     error_doc_too_long: 'Dieses Dokument ist zu lang für eine vollständige Analyse. Versuchen Sie einen kürzeren Vertrag oder fügen Sie die wichtigsten Abschnitte als Textdatei ein.',
     error_ai_unavailable: 'Der KI-Dienst ist vorübergehend nicht verfügbar. Bitte versuchen Sie es in wenigen Minuten erneut.',
-    warn_large_file: 'Große Datei erkannt (>5MB). Die Analyse kann bis zu 60 Sekunden dauern — bitte haben Sie Geduld.',
+    warn_large_file: 'Große Datei erkannt (>5MB). Die Analyse kann bis zu 2 Minuten dauern — bitte haben Sie Geduld.',
     contract_type_employment: 'Arbeitsvertrag',
     contract_type_tenancy: 'Mietvertrag',
     contract_type_nda: 'Geheimhaltungsvereinbarung',
@@ -244,6 +271,15 @@ export const translations = {
     progress_clearing: 'Dokument wird aus dem Speicher gelöscht…',
     progress_finalising: 'Analyse wird abgeschlossen…',
     progress_done: 'Fertig!',
+    progress_analysing: 'Klauseln und Bedingungen werden analysiert…',
+    progress_swiss_law: 'Schweizer Recht wird geprüft…',
+    progress_preparing: 'Ihr Bericht wird erstellt…',
+    progress_extracting_both: 'Beide Dokumente werden extrahiert…',
+    progress_identifying_changes: 'Änderungen werden identifiziert…',
+    progress_assessing_impact: 'Auswirkungen der Änderungen werden bewertet…',
+    progress_preparing_comparison: 'Vergleichsbericht wird erstellt…',
+    progress_complete: 'Fertig!',
+    progress_elapsed: 'vergangen',
     upload_tip: 'Tipp: Namen, Unterschriften und persönliche Daten vor dem Hochladen schwärzen',
     privacy_title: 'Ihr Datenschutz, klar ausgedrückt',
     privacy_points: [
@@ -328,6 +364,24 @@ export const translations = {
     download_pdf: 'PDF herunterladen',
     demo_btn: 'Mit Beispiel testen',
     demo_loading: 'Beispiel wird geladen…',
+    compare_title: 'Vertragsversionen vergleichen',
+    compare_subtitle: 'Laden Sie die Original- und die überarbeitete Version hoch, um zu sehen, was sich geändert hat — mit Auswirkungsbewertung und Schweizer Rechtskontext.',
+    compare_upload_original: 'Originalvertrag',
+    compare_upload_revised: 'Überarbeiteter Vertrag',
+    compare_button: 'Vergleichen',
+    compare_analysing: 'Verträge werden verglichen…',
+    compare_favourable: 'Vorteilhaft',
+    compare_neutral: 'Neutral',
+    compare_unfavourable: 'Nachteilig',
+    compare_original_text: 'Original',
+    compare_revised_text: 'Überarbeitet',
+    compare_unchanged: 'Unveränderte Schlüsselbegriffe',
+    compare_overall: 'Gesamtbewertung',
+    compare_nav: 'Versionen vergleichen',
+    compare_error_both_files: 'Bitte laden Sie sowohl den Original- als auch den überarbeiteten Vertrag hoch',
+    compare_identical: 'Diese Dokumente sind identisch. Es wurden keine Änderungen festgestellt.',
+    compare_near_identical: 'Diese Dokumente sind nahezu identisch.',
+    compare_verified: 'Alle Änderungen gegen die Quelldokumente verifiziert',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -380,13 +434,13 @@ export const translations = {
     og_locale: 'fr_CH',
     error_short: 'Le texte du contrat est trop court ou vide. Veuillez télécharger un document contractuel valide.',
     error_network: 'Erreur réseau. Veuillez vérifier votre connexion.',
-    error_timeout: "L'analyse prend plus de temps que prévu. Veuillez réessayer — les documents volumineux peuvent prendre jusqu'à 60 secondes.",
+    error_timeout: "L'analyse prend plus de temps que prévu. Veuillez réessayer — les documents volumineux peuvent prendre jusqu'à 2 minutes.",
     error_scanned_pdf: 'Ce document n\'a pas pu être lu — même avec la reconnaissance de texte (OCR). Veuillez télécharger un scan plus net, un PDF textuel ou un document Word.',
     error_file_too_large: 'Fichier trop volumineux. La taille maximale est de 10MB.',
     error_file_unreadable: "Impossible de lire ce fichier. Si vous l'avez sélectionné depuis Google Drive ou un stockage cloud, téléchargez-le d'abord sur votre appareil.",
     error_doc_too_long: "Ce document est trop long pour être analysé en entier. Essayez un contrat plus court ou copiez les sections clés dans un fichier texte.",
     error_ai_unavailable: "Le service d'IA est temporairement indisponible. Veuillez réessayer dans quelques minutes.",
-    warn_large_file: "Fichier volumineux détecté (>5MB). L'analyse peut prendre jusqu'à 60 secondes — merci de patienter.",
+    warn_large_file: "Fichier volumineux détecté (>5MB). L'analyse peut prendre jusqu'à 2 minutes — merci de patienter.",
     contract_type_employment: 'Contrat de travail',
     contract_type_tenancy: 'Contrat de bail',
     contract_type_nda: 'Accord de confidentialité',
@@ -408,6 +462,15 @@ export const translations = {
     progress_clearing: 'Suppression du document de la mémoire…',
     progress_finalising: "Finalisation de l'analyse…",
     progress_done: 'Terminé !',
+    progress_analysing: 'Analyse des clauses et conditions…',
+    progress_swiss_law: 'Vérification du droit suisse…',
+    progress_preparing: 'Préparation de votre rapport…',
+    progress_extracting_both: 'Extraction des deux documents…',
+    progress_identifying_changes: 'Identification des changements…',
+    progress_assessing_impact: 'Évaluation de l\'impact des changements...',
+    progress_preparing_comparison: 'Préparation du rapport de comparaison...',
+    progress_complete: 'Terminé !',
+    progress_elapsed: 'écoulé',
     upload_tip: 'Conseil : masquez les noms, signatures et données personnelles avant d\'envoyer',
     privacy_title: 'Votre confidentialité, clairement expliquée',
     privacy_points: [
@@ -492,6 +555,24 @@ export const translations = {
     download_pdf: 'Télécharger PDF',
     demo_btn: 'Essayer avec un exemple',
     demo_loading: 'Chargement…',
+    compare_title: 'Comparer les versions du contrat',
+    compare_subtitle: 'Téléchargez la version originale et la version révisée pour voir ce qui a changé — avec indicateurs d\'impact et contexte juridique suisse.',
+    compare_upload_original: 'Contrat original',
+    compare_upload_revised: 'Contrat révisé',
+    compare_button: 'Comparer',
+    compare_analysing: 'Comparaison des contrats…',
+    compare_favourable: 'Favorable',
+    compare_neutral: 'Neutre',
+    compare_unfavourable: 'Défavorable',
+    compare_original_text: 'Original',
+    compare_revised_text: 'Révisé',
+    compare_unchanged: 'Termes clés inchangés',
+    compare_overall: 'Évaluation globale',
+    compare_nav: 'Comparer des versions',
+    compare_error_both_files: 'Veuillez télécharger le contrat original et le contrat révisé',
+    compare_identical: 'Ces documents sont identiques. Aucune modification n\'a été détectée.',
+    compare_near_identical: 'Ces documents sont presque identiques.',
+    compare_verified: 'Toutes les modifications vérifiées par rapport aux documents sources',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -544,13 +625,13 @@ export const translations = {
     og_locale: 'it_CH',
     error_short: 'Il testo del contratto è troppo breve o vuoto. Carica un documento contrattuale valido.',
     error_network: 'Errore di rete. Controlla la connessione.',
-    error_timeout: "L'analisi sta richiedendo più tempo del previsto. Riprova — i documenti di grandi dimensioni possono richiedere fino a 60 secondi.",
+    error_timeout: "L'analisi sta richiedendo più tempo del previsto. Riprova — i documenti di grandi dimensioni possono richiedere fino a 2 minuti.",
     error_scanned_pdf: 'Questo documento non è stato leggibile — nemmeno con il riconoscimento del testo (OCR). Caricate una scansione più chiara, un PDF testuale o un documento Word.',
     error_file_too_large: 'File troppo grande. La dimensione massima è 10MB.',
     error_file_unreadable: 'Impossibile leggere questo file. Se lo hai selezionato da Google Drive o da un archivio cloud, scaricalo prima sul dispositivo.',
     error_doc_too_long: 'Questo documento è troppo lungo per essere analizzato interamente. Prova un contratto più breve o incolla le sezioni principali in un file di testo.',
     error_ai_unavailable: 'Il servizio di IA è temporaneamente non disponibile. Riprova tra qualche minuto.',
-    warn_large_file: "File di grandi dimensioni rilevato (>5MB). L'analisi può richiedere fino a 60 secondi — attendere.",
+    warn_large_file: "File di grandi dimensioni rilevato (>5MB). L'analisi può richiedere fino a 2 minuti — attendere.",
     contract_type_employment: 'Contratto di lavoro',
     contract_type_tenancy: 'Contratto di locazione',
     contract_type_nda: 'Accordo di riservatezza',
@@ -572,6 +653,15 @@ export const translations = {
     progress_clearing: 'Cancellazione del documento dalla memoria…',
     progress_finalising: "Finalizzazione dell'analisi…",
     progress_done: 'Fatto!',
+    progress_analysing: 'Analisi delle clausole e condizioni…',
+    progress_swiss_law: 'Verifica del diritto svizzero…',
+    progress_preparing: 'Preparazione del rapporto…',
+    progress_extracting_both: 'Estrazione di entrambi i documenti…',
+    progress_identifying_changes: 'Identificazione delle modifiche…',
+    progress_assessing_impact: 'Valutazione dell\'impatto delle modifiche...',
+    progress_preparing_comparison: 'Preparazione del rapporto di confronto...',
+    progress_complete: 'Completato!',
+    progress_elapsed: 'trascorso',
     upload_tip: 'Suggerimento: oscura nomi, firme e dati personali prima di caricare',
     privacy_title: 'La tua privacy, detta chiaramente',
     privacy_points: [
@@ -656,6 +746,24 @@ export const translations = {
     download_pdf: 'Scarica PDF',
     demo_btn: 'Prova con un esempio',
     demo_loading: 'Caricamento…',
+    compare_title: 'Confronta le versioni del contratto',
+    compare_subtitle: 'Carica la versione originale e quella rivista per vedere cosa è cambiato — con indicatori di impatto e contesto giuridico svizzero.',
+    compare_upload_original: 'Contratto originale',
+    compare_upload_revised: 'Contratto rivisto',
+    compare_button: 'Confronta',
+    compare_analysing: 'Confronto dei contratti…',
+    compare_favourable: 'Favorevole',
+    compare_neutral: 'Neutro',
+    compare_unfavourable: 'Sfavorevole',
+    compare_original_text: 'Originale',
+    compare_revised_text: 'Rivisto',
+    compare_unchanged: 'Termini chiave invariati',
+    compare_overall: 'Valutazione complessiva',
+    compare_nav: 'Confronta versioni',
+    compare_error_both_files: 'Carica sia il contratto originale che quello rivisto',
+    compare_identical: 'Questi documenti sono identici. Non sono state rilevate modifiche.',
+    compare_near_identical: 'Questi documenti sono quasi identici.',
+    compare_verified: 'Tutte le modifiche verificate rispetto ai documenti originali',
   },
 } as const;
 
@@ -726,6 +834,15 @@ export type TranslationKeys = {
   progress_clearing: string;
   progress_finalising: string;
   progress_done: string;
+  progress_analysing: string;
+  progress_swiss_law: string;
+  progress_preparing: string;
+  progress_extracting_both: string;
+  progress_identifying_changes: string;
+  progress_assessing_impact: string;
+  progress_preparing_comparison: string;
+  progress_complete: string;
+  progress_elapsed: string;
   upload_tip: string;
   privacy_title: string;
   privacy_points: ReadonlyArray<string>;
@@ -776,4 +893,22 @@ export type TranslationKeys = {
   download_pdf: string;
   demo_btn: string;
   demo_loading: string;
+  compare_title: string;
+  compare_subtitle: string;
+  compare_upload_original: string;
+  compare_upload_revised: string;
+  compare_button: string;
+  compare_analysing: string;
+  compare_favourable: string;
+  compare_neutral: string;
+  compare_unfavourable: string;
+  compare_original_text: string;
+  compare_revised_text: string;
+  compare_unchanged: string;
+  compare_overall: string;
+  compare_nav: string;
+  compare_error_both_files: string;
+  compare_identical: string;
+  compare_near_identical: string;
+  compare_verified: string;
 };

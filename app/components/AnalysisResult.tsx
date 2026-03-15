@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { renderMarkdown, markdownToHtml } from '../lib/renderMarkdown';
 
 interface TermItem {
   title: string;
@@ -77,7 +78,7 @@ function AccordionItem({ item, index }: { item: TermItem; index: number }) {
       </button>
       {isOpen && (
         <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-          <p className="text-gray-700 text-sm leading-relaxed">{item.explanation}</p>
+          <p className="text-gray-700 text-sm leading-relaxed">{renderMarkdown(item.explanation)}</p>
         </div>
       )}
     </div>
@@ -249,7 +250,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             </svg>
             {l.yourQuestion}
           </h2>
-          <p className="text-indigo-800 text-sm leading-relaxed">{analysis.question_answer}</p>
+          <p className="text-indigo-800 text-sm leading-relaxed">{renderMarkdown(analysis.question_answer)}</p>
         </div>
       )}
 
@@ -261,7 +262,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
           </svg>
           {l.summary}
         </h2>
-        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{analysis.summary}</p>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-line">{renderMarkdown(analysis.summary)}</p>
       </div>
 
       {/* Red Flags */}
@@ -277,7 +278,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             {analysis.red_flags.map((flag, i) => (
               <div key={i} className="bg-white border border-red-200 rounded-lg p-4">
                 <p className="font-semibold text-red-800 mb-1">{flag.title}</p>
-                <p className="text-red-700 text-sm leading-relaxed">{flag.explanation}</p>
+                <p className="text-red-700 text-sm leading-relaxed">{renderMarkdown(flag.explanation)}</p>
               </div>
             ))}
           </div>
@@ -297,7 +298,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             {analysis.positive_clauses.map((clause, i) => (
               <div key={i} className="bg-white border border-green-200 rounded-lg p-4">
                 <p className="font-semibold text-green-800 mb-1">{clause.title}</p>
-                <p className="text-green-700 text-sm leading-relaxed">{clause.explanation}</p>
+                <p className="text-green-700 text-sm leading-relaxed">{renderMarkdown(clause.explanation)}</p>
               </div>
             ))}
           </div>
@@ -330,7 +331,7 @@ export default function AnalysisResult({ analysis, onReset, resetLabel = 'Analys
             </svg>
             {l.swissLaw}
           </h2>
-          <p className="text-blue-800 text-sm leading-relaxed whitespace-pre-line">{analysis.swiss_law_notes}</p>
+          <p className="text-blue-800 text-sm leading-relaxed whitespace-pre-line">{renderMarkdown(analysis.swiss_law_notes)}</p>
         </div>
       )}
 
