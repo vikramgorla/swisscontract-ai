@@ -164,6 +164,21 @@ export const translations = {
     download_pdf: 'Download PDF',
     demo_btn: 'Try with a sample',
     demo_loading: 'Loading sample…',
+    compare_title: 'Compare Contract Versions',
+    compare_subtitle: 'Upload original and revised versions to see what changed — with impact flags and Swiss law context.',
+    compare_upload_original: 'Original contract',
+    compare_upload_revised: 'Revised contract',
+    compare_button: 'Compare',
+    compare_analysing: 'Comparing contracts…',
+    compare_favourable: 'Favourable',
+    compare_neutral: 'Neutral',
+    compare_unfavourable: 'Unfavourable',
+    compare_original_text: 'Original',
+    compare_revised_text: 'Revised',
+    compare_unchanged: 'Unchanged key terms',
+    compare_overall: 'Overall assessment',
+    compare_nav: 'Compare versions',
+    compare_error_both_files: 'Please upload both the original and revised contract',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -328,6 +343,21 @@ export const translations = {
     download_pdf: 'PDF herunterladen',
     demo_btn: 'Mit Beispiel testen',
     demo_loading: 'Beispiel wird geladen…',
+    compare_title: 'Vertragsversionen vergleichen',
+    compare_subtitle: 'Laden Sie die Original- und die überarbeitete Version hoch, um zu sehen, was sich geändert hat — mit Auswirkungsbewertung und Schweizer Rechtskontext.',
+    compare_upload_original: 'Originalvertrag',
+    compare_upload_revised: 'Überarbeiteter Vertrag',
+    compare_button: 'Vergleichen',
+    compare_analysing: 'Verträge werden verglichen…',
+    compare_favourable: 'Vorteilhaft',
+    compare_neutral: 'Neutral',
+    compare_unfavourable: 'Nachteilig',
+    compare_original_text: 'Original',
+    compare_revised_text: 'Überarbeitet',
+    compare_unchanged: 'Unveränderte Schlüsselbegriffe',
+    compare_overall: 'Gesamtbewertung',
+    compare_nav: 'Versionen vergleichen',
+    compare_error_both_files: 'Bitte laden Sie sowohl den Original- als auch den überarbeiteten Vertrag hoch',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -492,6 +522,21 @@ export const translations = {
     download_pdf: 'Télécharger PDF',
     demo_btn: 'Essayer avec un exemple',
     demo_loading: 'Chargement…',
+    compare_title: 'Comparer les versions du contrat',
+    compare_subtitle: 'Téléchargez la version originale et la version révisée pour voir ce qui a changé — avec indicateurs d\'impact et contexte juridique suisse.',
+    compare_upload_original: 'Contrat original',
+    compare_upload_revised: 'Contrat révisé',
+    compare_button: 'Comparer',
+    compare_analysing: 'Comparaison des contrats…',
+    compare_favourable: 'Favorable',
+    compare_neutral: 'Neutre',
+    compare_unfavourable: 'Défavorable',
+    compare_original_text: 'Original',
+    compare_revised_text: 'Révisé',
+    compare_unchanged: 'Termes clés inchangés',
+    compare_overall: 'Évaluation globale',
+    compare_nav: 'Comparer des versions',
+    compare_error_both_files: 'Veuillez télécharger le contrat original et le contrat révisé',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -656,6 +701,21 @@ export const translations = {
     download_pdf: 'Scarica PDF',
     demo_btn: 'Prova con un esempio',
     demo_loading: 'Caricamento…',
+    compare_title: 'Confronta le versioni del contratto',
+    compare_subtitle: 'Carica la versione originale e quella rivista per vedere cosa è cambiato — con indicatori di impatto e contesto giuridico svizzero.',
+    compare_upload_original: 'Contratto originale',
+    compare_upload_revised: 'Contratto rivisto',
+    compare_button: 'Confronta',
+    compare_analysing: 'Confronto dei contratti…',
+    compare_favourable: 'Favorevole',
+    compare_neutral: 'Neutro',
+    compare_unfavourable: 'Sfavorevole',
+    compare_original_text: 'Originale',
+    compare_revised_text: 'Rivisto',
+    compare_unchanged: 'Termini chiave invariati',
+    compare_overall: 'Valutazione complessiva',
+    compare_nav: 'Confronta versioni',
+    compare_error_both_files: 'Carica sia il contratto originale che quello rivisto',
   },
 } as const;
 
@@ -776,4 +836,19 @@ export type TranslationKeys = {
   download_pdf: string;
   demo_btn: string;
   demo_loading: string;
+  compare_title: string;
+  compare_subtitle: string;
+  compare_upload_original: string;
+  compare_upload_revised: string;
+  compare_button: string;
+  compare_analysing: string;
+  compare_favourable: string;
+  compare_neutral: string;
+  compare_unfavourable: string;
+  compare_original_text: string;
+  compare_revised_text: string;
+  compare_unchanged: string;
+  compare_overall: string;
+  compare_nav: string;
+  compare_error_both_files: string;
 };

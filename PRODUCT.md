@@ -73,6 +73,19 @@ No account required. No data stored. 100% Swiss infrastructure.
 - Web app manifest, theme-color, Apple meta tags
 - Enables "Add to Home Screen" on mobile
 
+### ✅ Contract Comparison — [SPEC-011](docs/specs/011-contract-comparison.md)
+- Upload two versions of a contract (original + revised) to see what changed
+- AI identifies every meaningful change with impact flags: 🟢 favourable, 🟡 neutral, 🔴 unfavourable
+- Side-by-side original/revised text for each change
+- Swiss law context on legally significant differences
+- Unchanged key terms highlighted for reassurance
+- Overall assessment and Swiss law notes
+- Download comparison as PDF
+- Full i18n (EN/DE/FR/IT), mobile responsive
+- Shared `extractText` module — reuses OCR, PDF, DOCX extraction logic
+- `/compare` route with all locale variants in sitemap
+- Homepage "Compare versions" link
+
 ### ✅ CI/CD Pipeline — v0.4.0–v0.5.0
 - Build-once promote: single Docker image per commit, re-tagged on merge
 - Semver pre-release versioning: `-beta.N` auto-bumped on preprod
@@ -113,7 +126,7 @@ No account required. No data stored. 100% Swiss infrastructure.
 - [ ] Submit sitemap to Google Search Console
 - [ ] Blog Post #1: "Swiss Employment Contract: 10 Red Flags" (EN + DE)
 - [ ] Privacy-respecting analytics (Plausible or similar)
-- [ ] Contract comparison mode (upload two versions, see diffs)
+- [x] Contract comparison mode (upload two versions, see diffs) — SPEC-011 shipped
 - [ ] Freemium model — CHF 9.90/analysis or CHF 29/mo
 - [ ] Insurance referral integration (AXA-ARAG, DAS, Protekta)
 - [ ] WhatsApp bot for contract analysis
