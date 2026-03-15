@@ -125,21 +125,27 @@ export default function ProgressBar({ steps, isActive, isComplete, translations,
     displaySteps = stepDisplays;
     displayTotal = totalElapsed;
     hasTimingData = true;
-  } else if (isComplete && stats) {
-    // Completion with real timing data from parent
-    displaySteps = steps.map((_, i) => ({
-      status: 'done' as const,
-      time: formatTime(stats.stepTimes[i] || 0),
-    }));
-    displayTotal = formatTime(stats.totalMs);
-    hasTimingData = true;
-  } else if (isComplete && !stats) {
-    // Completion without timing data
-    displaySteps = steps.map(() => ({
-      status: 'done' as const,
-      time: null,
-    }));
-    hasTimingData = false;
+  } else if (isComplete) {
+    // Completion — prefer internal tracked data, then stats prop, then no data
+    const useStats = stats || (stepDoneRef.current.length > 0 ? {
+      stepTimes: steps.map((_, i) => stepDoneRef.current[i] || 0),
+      totalMs: startTimeRef.current > 0 ? performance.now() - startTimeRef.current : 0,
+    } : null);
+
+    if (useStats && useStats.totalMs > 0) {
+      displaySteps = steps.map((_, i) => ({
+        status: 'done' as const,
+        time: formatTime(useStats.stepTimes[i] || 0),
+      }));
+      displayTotal = formatTime(useStats.totalMs);
+      hasTimingData = true;
+    } else {
+      displaySteps = steps.map(() => ({
+        status: 'done' as const,
+        time: null,
+      }));
+      hasTimingData = false;
+    }
   } else {
     displaySteps = [];
   }
