@@ -179,6 +179,9 @@ export const translations = {
     compare_overall: 'Overall assessment',
     compare_nav: 'Compare versions',
     compare_error_both_files: 'Please upload both the original and revised contract',
+    compare_identical: 'These documents are identical. No changes were detected.',
+    compare_near_identical: 'These documents are nearly identical.',
+    compare_verified: 'All changes verified against source documents',
   },
   de: {
     badge: 'Kein Konto nötig · Jetzt ausprobieren',
@@ -358,6 +361,9 @@ export const translations = {
     compare_overall: 'Gesamtbewertung',
     compare_nav: 'Versionen vergleichen',
     compare_error_both_files: 'Bitte laden Sie sowohl den Original- als auch den überarbeiteten Vertrag hoch',
+    compare_identical: 'Diese Dokumente sind identisch. Es wurden keine Änderungen festgestellt.',
+    compare_near_identical: 'Diese Dokumente sind nahezu identisch.',
+    compare_verified: 'Alle Änderungen gegen die Quelldokumente verifiziert',
   },
   fr: {
     badge: 'Sans compte · Essayez maintenant',
@@ -537,6 +543,9 @@ export const translations = {
     compare_overall: 'Évaluation globale',
     compare_nav: 'Comparer des versions',
     compare_error_both_files: 'Veuillez télécharger le contrat original et le contrat révisé',
+    compare_identical: 'Ces documents sont identiques. Aucune modification n\'a été détectée.',
+    compare_near_identical: 'Ces documents sont presque identiques.',
+    compare_verified: 'Toutes les modifications vérifiées par rapport aux documents sources',
   },
   it: {
     badge: 'Senza account · Prova ora',
@@ -716,6 +725,9 @@ export const translations = {
     compare_overall: 'Valutazione complessiva',
     compare_nav: 'Confronta versioni',
     compare_error_both_files: 'Carica sia il contratto originale che quello rivisto',
+    compare_identical: 'Questi documenti sono identici. Non sono state rilevate modifiche.',
+    compare_near_identical: 'Questi documenti sono quasi identici.',
+    compare_verified: 'Tutte le modifiche verificate rispetto ai documenti originali',
   },
 } as const;
 
@@ -851,4 +863,7 @@ export type TranslationKeys = {
   compare_overall: string;
   compare_nav: string;
   compare_error_both_files: string;
+  compare_identical: string;
+  compare_near_identical: string;
+  compare_verified: string;
 };

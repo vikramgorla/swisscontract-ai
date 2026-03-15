@@ -37,6 +37,84 @@ function sanitiseQuestion(question: string, ip: string): string {
   return trimmed;
 }
 
+// --- Identical / near-identical document detection ---
+
+function normalizeText(text: string): string {
+  return text.replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * Compute a simple character-level similarity ratio between two strings.
+ * Returns a value between 0 (completely different) and 1 (identical).
+ * Uses a basic approach: ratio of shared character frequencies to total length.
+ */
+function similarityRatio(a: string, b: string): number {
+  if (a === b) return 1;
+  if (a.length === 0 && b.length === 0) return 1;
+  if (a.length === 0 || b.length === 0) return 0;
+
+  // Count character frequencies
+  const freqA = new Map<string, number>();
+  const freqB = new Map<string, number>();
+  for (const ch of a) freqA.set(ch, (freqA.get(ch) || 0) + 1);
+  for (const ch of b) freqB.set(ch, (freqB.get(ch) || 0) + 1);
+
+  // Sum of minimum frequencies (shared characters)
+  let shared = 0;
+  for (const [ch, count] of freqA) {
+    shared += Math.min(count, freqB.get(ch) || 0);
+  }
+
+  const totalLen = (a.length + b.length) / 2;
+  return shared / totalLen;
+}
+
+// --- Post-AI verification ---
+
+interface Change {
+  title: string;
+  original: string;
+  revised: string;
+  impact: string;
+  explanation: string;
+}
+
+function verifyChanges(changes: Change[], textA: string, textB: string): Change[] {
+  const normA = normalizeText(textA);
+  const normB = normalizeText(textB);
+
+  return changes.filter(change => {
+    if (change.original && change.revised) {
+      const normOriginal = normalizeText(change.original);
+      const normRevised = normalizeText(change.revised);
+
+      // If both quotes exist identically in both documents → hallucinated difference
+      if (normOriginal === normRevised) {
+        // AI quoted the same text as both original and revised — hallucinated
+        return false;
+      }
+
+      if (normA.includes(normOriginal) && normA.includes(normRevised) &&
+          normB.includes(normOriginal) && normB.includes(normRevised)) {
+        // Both texts found in both docs = not a real change
+        return false;
+      }
+
+      // If the "original" text doesn't appear in doc A at all → hallucinated
+      if (normOriginal.length > 20 && !normA.includes(normOriginal)) {
+        return false;
+      }
+
+      // If the "revised" text doesn't appear in doc B at all → hallucinated
+      if (normRevised.length > 20 && !normB.includes(normRevised)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+}
+
 const COMPARISON_SYSTEM_PROMPT = `You are a Swiss contract comparison assistant. You have been given two versions of a contract — an ORIGINAL and a REVISED version. Compare them and identify all meaningful changes.
 
 For each change:
@@ -56,6 +134,10 @@ Return a JSON object with these fields:
 6. language: Detected language of the contracts
 
 Be practical and helpful. Use plain language. Avoid legal jargon.
+
+IMPORTANT: Only report GENUINE differences between the two documents. Do not hallucinate or infer changes that are not explicitly present in the text. If a clause appears identically in both versions, do NOT report it as changed. If the documents are identical or nearly identical, respond with an empty changes array and say so in the summary.
+
+When quoting text, use EXACT quotes from the documents — do not paraphrase or summarize the quoted text.
 
 Return ONLY valid JSON, no markdown, no code blocks. All string values must be on a single line — do not use line breaks inside string values.
 
@@ -143,6 +225,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Revised: ERR_SCANNED_PDF' }, { status: 422 });
     }
 
+    // --- Identical / near-identical document detection ---
+    const normA = normalizeText(textA);
+    const normB = normalizeText(textB);
+
+    if (normA === normB) {
+      // Documents are textually identical — skip AI call entirely
+      return NextResponse.json({
+        success: true,
+        analysis: {
+          identical: true,
+          near_identical: false,
+          summary: 'These documents are identical. No changes were detected.',
+          changes: [],
+          unchanged_highlights: [],
+          overall_assessment: 'The two documents contain the same content.',
+          swiss_law_notes: '',
+          language: safeLocale === 'de' ? 'German' : safeLocale === 'fr' ? 'French' : safeLocale === 'it' ? 'Italian' : 'English',
+          changes_before_verification: 0,
+          changes_after_verification: 0,
+        },
+        _meta: {
+          provider: 'none',
+          model: 'identical-detection',
+          durationMs: 0,
+          attempts: 0,
+        },
+      });
+    }
+
+    // Check if documents are near-identical (differ by <1%)
+    const simRatio = similarityRatio(normA, normB);
+    const isNearIdentical = simRatio > 0.99;
+
     // Truncate if needed
     const MAX_CHARS = 25000; // per document (50k total)
     if (textA.length > MAX_CHARS) {
@@ -155,12 +270,20 @@ export async function POST(request: NextRequest) {
     // Build prompt
     let userContent = `Compare these two contract versions:\n\n<ORIGINAL_CONTRACT>\n${textA}\n</ORIGINAL_CONTRACT>\n\n<REVISED_CONTRACT>\n${textB}\n</REVISED_CONTRACT>`;
 
+    if (isNearIdentical) {
+      userContent += `\n\nIMPORTANT: These documents appear very similar (>99% identical). Only report genuine, verified differences. If no real differences exist, say so clearly and return an empty changes array.`;
+    }
+
     if (question && question.trim().length > 0) {
       const sanitisedQuestion = sanitiseQuestion(question, ip);
       userContent += `\n\n<USER_QUESTION>\n${sanitisedQuestion}\n</USER_QUESTION>\nPlease add a "question_answer" field to your JSON response with a direct, plain-language answer (2–4 sentences). Add it as the first field in your JSON.`;
     }
 
     const fullPrompt = `${COMPARISON_SYSTEM_PROMPT}\n\nReturn all fields (summary, changes, overall_assessment, swiss_law_notes) in ${outputLanguage}.\n\n${userContent}`;
+
+    // Keep copies for post-AI verification before clearing
+    const verifyTextA = textA;
+    const verifyTextB = textB;
 
     // Clear extracted text from memory
     textA = '';
@@ -233,6 +356,19 @@ export async function POST(request: NextRequest) {
     } else {
       analysis.changes = [];
     }
+
+    // Post-AI verification: filter out hallucinated changes
+    const changesBefore = (analysis.changes as Change[]).length;
+    if (changesBefore > 0) {
+      analysis.changes = verifyChanges(analysis.changes as Change[], verifyTextA, verifyTextB);
+    }
+    const changesAfter = (analysis.changes as Change[]).length;
+
+    // Add verification metadata
+    analysis.identical = false;
+    analysis.near_identical = isNearIdentical;
+    analysis.changes_before_verification = changesBefore;
+    analysis.changes_after_verification = changesAfter;
 
     // Sanitize unchanged_highlights
     if (Array.isArray(analysis.unchanged_highlights)) {
