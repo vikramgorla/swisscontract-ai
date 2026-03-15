@@ -507,20 +507,6 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             )}
           </div>
 
-          {isAnalysing && (
-            <div className="mb-6 bg-indigo-50 border border-indigo-200 rounded-xl p-6 animate-pulse">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-5 h-5 rounded bg-indigo-200" />
-                <div className="h-4 w-40 rounded bg-indigo-200" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-3 rounded bg-indigo-200 w-full" />
-                <div className="h-3 rounded bg-indigo-200 w-5/6" />
-                <div className="h-3 rounded bg-indigo-200 w-4/6" />
-              </div>
-            </div>
-          )}
-
           <AnalysisResult
             analysis={analysis}
             onReset={handleReset}

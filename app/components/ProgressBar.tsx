@@ -87,9 +87,9 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
     };
   }, [isActive, isComplete, steps]);
 
-  // Handle completion
+  // Handle completion — fires when isComplete becomes true (regardless of isActive)
   useEffect(() => {
-    if (isComplete && isActive) {
+    if (isComplete && startTimeRef.current > 0 && !showComplete) {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
@@ -106,7 +106,7 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
       setTotalElapsed(formatTime(elapsed));
       setShowComplete(true);
     }
-  }, [isComplete, isActive, steps]);
+  }, [isComplete, steps, showComplete]);
 
   // Reset
   useEffect(() => {
@@ -117,7 +117,7 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
     }
   }, [isActive, isComplete]);
 
-  if (!isActive && !showComplete) return null;
+  if (!isActive && !showComplete && !isComplete) return null;
 
   const elapsedLabel = (t as Record<string, unknown>)['progress_elapsed'] as string || 'elapsed';
   const completeLabel = (t as Record<string, unknown>)['progress_complete'] as string || 'Complete!';
