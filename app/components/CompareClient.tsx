@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import ComparisonResult from './ComparisonResult';
+import ProgressBar from './ProgressBar';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Locale, TranslationKeys } from '../i18n/translations';
+import { comparisonSteps } from '../lib/progressSteps';
 
 interface Change {
   title: string;
@@ -149,48 +151,6 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [question, setQuestion] = useState('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [progressLabel, setProgressLabel] = useState('');
-  const stepRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const progressSteps = [
-    { pct: 5, label: t.progress_uploading },
-    { pct: 15, label: t.progress_extracting },
-    { pct: 30, label: t.progress_reading },
-    { pct: 50, label: t.compare_analysing ?? t.analysing },
-    { pct: 70, label: t.progress_identifying },
-    { pct: 82, label: t.progress_swiss },
-    { pct: 92, label: t.progress_clearing },
-    { pct: 96, label: t.progress_finalising },
-  ];
-
-  useEffect(() => {
-    if (isAnalysing) {
-      stepRef.current = 0;
-      setProgress(0);
-      setProgressLabel(progressSteps[0].label);
-      scheduleNext();
-    } else {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setProgress(100);
-      setProgressLabel(t.progress_done);
-      setTimeout(() => { setProgress(0); setProgressLabel(''); }, 600);
-    }
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [isAnalysing]);
-
-  const scheduleNext = () => {
-    const step = stepRef.current;
-    if (step >= progressSteps.length) return;
-    const delays = [400, 2000, 3000, 5000, 5000, 4000, 2000, 2000];
-    timerRef.current = setTimeout(() => {
-      setProgress(progressSteps[step].pct);
-      setProgressLabel(progressSteps[step].label);
-      stepRef.current = step + 1;
-      scheduleNext();
-    }, delays[step] ?? 2000);
-  };
 
   const handleCompare = async () => {
     if (!fileA || !fileB || !awarenessChecked) return;
@@ -397,41 +357,36 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
                 </span>
               </label>
 
-              {/* Compare button / Progress */}
-              {isAnalysing ? (
-                <div className="mt-5 bg-gray-50 border border-gray-200 rounded-xl p-5">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-8 h-8 border-4 border-red-200 border-t-red-600 rounded-full animate-spin" />
-                    <div className="w-full">
-                      <div className="flex justify-between items-center mb-1.5">
-                        <p className="text-sm font-medium text-gray-700">{progressLabel}</p>
-                        <p className="text-sm font-semibold text-red-600">{progress}%</p>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                        <div
-                          className="bg-red-600 h-2.5 rounded-full transition-all duration-700 ease-out"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-400">{t.upload_time}</p>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={handleCompare}
-                  disabled={!fileA || !fileB || !awarenessChecked}
-                  className={`
-                    mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
-                    ${fileA && fileB && awarenessChecked
-                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }
-                  `}
-                >
-                  {t.compare_button}
-                </button>
-              )}
+              {/* Compare button */}
+              <button
+                onClick={handleCompare}
+                disabled={!fileA || !fileB || isAnalysing || !awarenessChecked}
+                className={`
+                  mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
+                  ${fileA && fileB && !isAnalysing && awarenessChecked
+                    ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }
+                `}
+              >
+                {isAnalysing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    {t.compare_analysing}
+                  </span>
+                ) : t.compare_button}
+              </button>
+
+              {/* Smart progress bar */}
+              <ProgressBar
+                steps={comparisonSteps}
+                isActive={isAnalysing}
+                isComplete={analysis !== null}
+                translations={t}
+              />
 
               {/* Link back to single analysis */}
               <div className="mt-4 text-center">

@@ -80,6 +80,15 @@ export const translations = {
     progress_clearing: 'Clearing document from memory…',
     progress_finalising: 'Finalising analysis…',
     progress_done: 'Done!',
+    progress_analysing: 'Analysing clauses and terms...',
+    progress_swiss_law: 'Checking Swiss law compliance...',
+    progress_preparing: 'Preparing your report...',
+    progress_extracting_both: 'Extracting both documents...',
+    progress_identifying_changes: 'Identifying changes...',
+    progress_assessing_impact: 'Assessing impact of changes...',
+    progress_preparing_comparison: 'Preparing comparison report...',
+    progress_complete: 'Complete!',
+    progress_elapsed: 'elapsed',
     upload_tip: 'Tip: redact names, signatures and personal details before uploading',
     privacy_title: 'Your privacy, plainly stated',
     privacy_points: [
@@ -262,6 +271,15 @@ export const translations = {
     progress_clearing: 'Dokument wird aus dem Speicher gelöscht…',
     progress_finalising: 'Analyse wird abgeschlossen…',
     progress_done: 'Fertig!',
+    progress_analysing: 'Klauseln und Bedingungen werden analysiert...',
+    progress_swiss_law: 'Schweizer Recht wird geprüft...',
+    progress_preparing: 'Ihr Bericht wird erstellt...',
+    progress_extracting_both: 'Beide Dokumente werden extrahiert...',
+    progress_identifying_changes: 'Änderungen werden identifiziert...',
+    progress_assessing_impact: 'Auswirkungen der Änderungen werden bewertet...',
+    progress_preparing_comparison: 'Vergleichsbericht wird erstellt...',
+    progress_complete: 'Fertig!',
+    progress_elapsed: 'vergangen',
     upload_tip: 'Tipp: Namen, Unterschriften und persönliche Daten vor dem Hochladen schwärzen',
     privacy_title: 'Ihr Datenschutz, klar ausgedrückt',
     privacy_points: [
@@ -444,6 +462,15 @@ export const translations = {
     progress_clearing: 'Suppression du document de la mémoire…',
     progress_finalising: "Finalisation de l'analyse…",
     progress_done: 'Terminé !',
+    progress_analysing: 'Analyse des clauses et conditions...',
+    progress_swiss_law: 'Vérification du droit suisse...',
+    progress_preparing: 'Préparation de votre rapport...',
+    progress_extracting_both: 'Extraction des deux documents...',
+    progress_identifying_changes: 'Identification des changements...',
+    progress_assessing_impact: 'Évaluation de l\'impact des changements...',
+    progress_preparing_comparison: 'Préparation du rapport de comparaison...',
+    progress_complete: 'Terminé !',
+    progress_elapsed: 'écoulé',
     upload_tip: 'Conseil : masquez les noms, signatures et données personnelles avant d\'envoyer',
     privacy_title: 'Votre confidentialité, clairement expliquée',
     privacy_points: [
@@ -626,6 +653,15 @@ export const translations = {
     progress_clearing: 'Cancellazione del documento dalla memoria…',
     progress_finalising: "Finalizzazione dell'analisi…",
     progress_done: 'Fatto!',
+    progress_analysing: 'Analisi delle clausole e condizioni...',
+    progress_swiss_law: 'Verifica del diritto svizzero...',
+    progress_preparing: 'Preparazione del rapporto...',
+    progress_extracting_both: 'Estrazione di entrambi i documenti...',
+    progress_identifying_changes: 'Identificazione delle modifiche...',
+    progress_assessing_impact: 'Valutazione dell\'impatto delle modifiche...',
+    progress_preparing_comparison: 'Preparazione del rapporto di confronto...',
+    progress_complete: 'Completato!',
+    progress_elapsed: 'trascorso',
     upload_tip: 'Suggerimento: oscura nomi, firme e dati personali prima di caricare',
     privacy_title: 'La tua privacy, detta chiaramente',
     privacy_points: [
@@ -798,6 +834,15 @@ export type TranslationKeys = {
   progress_clearing: string;
   progress_finalising: string;
   progress_done: string;
+  progress_analysing: string;
+  progress_swiss_law: string;
+  progress_preparing: string;
+  progress_extracting_both: string;
+  progress_identifying_changes: string;
+  progress_assessing_impact: string;
+  progress_preparing_comparison: string;
+  progress_complete: string;
+  progress_elapsed: string;
   upload_tip: string;
   privacy_title: string;
   privacy_points: ReadonlyArray<string>;
