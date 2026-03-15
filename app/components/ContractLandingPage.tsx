@@ -9,7 +9,7 @@ import ProgressBar from './ProgressBar';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, translations } from '../i18n/translations';
-import { analysisSteps } from '../lib/progressSteps';
+import { analysisSteps, ProgressStats } from '../lib/progressSteps';
 import { ContractType, contractPages, CONTRACT_TYPES, contractBrowse } from '../i18n/contractPages';
 
 interface Analysis {
@@ -40,6 +40,7 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
   const [warning, setWarning] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
+  const [progressStats, setProgressStats] = useState<ProgressStats | null>(null);
   const typewriterPlaceholder = useTypewriterPlaceholder(locale);
 
   // Auto-scroll to results when analysis completes
@@ -139,6 +140,7 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
     setWarning(null);
     setQuestion('');
     setAwarenessChecked(false);
+    setProgressStats(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -188,16 +190,20 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-16 text-center">
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-4 sm:mb-6">
-            {content.h1}
-          </h1>
-          <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto mb-6 leading-relaxed">
-            {content.cta}
-          </p>
+        <div className={`max-w-4xl mx-auto px-4 sm:px-6 text-center ${isAnalysing || analysis ? 'py-4 sm:py-6' : 'py-6 sm:py-16'}`}>
+          {!isAnalysing && !analysis && (
+            <>
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight mb-4 sm:mb-6">
+                {content.h1}
+              </h1>
+              <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto mb-6 leading-relaxed">
+                {content.cta}
+              </p>
+            </>
+          )}
 
           {/* Trust badges */}
-          {!analysis && (
+          {!analysis && !isAnalysing && (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-0 my-6">
               <div className="flex items-center gap-2 px-6">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -223,110 +229,113 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
             </div>
           )}
 
-          {/* Upload widget */}
-          {!analysis && (
-            <div className="max-w-xl mx-auto">
-              {/* Swap: show ProgressBar in place of UploadZone during analysis */}
-              {isAnalysing ? (
-                <ProgressBar
-                  steps={analysisSteps}
-                  isActive={isAnalysing}
-                  isComplete={false}
-                  translations={t}
-                />
-              ) : (
-                <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
-              )}
+          {/* Upload widget — ProgressBar swaps with UploadZone */}
+          <div className="max-w-xl mx-auto">
+            {isAnalysing ? (
+              /* Active analysis — show live progress */
+              <ProgressBar
+                steps={analysisSteps}
+                isActive={true}
+                isComplete={false}
+                translations={t}
+                onComplete={(s) => setProgressStats(s)}
+              />
+            ) : analysis ? (
+              /* Analysis complete — show completion summary in same space */
+              <ProgressBar
+                steps={analysisSteps}
+                isActive={false}
+                isComplete={true}
+                translations={t}
+                stats={progressStats}
+              />
+            ) : (
+              <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
+            )}
 
-              <div className="mt-3">
-                <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">
-                  {t.question_label} <span className="text-gray-400 font-normal">{t.question_optional}</span>
+            {!analysis && (
+              <>
+                <div className="mt-3">
+                  <label htmlFor="question-input" className="block text-sm font-medium text-gray-600 mb-1 text-left">
+                    {t.question_label} <span className="text-gray-400 font-normal">{t.question_optional}</span>
+                  </label>
+                  <input
+                    id="question-input"
+                    type="text"
+                    maxLength={300}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    disabled={isAnalysing}
+                    placeholder={question ? '' : (typewriterPlaceholder || t.question_placeholder_fallback)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
+                  />
+                </div>
+
+                {error && (
+                  <div className="mt-4 flex items-start gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-left">
+                    <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-sm">{error}</p>
+                  </div>
+                )}
+
+                {warning && !error && (
+                  <div className="mt-4 flex items-start gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-left">
+                    <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                    <p className="text-sm">{warning}</p>
+                  </div>
+                )}
+
+                {/* nFADP awareness checkbox */}
+                <label className="mt-4 flex items-start gap-3 text-left cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={awarenessChecked}
+                    onChange={(e) => setAwarenessChecked(e.target.checked)}
+                    disabled={isAnalysing}
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
+                  />
+                  <span className="text-xs text-gray-600 leading-relaxed">
+                    {t.awareness_checkbox_pre}{' '}
+                    <strong className="text-gray-800">{t.awareness_checkbox_no_store}</strong>
+                    {t.awareness_checkbox_mid}{' '}
+                    <strong className="text-gray-800">{t.awareness_checkbox_no_third_party}</strong>
+                    {' '}{t.awareness_checkbox_post}{' '}
+                    <a
+                      href="https://github.com/vikramgorla/swisscontract-ai"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-red-600 transition-colors"
+                    >{t.awareness_checkbox_opensource}</a>
+                    .
+                  </span>
                 </label>
-                <input
-                  id="question-input"
-                  type="text"
-                  maxLength={300}
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  disabled={isAnalysing}
-                  placeholder={question ? '' : (typewriterPlaceholder || t.question_placeholder_fallback)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
-                />
-              </div>
 
-              {error && (
-                <div className="mt-4 flex items-start gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-left">
-                  <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-sm">{error}</p>
-                </div>
-              )}
-
-              {warning && !error && (
-                <div className="mt-4 flex items-start gap-2 text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-left">
-                  <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                  </svg>
-                  <p className="text-sm">{warning}</p>
-                </div>
-              )}
-
-              {/* nFADP awareness checkbox */}
-              <label className="mt-4 flex items-start gap-3 text-left cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={awarenessChecked}
-                  onChange={(e) => setAwarenessChecked(e.target.checked)}
-                  disabled={isAnalysing}
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
-                />
-                <span className="text-xs text-gray-600 leading-relaxed">
-                  {t.awareness_checkbox_pre}{' '}
-                  <strong className="text-gray-800">{t.awareness_checkbox_no_store}</strong>
-                  {t.awareness_checkbox_mid}{' '}
-                  <strong className="text-gray-800">{t.awareness_checkbox_no_third_party}</strong>
-                  {' '}{t.awareness_checkbox_post}{' '}
-                  <a
-                    href="https://github.com/vikramgorla/swisscontract-ai"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-red-600 transition-colors"
-                  >{t.awareness_checkbox_opensource}</a>
-                  .
-                </span>
-              </label>
-
-              <button
-                onClick={handleAnalyse}
-                disabled={!selectedFile || isAnalysing || !awarenessChecked}
-                className={`
-                  mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
-                  ${selectedFile && !isAnalysing && awarenessChecked
-                    ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  }
-                `}
-              >
-                {isAnalysing ? t.analysing : t.analyse_btn}
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={handleAnalyse}
+                  disabled={!selectedFile || isAnalysing || !awarenessChecked}
+                  className={`
+                    mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
+                    ${selectedFile && !isAnalysing && awarenessChecked
+                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    }
+                  `}
+                >
+                  {isAnalysing ? t.analysing : t.analyse_btn}
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </section>
 
       {/* Results */}
       {analysis && (
         <section id="results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-          {/* Completion summary */}
-          <div className="max-w-xl mx-auto mb-6">
-            <ProgressBar
-              steps={analysisSteps}
-              isActive={false}
-              isComplete={true}
-              translations={t}
-            />
-          </div>
           <AnalysisResult
               analysis={analysis}
               onReset={handleReset}

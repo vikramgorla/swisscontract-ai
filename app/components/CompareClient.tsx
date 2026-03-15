@@ -6,7 +6,7 @@ import ComparisonResult from './ComparisonResult';
 import ProgressBar from './ProgressBar';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Locale, TranslationKeys } from '../i18n/translations';
-import { comparisonSteps } from '../lib/progressSteps';
+import { comparisonSteps, ProgressStats } from '../lib/progressSteps';
 
 interface Change {
   title: string;
@@ -151,6 +151,7 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [question, setQuestion] = useState('');
   const [awarenessChecked, setAwarenessChecked] = useState(false);
+  const [progressStats, setProgressStats] = useState<ProgressStats | null>(null);
 
   // Auto-scroll to results when analysis completes
   useEffect(() => {
@@ -248,6 +249,7 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
     setError(null);
     setQuestion('');
     setAwarenessChecked(false);
+    setProgressStats(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -290,135 +292,138 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
             </>
           )}
 
-          {/* Upload area */}
-          {!analysis && (
-            <div className="max-w-2xl mx-auto">
-              {/* Swap: show ProgressBar in place of upload zones during analysis */}
-              {isAnalysing ? (
-                <ProgressBar
-                  steps={comparisonSteps}
-                  isActive={isAnalysing}
-                  isComplete={false}
-                  translations={t}
-                />
-              ) : (
-                <>
-                  {/* Two upload zones */}
-                  <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                    <FileDropZone
-                      label={t.compare_upload_original}
-                      file={fileA}
-                      onSelect={(f) => { setFileA(f); setError(null); }}
-                      isAnalysing={isAnalysing}
-                      t={t}
-                    />
-                    <div className="hidden sm:flex items-center justify-center px-2">
-                      <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </div>
-                    <FileDropZone
-                      label={t.compare_upload_revised}
-                      file={fileB}
-                      onSelect={(f) => { setFileB(f); setError(null); }}
-                      isAnalysing={isAnalysing}
-                      t={t}
-                    />
+          {/* Upload area — ProgressBar swaps with upload zones */}
+          <div className="max-w-2xl mx-auto">
+            {isAnalysing ? (
+              /* Active analysis — show live progress */
+              <ProgressBar
+                steps={comparisonSteps}
+                isActive={true}
+                isComplete={false}
+                translations={t}
+                onComplete={(s) => setProgressStats(s)}
+              />
+            ) : analysis ? (
+              /* Analysis complete — show completion summary in same space */
+              <ProgressBar
+                steps={comparisonSteps}
+                isActive={false}
+                isComplete={true}
+                translations={t}
+                stats={progressStats}
+              />
+            ) : (
+              <>
+                {/* Two upload zones */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                  <FileDropZone
+                    label={t.compare_upload_original}
+                    file={fileA}
+                    onSelect={(f) => { setFileA(f); setError(null); }}
+                    isAnalysing={isAnalysing}
+                    t={t}
+                  />
+                  <div className="hidden sm:flex items-center justify-center px-2">
+                    <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
                   </div>
-                </>
-              )}
+                  <FileDropZone
+                    label={t.compare_upload_revised}
+                    file={fileB}
+                    onSelect={(f) => { setFileB(f); setError(null); }}
+                    isAnalysing={isAnalysing}
+                    t={t}
+                  />
+                </div>
+              </>
+            )}
 
-              {/* Optional question */}
-              <div className="mt-3">
-                <label htmlFor="compare-question" className="block text-sm font-medium text-gray-600 mb-1 text-left">
-                  {t.question_label} <span className="text-gray-400 font-normal">{t.question_optional}</span>
+            {!analysis && (
+              <>
+                {/* Optional question */}
+                <div className="mt-3">
+                  <label htmlFor="compare-question" className="block text-sm font-medium text-gray-600 mb-1 text-left">
+                    {t.question_label} <span className="text-gray-400 font-normal">{t.question_optional}</span>
+                  </label>
+                  <input
+                    id="compare-question"
+                    type="text"
+                    maxLength={300}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    disabled={isAnalysing}
+                    placeholder={t.question_placeholder_fallback}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
+                  />
+                </div>
+
+                {/* Error display */}
+                {error && (
+                  <div className="mt-4 flex items-start gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-left">
+                    <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-sm">{error}</p>
+                  </div>
+                )}
+
+                {/* nFADP checkbox */}
+                <label className="mt-4 flex items-start gap-3 text-left cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={awarenessChecked}
+                    onChange={(e) => setAwarenessChecked(e.target.checked)}
+                    disabled={isAnalysing}
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
+                  />
+                  <span className="text-xs text-gray-600 leading-relaxed">
+                    {t.awareness_checkbox_pre}{' '}
+                    <strong className="text-gray-800">{t.awareness_checkbox_no_store}</strong>
+                    {t.awareness_checkbox_mid}{' '}
+                    <strong className="text-gray-800">{t.awareness_checkbox_no_third_party}</strong>
+                    {' '}{t.awareness_checkbox_post}{' '}
+                    <a
+                      href="https://github.com/vikramgorla/swisscontract-ai"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-red-600 transition-colors"
+                    >{t.awareness_checkbox_opensource}</a>.
+                  </span>
                 </label>
-                <input
-                  id="compare-question"
-                  type="text"
-                  maxLength={300}
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  disabled={isAnalysing}
-                  placeholder={t.question_placeholder_fallback}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent disabled:opacity-50"
-                />
-              </div>
 
-              {/* Error display */}
-              {error && (
-                <div className="mt-4 flex items-start gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-left">
-                  <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <p className="text-sm">{error}</p>
-                </div>
-              )}
+                {/* Compare button */}
+                <button
+                  onClick={handleCompare}
+                  disabled={!fileA || !fileB || isAnalysing || !awarenessChecked}
+                  className={`
+                    mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
+                    ${fileA && fileB && !isAnalysing && awarenessChecked
+                      ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    }
+                  `}
+                >
+                  {isAnalysing ? t.compare_analysing : t.compare_button}
+                </button>
 
-              {/* nFADP checkbox */}
-              <label className="mt-4 flex items-start gap-3 text-left cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={awarenessChecked}
-                  onChange={(e) => setAwarenessChecked(e.target.checked)}
-                  disabled={isAnalysing}
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 flex-shrink-0"
-                />
-                <span className="text-xs text-gray-600 leading-relaxed">
-                  {t.awareness_checkbox_pre}{' '}
-                  <strong className="text-gray-800">{t.awareness_checkbox_no_store}</strong>
-                  {t.awareness_checkbox_mid}{' '}
-                  <strong className="text-gray-800">{t.awareness_checkbox_no_third_party}</strong>
-                  {' '}{t.awareness_checkbox_post}{' '}
-                  <a
-                    href="https://github.com/vikramgorla/swisscontract-ai"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-red-600 transition-colors"
-                  >{t.awareness_checkbox_opensource}</a>.
-                </span>
-              </label>
-
-              {/* Compare button */}
-              <button
-                onClick={handleCompare}
-                disabled={!fileA || !fileB || isAnalysing || !awarenessChecked}
-                className={`
-                  mt-5 w-full py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200
-                  ${fileA && fileB && !isAnalysing && awarenessChecked
-                    ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  }
-                `}
-              >
-                {isAnalysing ? t.compare_analysing : t.compare_button}
-              </button>
-
-              {/* Link back to single analysis */}
-              {!isAnalysing && (
-                <div className="mt-4 text-center">
-                  <Link href={localePrefix || '/'} className="text-sm text-gray-500 hover:text-red-600 transition-colors">
-                    ← {t.analyse_btn}
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
+                {/* Link back to single analysis */}
+                {!isAnalysing && (
+                  <div className="mt-4 text-center">
+                    <Link href={localePrefix || '/'} className="text-sm text-gray-500 hover:text-red-600 transition-colors">
+                      ← {t.analyse_btn}
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </section>
 
       {/* Results */}
       {analysis && analysis.identical && (
         <section id="compare-results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-          {/* Completion summary */}
-          <div className="max-w-xl mx-auto mb-6">
-            <ProgressBar
-              steps={comparisonSteps}
-              isActive={false}
-              isComplete={true}
-              translations={t}
-            />
-          </div>
           <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -439,15 +444,6 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
 
       {analysis && !analysis.identical && (
         <section id="compare-results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-          {/* Completion summary */}
-          <div className="max-w-xl mx-auto mb-6">
-            <ProgressBar
-              steps={comparisonSteps}
-              isActive={false}
-              isComplete={true}
-              translations={t}
-            />
-          </div>
           {/* Near-identical warning */}
           {analysis.near_identical && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
