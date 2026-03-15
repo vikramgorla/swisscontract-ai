@@ -5,9 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
+import ProgressBar from './ProgressBar';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, translations } from '../i18n/translations';
+import { analysisSteps } from '../lib/progressSteps';
 import { ContractType, contractPages, CONTRACT_TYPES, contractBrowse } from '../i18n/contractPages';
 
 interface Analysis {
@@ -300,6 +302,14 @@ export default function ContractLandingPage({ locale, contractType }: ContractLa
                   </span>
                 ) : t.analyse_btn}
               </button>
+
+              {/* Smart progress bar */}
+              <ProgressBar
+                steps={analysisSteps}
+                isActive={isAnalysing}
+                isComplete={analysis !== null}
+                translations={t}
+              />
             </div>
           )}
         </div>

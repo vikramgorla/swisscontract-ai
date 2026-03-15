@@ -7,8 +7,10 @@ import UploadZone from './UploadZone';
 import AnalysisResult from './AnalysisResult';
 import LanguageSwitcher from './LanguageSwitcher';
 
+import ProgressBar from './ProgressBar';
 import { useTypewriterPlaceholder } from './TypewriterPlaceholder';
 import { Locale, TranslationKeys } from '../i18n/translations';
+import { analysisSteps } from '../lib/progressSteps';
 import { CONTRACT_TYPES, contractBrowse } from '../i18n/contractPages';
 
 interface Analysis {
@@ -454,6 +456,14 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                   </span>
                 ) : t.analyse_btn}
               </button>
+
+              {/* Smart progress bar */}
+              <ProgressBar
+                steps={analysisSteps}
+                isActive={isAnalysing}
+                isComplete={analysis !== null}
+                translations={t}
+              />
             </div>
           )}
         </div>
