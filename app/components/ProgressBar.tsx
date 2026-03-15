@@ -133,7 +133,7 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
   const completeLabel = (t as Record<string, unknown>)['progress_complete'] as string || 'Complete!';
 
   return (
-    <div className="mt-5 bg-gray-50 border border-gray-200 rounded-xl p-5">
+    <div className="mt-5 bg-white border border-red-100 rounded-xl p-5 shadow-sm">
       <div className="space-y-2">
         {steps.map((step, index) => {
           const status = getStepStatus(index);
@@ -150,11 +150,11 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
               {/* Status indicator */}
               <div className="flex-shrink-0 w-6 text-center">
                 {status === 'done' ? (
-                  <span className="text-green-500 text-sm">✓</span>
+                  <span className="text-red-600 text-sm font-bold">✓</span>
                 ) : status === 'active' ? (
-                  <span className="inline-block w-2.5 h-2.5 bg-indigo-500 rounded-full animate-pulse" />
+                  <span className="inline-block w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
                 ) : (
-                  <span className="inline-block w-2 h-2 bg-gray-300 rounded-full" />
+                  <span className="inline-block w-2 h-2 bg-gray-200 rounded-full" />
                 )}
               </div>
 
@@ -173,7 +173,7 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
               {time && (
                 <div className="flex-shrink-0">
                   <span className={`text-xs tabular-nums ${
-                    status === 'active' ? 'text-indigo-600 font-medium' : 'text-gray-400'
+                    status === 'active' ? 'text-red-600 font-medium' : 'text-gray-400'
                   }`}>
                     {time}
                   </span>
@@ -185,9 +185,9 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
       </div>
 
       {/* Total elapsed + completion */}
-      <div className={`mt-3 pt-3 border-t border-gray-200 flex items-center justify-between`}>
+      <div className={`mt-3 pt-3 border-t border-red-100 flex items-center justify-between`}>
         {showComplete ? (
-          <p className="text-sm font-medium text-green-600">✅ {completeLabel}</p>
+          <p className="text-sm font-medium text-red-600">✅ {completeLabel}</p>
         ) : (
           <div />
         )}
