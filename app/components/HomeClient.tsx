@@ -352,9 +352,9 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
             <div className="max-w-xl mx-auto">
               <UploadZone onFileSelect={handleFileSelect} isAnalysing={isAnalysing} t={t} />
 
-              {/* Demo button — loads a pre-built sample contract */}
+              {/* Demo button + Compare link */}
               {!selectedFile && (
-                <div className="mt-3 flex justify-center">
+                <div className="mt-3 flex flex-col items-center gap-2">
                   <button
                     onClick={handleLoadDemo}
                     disabled={isDemoLoading || isAnalysing}
@@ -362,6 +362,15 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
                   >
                     {isDemoLoading ? `⏳ ${t.demo_loading}` : `📄 ${t.demo_btn}`}
                   </button>
+                  <Link
+                    href={`${locale === 'en' ? '' : `/${locale}`}/compare`}
+                    className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors flex items-center gap-1.5"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    {t.compare_nav}
+                  </Link>
                 </div>
               )}
 

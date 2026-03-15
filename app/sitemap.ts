@@ -45,6 +45,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...contractTypeEntries,
     {
+      url: 'https://swisscontract.ai/compare',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: 'https://swisscontract.ai/en/compare',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://swisscontract.ai/de/compare',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://swisscontract.ai/fr/compare',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: 'https://swisscontract.ai/it/compare',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: 'https://swisscontract.ai/privacy',
       lastModified: new Date(),
       changeFrequency: 'yearly',
