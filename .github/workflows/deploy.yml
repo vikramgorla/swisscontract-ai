@@ -403,7 +403,7 @@ jobs:
             --target main
           echo "✅ Release $TAG created"
 
-      - name: Commit release version and sync preprod
+      - name: Sync preprod with next dev version
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
@@ -413,18 +413,7 @@ jobs:
           git config user.email "268332783+agent-lea[bot]@users.noreply.github.com"
           git config user.name "Agent Léa 🏔️"
 
-          # 1. Commit clean version to main (if needed)
-          git add package.json
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: release v${VERSION}"
-            git push "$REMOTE" HEAD:main
-            echo "✅ package.json → ${VERSION} on main"
-          fi
-
-          MAIN_SHA=$(git rev-parse HEAD)
-          echo "Main @ ${MAIN_SHA:0:12}"
-
-          # 2. Prepare next dev version for preprod
+          # Prepare next dev version on top of current main
           PATCH=$(echo "$VERSION" | grep -oE '[0-9]+$')
           BASE=$(echo "$VERSION" | sed 's/\.[0-9]*$//')
           NEXT="${BASE}.$((PATCH + 1))-beta.0"
@@ -436,7 +425,7 @@ jobs:
           DEV_SHA=$(git rev-parse HEAD)
           echo "Next dev version: $NEXT @ ${DEV_SHA:0:12}"
 
-          # 3. Force-push preprod to dev commit
+          # Force-push preprod to dev commit
           curl -s -X PUT \
             -H "Authorization: Bearer $GH_PAT" \
             -H "Accept: application/vnd.github+json" \
