@@ -403,7 +403,7 @@ jobs:
             --target main
           echo "✅ Release $TAG created"
 
-      - name: Commit release version and sync preprod
+      - name: Merge main into preprod
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
@@ -413,43 +413,21 @@ jobs:
           git config user.email "268332783+agent-lea[bot]@users.noreply.github.com"
           git config user.name "Agent Léa 🏔️"
 
-          # 1. Commit clean version to main (if needed)
-          git add package.json
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: release v${VERSION}"
-            git push "$REMOTE" HEAD:main
-            echo "✅ package.json → ${VERSION} on main"
-          fi
+          # Fetch preprod and merge main into it
+          git fetch "$REMOTE" preprod:preprod
+          git checkout preprod
 
-          MAIN_SHA=$(git rev-parse HEAD)
-          echo "Main @ ${MAIN_SHA:0:12}"
-
-          # 2. Prepare next dev version for preprod
+          # Merge main — accept main's version for package.json conflicts
+          git merge origin/main --no-edit -X theirs || true
+          
+          # Set next dev version
           PATCH=$(echo "$VERSION" | grep -oE '[0-9]+$')
           BASE=$(echo "$VERSION" | sed 's/\.[0-9]*$//')
           NEXT="${BASE}.$((PATCH + 1))-beta.0"
           jq --arg v "$NEXT" '.version = $v' package.json > package.json.tmp
           mv package.json.tmp package.json
           git add package.json
-          git commit -m "chore: start v${BASE}.$((PATCH + 1)) dev cycle"
+          git commit -m "chore: start v${BASE}.$((PATCH + 1)) dev cycle" || true
 
-          DEV_SHA=$(git rev-parse HEAD)
-          echo "Next dev version: $NEXT @ ${DEV_SHA:0:12}"
-
-          # 3. Force-push preprod to dev commit
-          curl -s -X PUT \
-            -H "Authorization: Bearer $GH_PAT" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/vikramgorla/swisscontract-ai/branches/preprod/protection" \
-            -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"allow_force_pushes":true,"allow_deletions":false}' > /dev/null
-
-          git push "$REMOTE" "${DEV_SHA}:refs/heads/preprod" --force
-          echo "preprod → $NEXT"
-
-          curl -s -X PUT \
-            -H "Authorization: Bearer $GH_PAT" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/vikramgorla/swisscontract-ai/branches/preprod/protection" \
-            -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"allow_force_pushes":false,"allow_deletions":false}' > /dev/null
-
-          echo "✅ preprod synced + next dev cycle started, force push re-locked"
+          git push "$REMOTE" preprod
+          echo "✅ preprod merged from main + next dev: $NEXT"
