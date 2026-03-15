@@ -26,17 +26,17 @@ ENV HOSTNAME=0.0.0.0
 # pdftoppm converts PDF pages to images without pdfjs-dist (avoids version conflicts)
 RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-deu tesseract-ocr-data-fra tesseract-ocr-data-ita poppler-utils
 
-# Only copy what's needed to run
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.ts ./next.config.ts
-
-# Run as non-root user (security best practice)
+# Create non-root user before copying files
 RUN addgroup --system --gid 1001 nodejs \
- && adduser --system --uid 1001 nextjs \
- && chown -R nextjs:nodejs /app
+ && adduser --system --uid 1001 nextjs
+
+# Copy with correct ownership
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./next.config.ts
+
 USER nextjs
 
 EXPOSE 3000
