@@ -22,6 +22,10 @@ interface ComparisonAnalysis {
   overall_assessment: string;
   swiss_law_notes: string;
   language: string;
+  identical?: boolean;
+  near_identical?: boolean;
+  changes_before_verification?: number;
+  changes_after_verification?: number;
 }
 
 interface CompareClientProps {
@@ -441,8 +445,55 @@ export default function CompareClient({ locale, t }: CompareClientProps) {
       </section>
 
       {/* Results */}
-      {analysis && (
+      {analysis && analysis.identical && (
         <section id="compare-results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-green-800 mb-2">✅ {t.compare_identical}</h2>
+            <p className="text-green-700 text-sm mb-6">{analysis.overall_assessment}</p>
+            <button
+              onClick={handleReset}
+              className="px-6 py-3 bg-white border border-green-300 rounded-xl text-green-700 font-medium hover:bg-green-50 transition-colors"
+            >
+              {t.results_reset}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {analysis && !analysis.identical && (
+        <section id="compare-results" className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          {/* Near-identical warning */}
+          {analysis.near_identical && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
+              <svg className="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-sm text-amber-700">{t.compare_near_identical}</p>
+            </div>
+          )}
+
+          {/* Verification badge */}
+          {analysis.changes_before_verification != null && analysis.changes_after_verification != null && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
+              <svg className="w-4 h-4 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <p className="text-sm text-blue-700">
+                {t.compare_verified}
+                {analysis.changes_before_verification !== analysis.changes_after_verification && (
+                  <span className="text-blue-500 ml-1">
+                    ({analysis.changes_before_verification} → {analysis.changes_after_verification})
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
+
           <ComparisonResult
             analysis={analysis}
             onReset={handleReset}
