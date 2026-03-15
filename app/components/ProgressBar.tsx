@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { ProgressStep, getProgressState } from '../lib/progressSteps';
+import React, { useEffect, useRef, useState } from 'react';
+import { ProgressStep, ProgressStats, getProgressState } from '../lib/progressSteps';
 import { TranslationKeys } from '../i18n/translations';
 
 interface ProgressBarProps {
@@ -9,6 +9,8 @@ interface ProgressBarProps {
   isActive: boolean;
   isComplete: boolean;
   translations: TranslationKeys;
+  onComplete?: (stats: ProgressStats) => void;
+  stats?: ProgressStats | null;
 }
 
 interface StepDisplay {
@@ -16,17 +18,16 @@ interface StepDisplay {
   time: string | null;
 }
 
-export default function ProgressBar({ steps, isActive, isComplete, translations }: ProgressBarProps) {
+export default function ProgressBar({ steps, isActive, isComplete, translations, onComplete, stats }: ProgressBarProps) {
   const [stepDisplays, setStepDisplays] = useState<StepDisplay[]>([]);
   const [totalElapsed, setTotalElapsed] = useState('');
-  const [showComplete, setShowComplete] = useState(false);
-  const [hasTrackedData, setHasTrackedData] = useState(false);
 
   const startTimeRef = useRef<number>(0);
   const rafRef = useRef<number | null>(null);
   const stepStartRef = useRef<number[]>([]);
   const stepDoneRef = useRef<number[]>([]);
   const prevIndexRef = useRef(0);
+  const completedRef = useRef(false);
 
   const t = translations;
 
@@ -46,8 +47,7 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
       stepStartRef.current = [0];
       stepDoneRef.current = [];
       prevIndexRef.current = 0;
-      setShowComplete(false);
-      setHasTrackedData(true);
+      completedRef.current = false;
 
       const tick = () => {
         const elapsed = performance.now() - start;
@@ -87,55 +87,71 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
     };
   }, [isActive, isComplete, steps]);
 
-  // Handle completion with tracked data
+  // Handle completion: fire onComplete with timing data
   useEffect(() => {
-    if (isComplete && startTimeRef.current > 0 && !showComplete) {
+    if (isComplete && startTimeRef.current > 0 && !completedRef.current) {
+      completedRef.current = true;
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      const elapsed = performance.now() - startTimeRef.current;
+      const totalMs = performance.now() - startTimeRef.current;
 
-      const displays: StepDisplay[] = steps.map((_, i) => {
-        const duration = stepDoneRef.current[i] || (elapsed - (stepStartRef.current[i] || 0));
-        return { status: 'done' as const, time: formatTime(duration) };
-      });
+      // Finalize last step
+      const lastIdx = prevIndexRef.current;
+      if (!stepDoneRef.current[lastIdx]) {
+        stepDoneRef.current[lastIdx] = totalMs - (stepStartRef.current[lastIdx] || 0);
+      }
 
-      setStepDisplays(displays);
-      setTotalElapsed(formatTime(elapsed));
-      setShowComplete(true);
+      const stepTimes = steps.map((_, i) => stepDoneRef.current[i] || 0);
+
+      if (onComplete) {
+        onComplete({ stepTimes, totalMs });
+      }
     }
-  }, [isComplete, steps, showComplete]);
+  }, [isComplete, steps, onComplete]);
 
-  // Handle mount with isComplete=true (no tracked data — e.g. page re-render)
-  useEffect(() => {
-    if (isComplete && !isActive && startTimeRef.current === 0 && !showComplete) {
-      setStepDisplays(steps.map(() => ({ status: 'done' as const, time: null })));
-      setShowComplete(true);
-      setHasTrackedData(false);
-    }
-  }, [isComplete, isActive, steps, showComplete]);
+  // Render from stats prop when complete
+  // Derive display entirely from props — no internal showComplete state
+  if (!isActive && !isComplete) return null;
 
-  // Reset
-  useEffect(() => {
-    if (!isActive && !isComplete) {
-      setStepDisplays([]);
-      setTotalElapsed('');
-      setShowComplete(false);
-      setHasTrackedData(false);
-    }
-  }, [isActive, isComplete]);
+  // Determine what to render
+  let displaySteps: StepDisplay[];
+  let displayTotal = '';
+  let hasTimingData = false;
 
-  if (!isActive && !showComplete && !isComplete) return null;
+  if (isActive && !isComplete) {
+    // Live animation — use state from animation loop
+    displaySteps = stepDisplays;
+    displayTotal = totalElapsed;
+    hasTimingData = true;
+  } else if (isComplete && stats) {
+    // Completion with real timing data from parent
+    displaySteps = steps.map((_, i) => ({
+      status: 'done' as const,
+      time: formatTime(stats.stepTimes[i] || 0),
+    }));
+    displayTotal = formatTime(stats.totalMs);
+    hasTimingData = true;
+  } else if (isComplete && !stats) {
+    // Completion without timing data
+    displaySteps = steps.map(() => ({
+      status: 'done' as const,
+      time: null,
+    }));
+    hasTimingData = false;
+  } else {
+    displaySteps = [];
+  }
 
   const elapsedLabel = (t as Record<string, unknown>)['progress_elapsed'] as string || 'elapsed';
   const completeLabel = (t as Record<string, unknown>)['progress_complete'] as string || 'Complete';
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5">
-      <div className="space-y-3">
+      <div className="space-y-2.5">
         {steps.map((step, index) => {
-          const display = stepDisplays[index] || { status: 'pending' as const, time: null };
+          const display = displaySteps[index] || { status: 'pending' as const, time: null };
           const label = (t as Record<string, unknown>)[step.label] as string || step.label;
 
           return (
@@ -148,7 +164,7 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
               {/* Status indicator */}
               <div className="flex-shrink-0 w-5">
                 {display.status === 'done' ? (
-                  <svg className="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 ) : display.status === 'active' ? (
@@ -179,17 +195,17 @@ export default function ProgressBar({ steps, isActive, isComplete, translations 
         })}
       </div>
 
-      {/* Footer — total elapsed (only show when we have real data) */}
-      {(hasTrackedData || isActive) && (
+      {/* Footer — total elapsed (only show when we have real timing data) */}
+      {hasTimingData && (
         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-          {showComplete ? (
-            <span className="text-sm font-medium text-red-600">{completeLabel}</span>
+          {isComplete ? (
+            <span className="text-sm font-medium text-gray-600">{completeLabel}</span>
           ) : (
             <span />
           )}
-          {totalElapsed && (
+          {displayTotal && (
             <span className="text-xs text-gray-400 tabular-nums">
-              {totalElapsed} {elapsedLabel}
+              {displayTotal} {elapsedLabel}
             </span>
           )}
         </div>

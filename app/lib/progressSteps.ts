@@ -6,6 +6,11 @@ export interface ProgressStep {
   durationMs: number;  // Expected time to fill this step's range
 }
 
+export interface ProgressStats {
+  stepTimes: number[];  // ms per step
+  totalMs: number;
+}
+
 export const analysisSteps: ProgressStep[] = [
   { label: 'progress_extracting', emoji: '', startPercent: 0, endPercent: 10, durationMs: 2000 },
   { label: 'progress_identifying', emoji: '', startPercent: 10, endPercent: 25, durationMs: 3000 },
