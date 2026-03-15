@@ -363,22 +363,14 @@ export default function HomeClient({ locale, t }: HomeClientProps) {
 
           {/* Upload + Analyse area — ProgressBar swaps with UploadZone */}
           <div className="max-w-xl mx-auto">
-            {isAnalysing ? (
-              /* Active analysis — show live progress */
+            {(isAnalysing || analysis) ? (
+              /* Single ProgressBar instance — stays mounted through active → complete */
               <ProgressBar
                 steps={analysisSteps}
-                isActive={true}
-                isComplete={false}
+                isActive={isAnalysing}
+                isComplete={analysis !== null}
                 translations={t}
                 onComplete={(s) => setProgressStats(s)}
-              />
-            ) : analysis ? (
-              /* Analysis complete — show completion summary in same space */
-              <ProgressBar
-                steps={analysisSteps}
-                isActive={false}
-                isComplete={true}
-                translations={t}
                 stats={progressStats}
               />
             ) : (
