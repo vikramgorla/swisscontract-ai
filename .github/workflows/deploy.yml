@@ -25,7 +25,7 @@ jobs:
     # Build runs ONLY on preprod push — produces a single image
     # Skips auto-bump commits to avoid infinite loop
     runs-on: ubuntu-latest
-    if: "github.ref_name == 'preprod' && !startsWith(github.event.head_commit.message, 'chore: preprod')"
+    if: "github.ref_name == 'preprod' && !startsWith(github.event.head_commit.message, 'chore: preprod') && !startsWith(github.event.head_commit.message, 'chore: start')"
     outputs:
       sha_tag: ${{ steps.meta.outputs.sha_tag }}
       new_version: ${{ steps.preversion.outputs.new_version }}
@@ -60,10 +60,10 @@ jobs:
         if: steps.preversion.outputs.bumped == 'true'
         run: |
           VERSION="${{ steps.preversion.outputs.new_version }}"
-          git config user.email "vikram.gorla@gmail.com"
-          git config user.name "Vikram Gorla"
+          git config user.email "268332783+agent-lea[bot]@users.noreply.github.com"
+          git config user.name "Agent Léa 🏔️"
           git add package.json
-          git commit -m "chore: preprod ${VERSION}" -m "Written by Léa 🏔️"
+          git commit -m "chore: preprod ${VERSION}"
           git push origin preprod
 
       - name: Set image metadata
@@ -99,7 +99,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment: preprod
-    if: "github.ref_name == 'preprod' && !startsWith(github.event.head_commit.message, 'chore: preprod')"
+    if: "github.ref_name == 'preprod' && !startsWith(github.event.head_commit.message, 'chore: preprod') && !startsWith(github.event.head_commit.message, 'chore: start')"
     timeout-minutes: 15
 
     steps:
@@ -225,7 +225,7 @@ jobs:
     # Skips auto-release commits to avoid infinite loop
     runs-on: ubuntu-latest
     environment: production
-    if: github.ref_name == 'main'
+    if: "github.ref_name == 'main' && !startsWith(github.event.head_commit.message, 'chore: release')"
     timeout-minutes: 15
 
     steps:
@@ -234,14 +234,29 @@ jobs:
 
       - name: Read release version
         id: version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Version in package.json is already correct — set on preprod as release candidate
-          # Strip any pre-release suffix as safety net (should already be clean)
           CURRENT=$(jq -r .version package.json)
           RELEASE_VERSION=$(echo "$CURRENT" | sed 's/-[a-z]*\.[0-9]*$//')
-          echo "Version: $CURRENT → $RELEASE_VERSION"
+          TAG="v${RELEASE_VERSION}"
+
+          # If tag already exists, bump patch until we find an unused one
+          while gh release view "$TAG" &>/dev/null; do
+            echo "⚠️  Tag $TAG already exists, bumping..."
+            PATCH=$(echo "$RELEASE_VERSION" | grep -oE '[0-9]+$')
+            BASE=$(echo "$RELEASE_VERSION" | sed 's/\.[0-9]*$//')
+            RELEASE_VERSION="${BASE}.$((PATCH + 1))"
+            TAG="v${RELEASE_VERSION}"
+          done
+
+          # Update package.json with clean version
+          jq --arg v "$RELEASE_VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+          echo "Version: $CURRENT → $RELEASE_VERSION (tag: $TAG)"
           echo "new_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v${RELEASE_VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -376,7 +391,7 @@ jobs:
           echo "ℹ️  Security headers check complete (advisory only)"
 
       - name: Create git tag and GitHub release
-        # Tags the merge commit on main — NO commits to main, version arrived via PR
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -388,35 +403,53 @@ jobs:
             --target main
           echo "✅ Release $TAG created"
 
-      - name: Sync preprod to main
-        # Uses GitHub API to reset preprod ref — bypasses branch protection cleanly
-        # This is branch management (pointer update), not a code commit
+      - name: Commit release version and sync preprod
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          MAIN_SHA=$(git rev-parse origin/main)
-          echo "Syncing preprod to main @ ${MAIN_SHA:0:12}"
+          VERSION="${{ steps.version.outputs.new_version }}"
+          REMOTE="https://x-access-token:${GH_PAT}@github.com/vikramgorla/swisscontract-ai.git"
 
-          # Temporarily allow force push on preprod
+          git config user.email "268332783+agent-lea[bot]@users.noreply.github.com"
+          git config user.name "Agent Léa 🏔️"
+
+          # 1. Commit clean version to main (if needed)
+          git add package.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: release v${VERSION}"
+            git push "$REMOTE" HEAD:main
+            echo "✅ package.json → ${VERSION} on main"
+          fi
+
+          MAIN_SHA=$(git rev-parse HEAD)
+          echo "Main @ ${MAIN_SHA:0:12}"
+
+          # 2. Prepare next dev version for preprod
+          PATCH=$(echo "$VERSION" | grep -oE '[0-9]+$')
+          BASE=$(echo "$VERSION" | sed 's/\.[0-9]*$//')
+          NEXT="${BASE}.$((PATCH + 1))-beta.0"
+          jq --arg v "$NEXT" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+          git add package.json
+          git commit -m "chore: start v${BASE}.$((PATCH + 1)) dev cycle"
+
+          DEV_SHA=$(git rev-parse HEAD)
+          echo "Next dev version: $NEXT @ ${DEV_SHA:0:12}"
+
+          # 3. Force-push preprod to dev commit
           curl -s -X PUT \
             -H "Authorization: Bearer $GH_PAT" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/vikramgorla/swisscontract-ai/branches/preprod/protection" \
             -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"allow_force_pushes":true,"allow_deletions":false}' > /dev/null
 
-          # Reset preprod to main SHA via API
-          curl -s -X PATCH \
-            -H "Authorization: Bearer $GH_PAT" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/vikramgorla/swisscontract-ai/git/refs/heads/preprod" \
-            -d "{\"sha\":\"$MAIN_SHA\",\"force\":true}" \
-            | python3 -c "import sys,json; r=json.load(sys.stdin); print('preprod now at:', r.get('object',{}).get('sha','err')[:12])"
+          git push "$REMOTE" "${DEV_SHA}:refs/heads/preprod" --force
+          echo "preprod → $NEXT"
 
-          # Re-lock preprod
           curl -s -X PUT \
             -H "Authorization: Bearer $GH_PAT" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/vikramgorla/swisscontract-ai/branches/preprod/protection" \
             -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"allow_force_pushes":false,"allow_deletions":false}' > /dev/null
 
-          echo "✅ preprod synced to main, force push re-locked"
+          echo "✅ preprod synced + next dev cycle started, force push re-locked"
