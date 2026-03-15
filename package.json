@@ -1,6 +1,6 @@
 {
   "name": "swisscontract-ai",
-  "version": "0.7.3-beta.19",
+  "version": "0.7.3-beta.20",
   "private": true,
   "scripts": {
     "dev": "next dev",
