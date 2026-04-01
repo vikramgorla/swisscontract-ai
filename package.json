@@ -22,5 +22,8 @@
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "0.8.12"
   }
 }
