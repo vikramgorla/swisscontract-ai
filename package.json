@@ -10,7 +10,7 @@
   "dependencies": {
     "jsonrepair": "^3.13.2",
     "mammoth": "^1.12.0",
-    "next": "16.2.1",
+    "next": "16.2.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "unpdf": "^1.4.0"
