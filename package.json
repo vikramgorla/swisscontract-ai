@@ -24,6 +24,6 @@
     "typescript": "^6"
   },
   "overrides": {
-    "@xmldom/xmldom": "0.8.12"
+    "@xmldom/xmldom": "0.8.15"
   }
 }

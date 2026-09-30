@@ -78,7 +78,7 @@ export async function extractText(file: File): Promise<string> {
 
     const pdf = await getDocumentProxy(new Uint8Array(arrayBuffer.slice(0)));
     const pageCount = pdf.numPages;
-    await pdf.destroy();
+    await pdf.loadingTask.destroy();
 
     if (pageCount > MAX_PAGES) {
       throw new Error(`Document has ${pageCount} pages. Maximum allowed is ${MAX_PAGES} pages. Please upload a shorter document.`);
